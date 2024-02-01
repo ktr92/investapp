@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    //"strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+
+    "strict": false,
+    "module": "es6",
+    "target": "es5",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src"]
+    },
+    "lib": [
+      "es2016",
+      "dom"
+    ]
+
+  }
+}
