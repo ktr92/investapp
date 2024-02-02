@@ -4,7 +4,6 @@
     "outDir": "./dist/",
     "noImplicitAny": true,
     //"strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
 
     "strict": false,
     "module": "es6",
