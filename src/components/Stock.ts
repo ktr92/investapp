@@ -1,4 +1,4 @@
-export class Stock {
+export class Stock implements IObjIndexable {
   constructor(
     public name: string,
     public ticker:string,
@@ -6,4 +6,6 @@ export class Stock {
     public buyPrice: number,
     public salePrice: number = null
   ) {}
+
+  [index: string]: unknown
 }
