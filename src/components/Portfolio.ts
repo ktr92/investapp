@@ -1,9 +1,9 @@
-import {Stock} from './Stock';
+import {Position} from './Position';
 
 export class Portfolio {
-  constructor(public name: string, public stocks: Array<Stock> = []) {}
+  constructor(public name: string, public positions: Array<Position> = []) {}
 
-  buyStock(stock: Stock) {
-    this.stocks.push(stock)
+  buyStock(position: Position) {
+    this.positions.push(position)
   }
 }

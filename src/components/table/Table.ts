@@ -1,7 +1,7 @@
 import {createTable} from './table.template'
 
 export class Table {
-  constructor(public selector: string, public items: Array<IObjIndexable>) {}
+  constructor(public selector: string, public items: Array<IObjIndexable>, public stocks: Array<IObjIndexable>) {}
 
   render() {
     const $root: Node = document.querySelector(this.selector)

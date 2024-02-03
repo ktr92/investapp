@@ -1,11 +1,3 @@
-export class Stock implements IObjIndexable {
-  constructor(
-    public name: string,
-    public ticker:string,
-    public currentPrice: number,
-    public buyPrice: number,
-    public salePrice: number = null
-  ) {}
-
-  [index: string]: unknown
+export class Stock {
+  constructor(public ticker: string, public price: number, public change: number) {}
 }
