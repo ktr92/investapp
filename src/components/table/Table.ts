@@ -6,7 +6,7 @@ export class Table {
   render() {
     const $root: Node = document.querySelector(this.selector)
     const root: HTMLElement = $root.appendChild(document.createElement('div'))
-    const table = createTable(this.items)
+    const table = createTable([...this.items, ...this.stocks])
     root.innerHTML = table
   }
 }
