@@ -5,5 +5,6 @@ export class Stock implements IObjIndexable {
     this.dayChange = 500
     this.logo = 'https://storage.yandexcloud.net/snowball-data/asset-logos/SBER-MCX-RUB-custom.png'
   }
+  public currentPrice: number
   [index: string]: unknown
 }

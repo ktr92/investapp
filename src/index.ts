@@ -7,8 +7,8 @@ import {Table} from './components/table/Table'
 /* import {TableStock} from './components/table/TableStock' */
 import './scss/index.scss'
 
-const position1 = new Position('Лукойл', 'LKOH', 6990, 5000)
-const position2 = new Position('Совкомбанк', 'SVCB', 15.250, 0)
+const position1 = new Position('Лукойл', 'LKOH', 6990, 10, 5000)
+const position2 = new Position('Совкомбанк', 'SVCB', 15.250, 3000, 0)
 
 /* const stock1 = new Stock('LKOH', 'Лукойл', 7000, 110, 'https://storage.yandexcloud.net/snowball-data/asset-logos/SBER-MCX-RUB-custom.png')
 const stock2 = new Stock('SVCB', 'Совкомбанк', 16, 0.7, '') */

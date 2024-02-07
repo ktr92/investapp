@@ -1,11 +1,10 @@
 import {Stock} from '../Stock';
 import {TableComponent} from './TableComponent';
 
-export class TableStock extends TableComponent implements IObjIndexable {
+export class TableStock extends TableComponent {
   constructor(protected stock: Stock) {
-    super()
+    super(-1)
   }
-  [index: string]: unknown
 
   render() {
     return `
@@ -16,7 +15,7 @@ export class TableStock extends TableComponent implements IObjIndexable {
           </span>
           <span>
             <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white">${this.stock.name}</span>
-            <span class="block  bg-primary-100 text-primary-800 text-xs font-medium rounded dark:bg-primary-900 dark:text-primary-300">${this.stock.ticker}</span>
+            <span class="block  bg-primary-100 text-slate-400 text-xs font-medium rounded dark:bg-primary-900 dark:text-primary-300">${this.stock.ticker}</span>
             </span>  
         </a>
       </div>

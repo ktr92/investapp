@@ -1,7 +1,13 @@
+import {Price} from '../Price'
 import {Stock} from '../Stock'
+import {Change} from '../Change'
+import {TableChange} from './TableChange'
+import {TablePrice} from './TablePrice'
 import {TableStock} from './TableStock'
 
 export function renderTable(items: Array<IObjIndexable>): string {
+  console.log(items)
+
   const rows = []
 
   for (let i = 0; i < items.length; i++) {
@@ -41,12 +47,21 @@ function createRow(cols: IObjIndexable) {
 
 function createCol(value: unknown) {
   let newcol = null
-  console.log(value)
   if (value instanceof Stock) {
     const stock = new TableStock(value)
     newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"> 
       ${stock.render()}
       `
+  } else if (value instanceof Price) {
+    const price = new TablePrice(value)
+    newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"> 
+    ${price.render()}
+    `
+  } else if (value instanceof Change) {
+    const change = new TableChange(value)
+    newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"> 
+    ${change.render()}
+    `
   } else {
     newcol = ` 
     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">${value ? value : ''}</td>
