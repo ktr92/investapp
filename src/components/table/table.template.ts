@@ -1,7 +1,7 @@
-import {Position} from '../Position'
 import {Stock} from '../Stock'
+import {TableStock} from './TableStock'
 
-export function createTable(items: Array<IObjIndexable>): string {
+export function renderTable(items: Array<IObjIndexable>): string {
   const rows = []
 
   for (let i = 0; i < items.length; i++) {
@@ -41,12 +41,12 @@ function createRow(cols: IObjIndexable) {
 
 function createCol(value: unknown) {
   let newcol = null
-  if (value instanceof Position) {
-    newcol = `position`
-  } else if (value instanceof Stock) {
-    newcol = ` 
-      <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">${value ? value : ''}</td>
-    `
+  console.log(value)
+  if (value instanceof Stock) {
+    const stock = new TableStock(value)
+    newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"> 
+      ${stock.render()}
+      `
   } else {
     newcol = ` 
     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">${value ? value : ''}</td>
