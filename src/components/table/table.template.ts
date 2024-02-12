@@ -1,19 +1,15 @@
-import {Price} from '../Price'
-import {Stock} from '../Stock'
-import {Change} from '../Change'
-import {TableChange} from './TableChange'
-import {TablePrice} from './TablePrice'
-import {TableStock} from './TableStock'
 
-export function renderTable(items: Array<IObjIndexable>): string {
-  console.log(items)
+import {TableComponent} from './TableComponent'
 
-  const rows = []
+export function renderTable(items: Array<Array<TableComponent>>): string {
+/*   console.log(items) */
 
-  for (let i = 0; i < items.length; i++) {
-    const row = createRow(items[i])
+  const rows: Array<string> = []
+
+  items.forEach(item => {
+    const row = createRow(item)
     rows.push(row)
-  }
+  })
 
   const table = `
     <section class="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5">
@@ -34,39 +30,23 @@ export function renderTable(items: Array<IObjIndexable>): string {
   return ''
 } */
 
-function createRow(cols: IObjIndexable) {
+function createRow(cols: Array<TableComponent>) {
   let row = '<tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">'
 
-  Object.keys(cols).forEach(key => {
-    row += createCol(cols[key])
+  cols.sort((a, b) => a.sort - b.sort)
+
+  cols.forEach(item => {
+    row += createCol(item)
   })
 
   row += '</tr>'
   return row
 }
 
-function createCol(value: unknown) {
-  let newcol = null
-  if (value instanceof Stock) {
-    const stock = new TableStock(value)
-    newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"> 
-      ${stock.render()}
-      `
-  } else if (value instanceof Price) {
-    const price = new TablePrice(value)
-    newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"> 
-    ${price.render()}
-    `
-  } else if (value instanceof Change) {
-    const change = new TableChange(value)
-    newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"> 
-    ${change.render()}
-    `
-  } else {
-    newcol = ` 
-    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">${value ? value : ''}</td>
-  `
-  }
+function createCol(value: TableComponent) {
+  let newcol = '<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">'
+  newcol += value.render()
+  newcol += '</td>'
   return newcol
 }
 

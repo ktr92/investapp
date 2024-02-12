@@ -4,8 +4,8 @@
 import {Position} from './components/position/Position'
 /* import {TablePosition} from './components/view/table/TablePosition'
  *//* import {Stock} from './components/Stock' */
-import {Table} from './components/view/table/Table'
-import {TablePosition} from './components/view/table/TablePosition'
+import {Table} from './components/table/Table'
+import {TablePosition} from './components/table/TablePosition'
 /* import {TableStock} from './components/table/TableStock' */
 import './scss/index.scss'
 

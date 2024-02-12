@@ -1,9 +1,9 @@
-import {Change} from '../Change';
+import {Change} from '../position/Change';
 import {TableComponent} from './TableComponent';
 
 export class TableChange extends TableComponent {
-  constructor(protected change: Change) {
-    super(0)
+  constructor(protected change: Change, public sort: number) {
+    super(sort)
   }
 
   render() {
