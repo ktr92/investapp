@@ -1,4 +1,4 @@
-import {Position} from './Position';
+import {Position} from './position/Position';
 
 export class Portfolio {
   constructor(public name: string, public positions: Array<Position> = []) {}

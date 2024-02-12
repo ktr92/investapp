@@ -1,9 +1,9 @@
-import {Stock} from '../Stock';
-import {TableComponent} from './TableComponent';
+import {Stock} from '../position/Stock';
+import {TableComponent} from './table/TableComponent';
 
 export class TableStock extends TableComponent {
-  constructor(protected stock: Stock) {
-    super(-1)
+  constructor(protected stock: Stock, public sort: number) {
+    super(sort)
   }
 
   render() {
