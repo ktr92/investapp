@@ -32,13 +32,21 @@ export class TablePosition {
   public components: Array<TableComponent> = []
 
   init() {
+    /*     Object.keys(this.items).forEach(item => {
+      this.components.push()
+    }) */
+
     this.components.push(new TableStock(this.items.stock, 0))
     this.components.push(new TablePrice(this.items.startPrice, 1))
     this.components.push(new TableCount(this.items.count, 2))
     this.components.push(new TableTotal(this.items.startTotal, 3))
     this.components.push(new TableTotal(this.items.currentPrice, 4))
     this.components.push(new TableChange(this.items.change, 5))
-    this.components.push(new TablePrice(this.items.myStop, 6))
-    this.components.push(new TablePrice(this.items.salePrice, 7))
+    if (this.items.myStop.value) {
+      this.components.push(new TablePrice(this.items.myStop, 6))
+    }
+    if (this.items.salePrice.value) {
+      this.components.push(new TablePrice(this.items.salePrice, 7))
+    }
   }
 }

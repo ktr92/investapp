@@ -11,16 +11,20 @@ interface IConstructor {
 
 export class Table {
   constructor(public selector: string, protected Component: IConstructor, public items: Array<unknown>) {
-    this.init()
+    /*  this.init() */
   }
 
   protected instances: Array<Array<TableComponent>> = []
 
   init() {
     // для каждой позиции (items) нужно сформировать массив с компонентами таблицы
-    this.items.forEach((item) => {
+    /*  this.items.forEach((item) => {
       const subinstance = new this.Component(item)
       this.instances.push(subinstance.components as Array<TableComponent>)
+    }) */
+
+    this.items.forEach((item) => {
+      console.log(item)
     })
   }
 
