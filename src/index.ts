@@ -10,7 +10,7 @@ import {TablePosition} from './components/table/TablePosition'
 import './scss/index.scss'
 
 const position1 = new Position('LKOH', 6990, 10, 5000)
-const position2 = new Position('SVCB', 15.250, 3000, 0)
+const position2 = new Position('SVCB', 6500, 15, 0)
 
 const portfolio1 = new Portfolio('ИИС')
 portfolio1.buyStock(position1)

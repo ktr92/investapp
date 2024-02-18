@@ -3,6 +3,8 @@ import {renderTable} from './table.template'
 
 interface ITableComponent {
   components: Array<TableComponent>
+  headers: Array<string>
+  footers: Array<unknown>
 }
 
 interface IConstructor {
@@ -38,7 +40,7 @@ export class Table {
 
     console.log(this.instances)
 
-    const table = renderTable(this.instances.components)
+    const table = renderTable(this.instances.components, this.instances.headers, this.instances.footers)
     root.innerHTML = table
   }
 }

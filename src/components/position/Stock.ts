@@ -4,7 +4,7 @@ export class Stock extends ViewComponent implements IObjIndexable {
   constructor(public ticker: string) {
     super()
     this.name = 'name'
-    this.currentPrice = 10000
+    this.currentPrice = 7200
     this.dayChange = 500
     this.logo = 'https://storage.yandexcloud.net/snowball-data/asset-logos/SBER-MCX-RUB-custom.png'
   }
