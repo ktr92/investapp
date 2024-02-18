@@ -1,11 +1,11 @@
 export class TableComponent {
   constructor() {
-    this.props = {}
+    this.props = []
   }
 
   headers: []
 
-  props: IObjIndexable
+  props: Array<unknown>
 
   components: []
 

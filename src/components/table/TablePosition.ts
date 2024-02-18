@@ -5,6 +5,7 @@ import {Price} from '../position/Price'
 import {Stock} from '../position/Stock'
 import {Count} from '../position/Count'
 import {Totalprice} from '../position/Totalprice'
+import {ViewComponent} from './ViewComponent'
 
 declare interface IPosition extends IObjIndexable {
   stock: Stock
@@ -22,8 +23,8 @@ export class TablePosition {
     this.init()
   }
   public viewItems: TableComponent
-  public headers = ['Актив', 'Средняя цена', 'Кол-во', 'Вложено', 'Текущая стоимость', 'Прибыль']
-  public props = ['stock', 'startPrice', 'count', 'startTotal', 'currentPrice', 'change']
+  public headers = ['Актив', 'Кол-во', 'Средняя цена', 'Вложено', 'Текущая стоимость', 'Прибыль']
+  public props = ['stock', 'count', 'startPrice', 'startTotal', 'currentPrice', 'change']
   public components: Array<TableComponent> = []
 
   init() {
@@ -31,8 +32,11 @@ export class TablePosition {
       const viewItem = new TableComponent()
       Object.keys(item)
           .forEach(key => {
-            if (this.props.indexOf(key) > -1) {
-              viewItem.props[key] = item[key]
+            const idx = this.props.indexOf(key)
+            if (idx > -1) {
+              const newItem = item[key] as ViewComponent
+              newItem.sort = idx
+              viewItem.props.push(newItem)
             }
           })
       this.components.push(viewItem)

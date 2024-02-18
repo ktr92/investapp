@@ -1,5 +1,9 @@
-export class Count {
-  constructor(public count: number = 1) {}
+import {ViewComponent} from '../table/ViewComponent'
+
+export class Count extends ViewComponent {
+  constructor(public count: number = 1) {
+    super()
+  }
 
   render() {
     let value = ''

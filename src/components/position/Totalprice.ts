@@ -1,5 +1,8 @@
-export class Totalprice {
+import {ViewComponent} from '../table/ViewComponent'
+
+export class Totalprice extends ViewComponent {
   constructor(public single: number = null, public count: number = null) {
+    super()
     this.total = this.single * this.count
   }
 

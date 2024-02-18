@@ -1,5 +1,9 @@
-export class Price {
-  constructor(public value: number = null) {}
+import {ViewComponent} from '../table/ViewComponent';
+
+export class Price extends ViewComponent {
+  constructor(public value: number = null) {
+    super()
+  }
 
   render() {
     return `

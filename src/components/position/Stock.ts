@@ -1,5 +1,8 @@
-export class Stock implements IObjIndexable {
+import {ViewComponent} from '../table/ViewComponent'
+
+export class Stock extends ViewComponent implements IObjIndexable {
   constructor(public ticker: string) {
+    super()
     this.name = 'name'
     this.currentPrice = 10000
     this.dayChange = 500

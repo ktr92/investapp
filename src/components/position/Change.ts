@@ -1,5 +1,9 @@
-export class Change implements IObjIndexable {
-  constructor(public startValue: number, public currentValue: number) {}
+import {ViewComponent} from '../table/ViewComponent'
+
+export class Change extends ViewComponent implements IObjIndexable {
+  constructor(public startValue: number, public currentValue: number) {
+    super()
+  }
   [index: string]: unknown
 
   render() {

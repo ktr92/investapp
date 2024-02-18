@@ -6,7 +6,8 @@ export function renderTable(items: Array<TableComponent>): string {
   const rows: Array<string> = []
 
   items.forEach(item => {
-    const row = createRow(item)
+    console.log(item.props)
+    const row = createRow(item.props as Array<ViewComponent>)
     rows.push(row)
   })
 
@@ -29,19 +30,21 @@ export function renderTable(items: Array<TableComponent>): string {
   return ''
 } */
 
-function createRow(cols: TableComponent) {
+function createRow(cols: Array<ViewComponent>) {
   let row = '<tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">'
 
-  console.log(cols)
-
-  /*   cols.sort((a, b) => a.sort - b.sort) */
+  cols.sort((a, b) => a.sort - b.sort)
 
   /*   cols.forEach(item => {
     row += createCol(item)
   }) */
 
-  Object.keys(cols.props).forEach(key => {
+  /* Object.keys(cols.props).forEach(key => {
     row += createCol((cols.props[key] as ViewComponent).render())
+  }) */
+
+  cols.forEach(item => {
+    row += createCol((item as ViewComponent).render())
   })
 
   row += '</tr>'
