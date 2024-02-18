@@ -8,7 +8,7 @@ export class Stock implements IObjIndexable {
   public currentPrice: number
   [index: string]: unknown
 
-  toHTML() {
+  render() {
     return `
     <div class="">
       <a href="#" target="_blank" class="flex items-center">

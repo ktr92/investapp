@@ -1,19 +1,12 @@
 import {TableComponent} from './TableComponent'
-/* import {TableStock} from './TableStock'
-import {Stock} from '../Stock' */
 
 import {Change} from '../position/Change'
 import {Price} from '../position/Price'
 import {Stock} from '../position/Stock'
 import {Count} from '../position/Count'
-import {TableStock} from './TableStock'
-import {TableCount} from './TableCount'
-import {TablePrice} from './TablePrice'
-import {TableTotal} from './TableTotal'
 import {Totalprice} from '../position/Totalprice'
-import {TableChange} from './TableChange'
 
-declare interface IPosition {
+declare interface IPosition extends IObjIndexable {
   stock: Stock
   startPrice: Price
   count: Count
@@ -25,28 +18,24 @@ declare interface IPosition {
 }
 
 export class TablePosition {
-  constructor(private items: IPosition) {
+  constructor(private items: IPosition[]) {
     this.init()
   }
-
+  public viewItems: TableComponent
+  public headers = ['Актив', 'Средняя цена', 'Кол-во', 'Вложено', 'Текущая стоимость', 'Прибыль']
+  public props = ['stock', 'startPrice', 'count', 'startTotal', 'currentPrice', 'change']
   public components: Array<TableComponent> = []
 
   init() {
-    /*     Object.keys(this.items).forEach(item => {
-      this.components.push()
-    }) */
-
-    this.components.push(new TableStock(this.items.stock, 0))
-    this.components.push(new TablePrice(this.items.startPrice, 1))
-    this.components.push(new TableCount(this.items.count, 2))
-    this.components.push(new TableTotal(this.items.startTotal, 3))
-    this.components.push(new TableTotal(this.items.currentPrice, 4))
-    this.components.push(new TableChange(this.items.change, 5))
-    if (this.items.myStop.value) {
-      this.components.push(new TablePrice(this.items.myStop, 6))
-    }
-    if (this.items.salePrice.value) {
-      this.components.push(new TablePrice(this.items.salePrice, 7))
-    }
+    this.items.forEach(item => {
+      const viewItem = new TableComponent()
+      Object.keys(item)
+          .forEach(key => {
+            if (this.props.indexOf(key) > -1) {
+              viewItem.props[key] = item[key]
+            }
+          })
+      this.components.push(viewItem)
+    })
   }
 }

@@ -1,7 +1,15 @@
-export abstract class TableComponent {
-  constructor(public sort: number) {}
+export class TableComponent {
+  constructor() {
+    this.props = {}
+  }
 
-  render() {
+  headers: []
+
+  props: IObjIndexable
+
+  components: []
+
+  init() {
     return ''
   }
 }

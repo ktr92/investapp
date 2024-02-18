@@ -1,9 +1,8 @@
 
 import {TableComponent} from './TableComponent'
+import {ViewComponent} from './ViewComponent'
 
-export function renderTable(items: Array<Array<TableComponent>>): string {
-/*   console.log(items) */
-
+export function renderTable(items: Array<TableComponent>): string {
   const rows: Array<string> = []
 
   items.forEach(item => {
@@ -30,26 +29,28 @@ export function renderTable(items: Array<Array<TableComponent>>): string {
   return ''
 } */
 
-function createRow(cols: Array<TableComponent>) {
+function createRow(cols: TableComponent) {
   let row = '<tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">'
 
-  cols.sort((a, b) => a.sort - b.sort)
+  console.log(cols)
 
-  cols.forEach(item => {
+  /*   cols.sort((a, b) => a.sort - b.sort) */
+
+  /*   cols.forEach(item => {
     row += createCol(item)
+  }) */
+
+  Object.keys(cols.props).forEach(key => {
+    row += createCol((cols.props[key] as ViewComponent).render())
   })
 
   row += '</tr>'
   return row
 }
 
-function createCol(value: TableComponent) {
+function createCol(value: string) {
   let newcol = '<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">'
-  newcol += value.render()
+  newcol += value
   newcol += '</td>'
   return newcol
 }
-
-/* function createCell() {
-  return ''
-} */

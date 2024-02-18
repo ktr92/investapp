@@ -11,28 +11,32 @@ interface IConstructor {
 
 export class Table {
   constructor(public selector: string, protected Component: IConstructor, public items: Array<unknown>) {
-    /*  this.init() */
+    this.init()
   }
 
-  protected instances: Array<Array<TableComponent>> = []
+  /*   protected instances: Array<Array<TableComponent>> = []
+ */
+
+  protected instances: ITableComponent
 
   init() {
-    // для каждой позиции (items) нужно сформировать массив с компонентами таблицы
+    this.instances = new this.Component(this.items)
+
     /*  this.items.forEach((item) => {
       const subinstance = new this.Component(item)
       this.instances.push(subinstance.components as Array<TableComponent>)
-    }) */
+    })
 
     this.items.forEach((item) => {
       console.log(item)
-    })
+    }) */
   }
 
   render() {
     const $root: Node = document.querySelector(this.selector)
     const root: HTMLElement = $root.appendChild(document.createElement('div'))
 
-    const table = renderTable(this.instances)
+    const table = renderTable(this.instances.components)
     root.innerHTML = table
   }
 }
