@@ -36,6 +36,8 @@ export class Table {
     const $root: Node = document.querySelector(this.selector)
     const root: HTMLElement = $root.appendChild(document.createElement('div'))
 
+    console.log(this.instances)
+
     const table = renderTable(this.instances.components)
     root.innerHTML = table
   }

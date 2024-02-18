@@ -1,15 +1,9 @@
+import {ViewComponent} from './ViewComponent'
+
 export class TableComponent {
   constructor() {
     this.props = []
   }
-
-  headers: []
-
-  props: Array<unknown>
-
-  components: []
-
-  init() {
-    return ''
-  }
+  components: Array<TableComponent>
+  props: Array<ViewComponent>
 }

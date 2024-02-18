@@ -19,16 +19,16 @@ declare interface IPosition extends IObjIndexable {
 }
 
 export class TablePosition {
-  constructor(private items: IPosition[]) {
-    this.init()
+  constructor(items: IPosition[]) {
+    this.init(items)
   }
   public viewItems: TableComponent
   public headers = ['Актив', 'Кол-во', 'Средняя цена', 'Вложено', 'Текущая стоимость', 'Прибыль']
   public props = ['stock', 'count', 'startPrice', 'startTotal', 'currentPrice', 'change']
   public components: Array<TableComponent> = []
 
-  init() {
-    this.items.forEach(item => {
+  init(items: IPosition[]) {
+    items.forEach(item => {
       const viewItem = new TableComponent()
       Object.keys(item)
           .forEach(key => {

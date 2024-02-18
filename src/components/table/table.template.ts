@@ -6,21 +6,33 @@ export function renderTable(items: Array<TableComponent>): string {
   const rows: Array<string> = []
 
   items.forEach(item => {
-    console.log(item.props)
     const row = createRow(item.props as Array<ViewComponent>)
     rows.push(row)
   })
+  /*
+  const head = renderHeader(header) */
 
   const table = `
     <section class="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5">
       <div class="px-4 mx-auto max-w-screen-2xl lg:px-12">
         <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <table><tbody>${rows}</tbody></table>
+        <table>
+        <tbody>${rows}</tbody>
+        </table>
         </div>
       </div>
     </section>
   `
   return table
+}
+
+export function renderHeader(headers: Array<string>) {
+  let row = '<tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">'
+  headers.forEach(item => {
+    row += createCol(item)
+  })
+  row += '</tr>'
+  return row
 }
 
 /* function createHeader() {
