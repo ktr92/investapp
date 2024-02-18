@@ -36,7 +36,8 @@ export class TablePosition {
             const idx = this.props.indexOf(key)
             if (idx > -1) {
               const newItem = item[key] as ViewComponent
-              newItem.sort = idx
+              this.initSortfield(item[key] as ViewComponent, newItem, idx)
+
               viewItem.props.push(newItem)
             }
           })
@@ -46,6 +47,25 @@ export class TablePosition {
     this.initFooters(items)
   }
 
+  initSortfield(item: ViewComponent, newItem: ViewComponent, idx: number) {
+    newItem.sort = idx
+    if (item instanceof Price) {
+      newItem.sortField = (item as Price).value
+    }
+    if (item instanceof Totalprice) {
+      newItem.sortField = (item as Totalprice).total
+    }
+    if (item instanceof Count) {
+      newItem.sortField = (item as Count).count
+    }
+    if (item instanceof Count) {
+      newItem.sortField = (item as Count).count
+    }
+    if (item instanceof Change) {
+      newItem.sortField = (item as Change).value
+    }
+  }
+
   initFooters(items: IPosition[]) {
     this.footers.push('Всего')
     this.footers.push(this.calcCount(items))
@@ -53,10 +73,6 @@ export class TablePosition {
     this.footers.push(this.calcBuy(items))
     this.footers.push(this.calcCurrent(items))
     this.footers.push(this.calcChange(items))
-  }
-
-  showText(str: string) {
-    return str
   }
 
   calcCount(items: IPosition[]) {
@@ -83,8 +99,6 @@ export class TablePosition {
   calcChange(items: IPosition[]) {
     let change = 0
     let percent = 0
-
-    console.log(items)
 
     items.forEach(item => {
       change += item.change.currentValue * item.count.count - item.change.startValue * item.count.count

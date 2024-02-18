@@ -22,6 +22,7 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     'operator-linebreak': 'off',
     'max-len': 'off',
-
+    '@typescript-eslint/no-unused-vars': 'off',
+    'no-unused-vars': 'off'
   },
 };

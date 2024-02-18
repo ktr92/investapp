@@ -9,7 +9,7 @@ export class Price extends ViewComponent {
     return `
       <div class="">
           <span class="w-auto block mr-3">
-          <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white">${this.value}</span>
+          <span class="block font-normal text-gray-900 whitespace-nowrap dark:text-white">${this.value} ₽</span>
           </span>
         
       </div>

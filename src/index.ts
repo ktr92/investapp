@@ -9,7 +9,7 @@ import {TablePosition} from './components/table/TablePosition'
 /* import {TableStock} from './components/table/TableStock' */
 import './scss/index.scss'
 
-const position1 = new Position('LKOH', 6990, 10, 5000)
+const position1 = new Position('LKOH', 6990, 22, 5000)
 const position2 = new Position('SVCB', 6500, 15, 0)
 
 const portfolio1 = new Portfolio('ИИС')
