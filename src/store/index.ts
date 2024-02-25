@@ -9,6 +9,20 @@ const state = {
       comm: 0.06,
       positions: [
         {
+          ticker: 'ASTR',
+          buyPrice: 554,
+          count: 100,
+          myStop: 500,
+        },
+      ]
+    },
+    {
+      id: 2,
+      name: 'IIS',
+      depo: 200000,
+      comm: 0.06,
+      positions: [
+        {
           ticker: 'LKOH',
           buyPrice: 6990,
           count: 22,
@@ -24,16 +38,27 @@ const state = {
       ]
     },
     {
-      id: 2,
-      name: 'IIS',
-      depo: 200000,
-      comm: 0.06
-    },
-    {
       id: 3,
       name: 'Finam',
       depo: 50000,
-      comm: 0.065
+      comm: 0.065,
+
+      positions: [
+        {
+          ticker: 'SVET',
+          buyPrice: 32,
+          count: 1000,
+          myStop: 25,
+        },
+        {
+          ticker: 'HYDR',
+          buyPrice: 0.8885,
+          count: 3000,
+          myStop: 0.7000,
+        },
+
+      ]
+
     }
   ]
 }
@@ -43,6 +68,7 @@ const mutations = {
 }
 
 const getters = {
+  getAllPortfolio: () => state.portfolio,
   getPortfolio: (name: string) => state.portfolio.filter(item => item.name === name)[0],
   getPortfolioId: (name: string) => state.portfolio.filter(item => item.name === name)[0].id,
   getPortfolioName: (name: string) => state.portfolio.filter(item => item.name === name)[0].name,

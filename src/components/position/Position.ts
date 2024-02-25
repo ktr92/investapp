@@ -3,6 +3,7 @@ import {Price} from './Price';
 import {Stock} from './Stock';
 import {Count} from './Count';
 import {Totalprice} from './Totalprice';
+import {Portfolio} from '../Portfolio';
 
 export class Position implements IObjIndexable {
   constructor(
@@ -29,4 +30,21 @@ export class Position implements IObjIndexable {
   public change: Change
   public startPrice: Price
   public currentPrice: Totalprice
+
+  static createPosition(items: Array<IPosition>) {
+    const result = items.map((item: IPosition) => {
+      return new Position(item.ticker, item.buyPrice, item.count, item.myStop)
+    })
+    return result
+  }
+
+/*   static createTotalPositions(items: Array<Portfolio>) {
+    const allPositions: Array<Position> = []
+    items.forEach((portf) => {
+      portf.positions.forEach((item: Position) => {
+        allPositions.push(new Position(item.ticker, item.buyPrice, item.count, item.myStop))
+      })
+    })
+    return allPositions
+  } */
 }
