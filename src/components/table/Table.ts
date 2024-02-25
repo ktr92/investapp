@@ -1,3 +1,4 @@
+import {DomComponent} from '../DomComponent'
 import {TableComponent} from './TableComponent'
 import {ViewComponent} from './ViewComponent'
 import {renderTable} from './table.template'
@@ -13,8 +14,9 @@ interface IConstructor {
   new (...args: Array<unknown>): ITableComponent,
 }
 
-export class Table {
+export class Table extends DomComponent {
   constructor(public selector: string, protected Component: IConstructor, public items: Array<unknown>) {
+    super()
     this.init()
   }
 
@@ -34,21 +36,40 @@ export class Table {
     renderBody(this.instances.components)
 
     root.addEventListener('click', e => {
-      if (e.target instanceof HTMLElement) {
-        if (e.target.getAttribute('data-header')) {
-          this.sortTable(Number(e.target.getAttribute('data-sort')))
-        }
-      }
+      this.sortTable(e)
     })
   }
 
-  sortTable(index: number) {
-    console.log('before: ', this.instances)
+  sortTable(e: Event) {
+    if (e.target instanceof HTMLElement) {
+      const direction = e.target.getAttribute('data-header')
+      const classes = e.target.classList
+      if (direction) {
+        if (direction === 'asc') {
+          this.sortAsc(Number(e.target.getAttribute('data-sort')))
+          e.target.setAttribute('data-header', 'desc')
+          classes.remove('asc')
+          classes.remove('desc')
+          classes.add('desc')
+        }
+        if (direction === 'desc') {
+          this.sortDesc(Number(e.target.getAttribute('data-sort')))
+          e.target.setAttribute('data-header', 'asc')
+          classes.remove('asc')
+          classes.remove('desc')
+          classes.add('asc')
+        }
+        this.toggleClass(e.target, '.sorted', 'sorted')
+        renderBody(this.instances.components)
+      }
+    }
+  }
 
+  sortAsc(index: number) {
     this.instances.components.sort((a, b) => (a.props[index] as ViewComponent).sortField - (b.props[index] as ViewComponent).sortField)
+  }
 
-    renderBody(this.instances.components)
-
-    console.log(this.instances)
+  sortDesc(index: number) {
+    this.instances.components.sort((a, b) => (b.props[index] as ViewComponent).sortField - (a.props[index] as ViewComponent).sortField)
   }
 }

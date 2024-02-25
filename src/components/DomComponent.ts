@@ -1,6 +1,11 @@
 export abstract class DomComponent {
-  sort: number
-  render() {
-    return ''
+  toggleClass(element: HTMLElement, selector: string, className: string) {
+    const oldElement = document.querySelector(selector)
+    if (oldElement) {
+      oldElement.classList.remove(className)
+    }
+    if (element) {
+      element.classList.add(className)
+    }
   }
 }

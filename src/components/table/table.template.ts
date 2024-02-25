@@ -14,7 +14,7 @@ export function renderTable(items: Array<TableComponent>, headers: Array<string>
     <section class="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5">
       <div class="px-4 mx-auto max-w-screen-2xl lg:px-12">
         <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <table>
+        <table class="w-full">
         <thead>${header ?? ''}</thead>
         <tbody></tbody>
         <tfoot>${footer ?? ''}</tfoot>
@@ -84,7 +84,7 @@ function createRow(cols: Array<ViewComponent>) {
 } */
 
 function createCol(value: string | unknown, index: number, isheader = false) {
-  let newcol = `<td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white" data-sort="${index}" ${isheader ? `data-header="${index}"` : ''}>`
+  let newcol = `<td class="px-8 py-2 relative cursor-pointer font-medium text-gray-900 whitespace-nowrap dark:text-white" data-sort="${index}" ${isheader ? `data-header="asc"` : ''}>`
   newcol += value
   newcol += '</td>'
   return newcol
