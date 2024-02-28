@@ -21,6 +21,7 @@ const loadMoex = async () => {
   await store.actions.initMoex()
   console.log(store.getters.getMoex())
 }
+loadMoex()
 
 /* store.actions.initMoex().then(() => console.log(store.getters.getMoex()))
  */

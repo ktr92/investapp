@@ -3,29 +3,36 @@ export async function moexTickerLast(tickers) {
       .then((res) => {
         return res.json()
       });
-  const fMarketdata = json.marketdata.data.filter(function(d) {
-    return ['TQBR', 'TQTF'].indexOf(d[1]) !== -1;
-  })
-  const fSecurities = json.securities.data.filter(function(d) {
-    return ['TQBR', 'TQTF'].indexOf(d[1]) !== -1;
-  })
 
-  const resMarketdata = []
-  const resSecurities = []
+  const fMarketdata = moexFilter(json.marketdata.data)
+  const fSecurities = moexFilter(json.securities.data)
+  const indexes = []
 
-  fMarketdata.forEach(element => {
+  fMarketdata.forEach((element, index) => {
     if (tickers.indexOf(element[0]) > -1) {
-      resMarketdata.push(element)
-    }
-  });
-  fSecurities.forEach(element => {
-    if (tickers.indexOf(element[0]) > -1) {
-      resSecurities.push(element)
+      indexes.push(index)
     }
   });
 
-  return [
-    resMarketdata,
-    resSecurities
-  ]
+  return moexTransformer(fMarketdata, fSecurities, indexes)
+}
+
+function moexFilter(data) {
+  return data.filter(function(d) {
+    return ['TQBR', 'TQTF'].indexOf(d[1]) !== -1;
+  })
+}
+
+function moexTransformer(market, security, indexes) {
+  const result = []
+  indexes.forEach(index => {
+    result.push(
+        {
+          name: security[index][2],
+          price: market[index][12],
+          open: security[index][3],
+        })
+  })
+
+  return result
 }
