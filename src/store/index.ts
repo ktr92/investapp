@@ -1,6 +1,13 @@
 import {Position} from '../components/position/Position'
+import {moexTickerLast} from '../utils/getStockPrice'
 
-const state = {
+interface IState {
+  moex: Array<unknown>,
+  portfolio: Array<IPortfolio>
+}
+
+const state: IState = {
+  moex: [],
   portfolio: [
     {
       id: 1,
@@ -74,14 +81,26 @@ const getters = {
   getPortfolioName: (name: string) => state.portfolio.filter(item => item.name === name)[0].name,
   getPortfolioComm: (name: string) => state.portfolio.filter(item => item.name === name)[0].comm,
   getPortfolioDepo: (name: string) => state.portfolio.filter(item => item.name === name)[0].depo,
-  getPortfolioPositions: (name: string) => state.portfolio.filter(item => item.name === name)[0].positions
+  getPortfolioPositions: (name: string) => state.portfolio.filter(item => item.name === name)[0].positions,
+  getAllTickers: () => {
+    const tickers: Array<string> = []
+    state.portfolio.forEach(item => {
+      item.positions.forEach(position => tickers.push(position.ticker))
+    })
+    return tickers
+  },
+  getMoex: () => state.moex
 }
 
 const actions = {
-
+  initMoex: async () => {
+    const tickers = getters.getAllTickers()
+    state.moex = await moexTickerLast(tickers)
+    return state.moex
+  }
 }
 
-export default {getters, actions}
+export default {getters, actions, state}
 
 /* addDepo(cash) {
   depo += cash

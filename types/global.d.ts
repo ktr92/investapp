@@ -17,3 +17,9 @@ declare interface IPortfolio {
   comm: number,
   positions: Array<IPosition>
 }
+
+declare interface IMoexApi {
+  name: string,
+  price: number,
+  open: number
+}

@@ -3,17 +3,17 @@ import {Price} from './Price';
 import {Stock} from './Stock';
 import {Count} from './Count';
 import {Totalprice} from './Totalprice';
-import {Portfolio} from '../Portfolio';
 
 export class Position implements IObjIndexable {
   constructor(
       ticker:string,
+      moex: IMoexApi,
       buyPrice: number,
       count: number,
       myStop: number = null,
       salePrice: number = null,
   ) {
-    this.stock = new Stock(ticker)
+    this.stock = new Stock(ticker, moex)
     this.startPrice = new Price(buyPrice)
     this.count = new Count(count)
     this.startTotal = new Totalprice(buyPrice, count)
@@ -32,10 +32,10 @@ export class Position implements IObjIndexable {
   public currentPrice: Totalprice
 
   static createPosition(items: Array<IPosition>) {
-    const result = items.map((item: IPosition) => {
-      return new Position(item.ticker, item.buyPrice, item.count, item.myStop)
+    /*  const result = items.map((item: IPosition) => {
+      return new Position(item.ticker, item.moex, item.buyPrice, item.count, item.myStop)
     })
-    return result
+    return result */
   }
 
 /*   static createTotalPositions(items: Array<Portfolio>) {

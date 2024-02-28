@@ -9,6 +9,7 @@ import {TablePosition} from './components/table/TablePosition'
 /* import {TableStock} from './components/table/TableStock' */
 import './scss/index.scss'
 import store from './store'
+import {moexTickerLast} from './utils/getStockPrice'
 
 /* const port = store.getters.getPortfolio('SBER') */
 
@@ -16,14 +17,25 @@ import store from './store'
 
 const all = store.getters.getAllPortfolio()
 
-// сделать массив Портфолио
-const allPortfolio = all.map(item => {
-  return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions), item.comm)
+const loadMoex = async () => {
+  await store.actions.initMoex()
+  console.log(store.getters.getMoex())
+}
+
+/* store.actions.initMoex().then(() => console.log(store.getters.getMoex()))
+ */
+
+/* const moex = moexTickerLast('')
+moex.then((res) => {
+  console.log(res)
 })
+ */
+// сделать массив Портфолио
+/* const allPortfolio = all.map(item => {
+  return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions), item.comm)
+}) */
 
 /* const allPositions: Array<Position> = Position.createTotalPositions(all.positions) */
-
-console.log(allPortfolio)
 
 /* const positions1 = port.positions.map(item => {
   return new Position(item.ticker, item.buyPrice, item.count, item.myStop)
@@ -43,9 +55,13 @@ const position2 = new Position('SVCB', 6500, 15, 0) */
 portfolio1.buyStock(position1)
 portfolio1.buyStock(position2) */
 
-allPortfolio.forEach(item => {
+/* allPortfolio.forEach(item => {
   const table = new Table('.table', TablePosition, item.positions)
   table.render()
-})
+}) */
+/* const tickerlist = []
+allPortfolio.forEach(item => {
+  tickerlist.push(item)
+}) */
 
 /* table.render() */

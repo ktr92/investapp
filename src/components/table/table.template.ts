@@ -26,16 +26,16 @@ export function renderTable(items: Array<TableComponent>, headers: Array<string>
   return table
 }
 
-export function renderBody(items: Array<TableComponent>) {
+export function renderBody(root: HTMLElement, items: Array<TableComponent>) {
   const rows: Array<string> = []
 
-  document.querySelector('tbody').innerHTML = ''
+  root.querySelector('tbody').innerHTML = ''
   items.forEach(item => {
     const row = createRow(item.props as Array<ViewComponent>)
     rows.push(row)
   })
 
-  document.querySelector('tbody').insertAdjacentHTML('afterbegin', rows.join(''))
+  root.querySelector('tbody').insertAdjacentHTML('afterbegin', rows.join(''))
 }
 
 function renderHeader(header: Array<unknown>) {

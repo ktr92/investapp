@@ -35,14 +35,14 @@ export class Table extends DomComponent {
     const table = renderTable(this.instances.components, this.instances.headers, this.instances.footers)
     root.innerHTML = table
 
-    renderBody(this.instances.components)
+    renderBody($root, this.instances.components)
 
     root.addEventListener('click', e => {
-      this.sortTable(e)
+      this.sortTable($root, e)
     })
   }
 
-  sortTable(e: Event) {
+  sortTable(root: HTMLElement, e: Event) {
     if (e.target instanceof HTMLElement) {
       const direction = e.target.getAttribute('data-header')
       const classes = e.target.classList
@@ -62,7 +62,7 @@ export class Table extends DomComponent {
           classes.add('asc')
         }
         this.toggleClass(e.target, '.sorted', 'sorted')
-        renderBody(this.instances.components)
+        renderBody(root, this.instances.components)
       }
     }
   }

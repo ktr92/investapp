@@ -1,11 +1,11 @@
 import {ViewComponent} from '../table/ViewComponent'
 
 export class Stock extends ViewComponent implements IObjIndexable {
-  constructor(public ticker: string) {
+  constructor(public ticker: string, moex: IMoexApi) {
     super()
-    this.name = 'name'
-    this.currentPrice = 7200
-    this.dayChange = 500
+    this.name = moex.name
+    this.currentPrice = moex.price
+    this.dayChange = moex.open - moex.price
     this.logo = 'https://storage.yandexcloud.net/snowball-data/asset-logos/SBER-MCX-RUB-custom.png'
   }
   public currentPrice: number

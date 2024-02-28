@@ -1,11 +1,31 @@
-async function moexTickerLast(ticker) {
-  const json = await fetch('https://iss.moex.com/iss/engines/stock/markets/shares/securities/' + ticker + '.json?iss.meta=off')
+export async function moexTickerLast(tickers) {
+  const json = await fetch('https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?q=GAZP,SBER')
       .then((res) => {
         return res.json()
       });
-  return json.marketdata.data.filter(function(d) {
+  const fMarketdata = json.marketdata.data.filter(function(d) {
     return ['TQBR', 'TQTF'].indexOf(d[1]) !== -1;
-  })[0][12];
-}
+  })
+  const fSecurities = json.securities.data.filter(function(d) {
+    return ['TQBR', 'TQTF'].indexOf(d[1]) !== -1;
+  })
 
-moexTickerLast('GAZP').then(console.log);
+  const resMarketdata = []
+  const resSecurities = []
+
+  fMarketdata.forEach(element => {
+    if (tickers.indexOf(element[0]) > -1) {
+      resMarketdata.push(element)
+    }
+  });
+  fSecurities.forEach(element => {
+    if (tickers.indexOf(element[0]) > -1) {
+      resSecurities.push(element)
+    }
+  });
+
+  return [
+    resMarketdata,
+    resSecurities
+  ]
+}
