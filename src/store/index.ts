@@ -2,7 +2,7 @@ import {Position} from '../components/position/Position'
 import {moexTickerLast} from '../utils/getStockPrice'
 
 interface IState {
-  moex: Array<unknown>,
+  moex: Array<IMoexApi>,
   portfolio: Array<IPortfolio>
 }
 
@@ -37,7 +37,7 @@ const state: IState = {
         },
         {
           ticker: 'SVCB',
-          buyPrice: 6500,
+          buyPrice: 16,
           count: 15,
           myStop: 0,
 

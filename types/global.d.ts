@@ -20,6 +20,7 @@ declare interface IPortfolio {
 
 declare interface IMoexApi {
   name: string,
+  ticker: string,
   price: number,
   open: number
 }

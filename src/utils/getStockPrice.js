@@ -29,6 +29,7 @@ function moexTransformer(market, security, indexes) {
     result.push(
         {
           name: security[index][2],
+          ticker: market[index][0],
           price: market[index][12],
           open: security[index][3],
         })

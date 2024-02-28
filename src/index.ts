@@ -15,13 +15,20 @@ import {moexTickerLast} from './utils/getStockPrice'
 
 /* console.log(port) */
 
-const all = store.getters.getAllPortfolio()
+const all = store.getters.getAllPortfolio();
 
-const loadMoex = async () => {
+(async function() {
   await store.actions.initMoex()
-  console.log(store.getters.getMoex())
-}
-loadMoex()
+
+  const allPortfolio = all.map(item => {
+    return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions), item.comm)
+  })
+
+  allPortfolio.forEach(item => {
+    const table = new Table('.table', TablePosition, item.positions)
+    table.render()
+  })
+})();
 
 /* store.actions.initMoex().then(() => console.log(store.getters.getMoex()))
  */
