@@ -8,7 +8,7 @@ export class Stock extends ViewComponent implements IObjIndexable {
     this.name = moex.name
     this.currentPrice = moex.price
     this.dayChange = moex.open - moex.price
-    this.logo = `https://eodhd.com/img/logos/MCX/${ticker}.png`
+    this.logo = `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${ticker}.png`
   }
   public currentPrice: number
   [index: string]: unknown

@@ -38,7 +38,7 @@ const state: IState = {
         {
           ticker: 'SVCB',
           buyPrice: 16,
-          count: 15,
+          count: 3000,
           myStop: 0,
 
         }
