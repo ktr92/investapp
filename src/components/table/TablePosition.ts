@@ -100,11 +100,17 @@ export class TablePosition {
   calcChange(items: IPosition[]) {
     let change = 0
     let percent = 0
+    let total = 0
 
     items.forEach(item => {
       change += item.change.currentValue * item.count.count - item.change.startValue * item.count.count
-      percent = change / Number(item.startTotal.total) * 100
+      total += item.change.startValue * item.count.count
     })
-    return numberWithSpaces(change.toFixed(2)) + ' ₽' + ' (' + numberWithSpaces(percent.toFixed(2)) + ' %)'
+    percent = change / total * 100
+
+    return `<span class="${change > 0 ? 'text-green-500' : 'text-red-500'}">
+      ${numberWithSpaces(change.toFixed(2))} ₽
+      (${numberWithSpaces(percent.toFixed(2))} %)
+    </span>`
   }
 }

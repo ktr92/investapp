@@ -53,7 +53,7 @@ function renderFooter(footer: Array<unknown>) {
   let row = '<tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">'
   let index = 0
   footer.forEach(item => {
-    row += createCol(item, index)
+    row += createCol(item, index, false, true)
     index += 1
   })
   row += '</tr>'
@@ -83,7 +83,7 @@ function createRow(cols: Array<ViewComponent>) {
   return row
 } */
 
-function createCol(value: string | unknown, index: number, isheader = false) {
+function createCol(value: string | unknown, index: number, isheader = false, iscolor = false) {
   let newcol = `<td class="px-8 py-2 relative cursor-pointer font-medium text-gray-900 whitespace-nowrap dark:text-white " data-sort="${index}" ${isheader ? `data-header="asc"` : ''}>`
   newcol += value
   newcol += '</td>'

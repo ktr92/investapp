@@ -1,4 +1,6 @@
 /* eslint-disable no-debugger */
+import './scss/tw.scss';
+
 /* import {Broker} from './components/Broker'
  */import {Portfolio} from './components/Portfolio'
 import {Position} from './components/position/Position'
@@ -9,6 +11,7 @@ import {TablePosition} from './components/table/TablePosition'
 /* import {TableStock} from './components/table/TableStock' */
 import './scss/index.scss'
 import store from './store'
+
 import {moexTickerLast} from './utils/getStockPrice'
 
 /* const port = store.getters.getPortfolio('SBER') */
