@@ -11,8 +11,8 @@ export function renderTable(items: Array<TableComponent>, headers: Array<string>
   }
 
   const table = `
-    <section class=" dark:bg-gray-900 py-3 sm:py-5">
-      <div class="px-4 mx-auto max-w-screen-2xl lg:px-12">
+    <section class="dark:bg-gray-900 py-3 sm:py-5">
+      <div class="mx-auto max-w-screen-2xl">
         <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <table class="w-full">
         <thead>${header ?? ''}</thead>

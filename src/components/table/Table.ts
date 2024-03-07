@@ -16,7 +16,7 @@ interface IConstructor {
 
 export class Table extends DomComponent {
   constructor(public selector: string, protected Component: IConstructor, public items: Array<unknown>) {
-    super()
+    super(selector)
     this.init()
   }
 
@@ -61,7 +61,7 @@ export class Table extends DomComponent {
           classes.remove('desc')
           classes.add('asc')
         }
-        this.toggleClass(e.target, '.sorted', 'sorted')
+        this.toggleClassEl(e.target, '.sorted', 'sorted')
         renderBody(root, this.instances.components)
       }
     }

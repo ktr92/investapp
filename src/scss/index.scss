@@ -6,6 +6,10 @@ body {
 
 }
 
+.container {
+  @apply m-auto max-w-screen-2xl px-8
+}
+
 
 .sorted {
   color: #00aff5!important;

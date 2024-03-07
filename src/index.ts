@@ -13,6 +13,11 @@ import './scss/index.scss'
 import store from './store'
 
 import {moexTickerLast} from './utils/getStockPrice'
+import {Header} from './components/layout/Header';
+import {Main} from './components/layout/Main';
+
+const header = new Header('#header')
+const main = new Main('#main')
 
 /* const port = store.getters.getPortfolio('SBER') */
 
