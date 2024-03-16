@@ -10,7 +10,7 @@ interface IDropdownOptions {
   position?: string
 }
 export default class Dropdown {
-  constructor(public trigger: string, public target: string, public items: Array<IListItem>, public options: IDropdownOptions = {
+  constructor(public trigger: string, public triggerText: string, public target: string, public items: Array<IListItem>, public options: IDropdownOptions = {
     width: '300px',
     placement: 'bottom',
     delay: 200,
@@ -19,6 +19,7 @@ export default class Dropdown {
   }) {
     this.$targetEl = document.querySelector(target)
     this.$triggerEl = document.querySelector(trigger)
+    this.triggerText = triggerText
     this.initDropdown()
   }
   private $targetEl: HTMLElement
@@ -27,18 +28,20 @@ export default class Dropdown {
   initDropdown() {
     this.$targetEl.classList.add(this.options.position)
 
+    this.$triggerEl.firstChild.textContent = this.triggerText
+
     let listContent = ''
     this.items.forEach(item => {
       if (item.type === 'link') {
         listContent += `
         <li>
-          <a href="${item.id}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.text}</a>
+          <a href="${item.id}" data-value="${item.text}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.text}</a>
         </li>
       `
       } else {
         listContent += `
         <li>
-          <span data-click="changeBroker" data-params="${item.id}" class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.text}</span>
+          <span data-click="changeBroker" data-params="${item.id}" data-value="${item.text}" class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.text}</span>
         </li>
       `
       }
@@ -55,6 +58,22 @@ export default class Dropdown {
       changeClass(this.$targetEl, 'hidden')
     })
 
+    this.changeText()
+
     closeByClickOutside(this.target, this.trigger)
+  }
+
+  changeText() {
+    this.$targetEl.addEventListener('click', (e) => {
+      if (e.target instanceof HTMLElement) {
+        if (e.target.dataset.value) {
+          this.$triggerEl.firstChild.textContent = e.target.dataset.value
+        }
+      }
+    })
+  }
+
+  reset() {
+    this.$triggerEl.firstChild.textContent = this.triggerText
   }
 }

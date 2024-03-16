@@ -36,17 +36,6 @@ const all = store.getters.getAllPortfolio();
   })
 })();
 
-const brokerLIst: Array<IListItem> = []
-
-all.forEach(broker => {
-  brokerLIst.push({
-    id: String(broker.id),
-    text: broker.name,
-    type: 'event'
-  })
-})
-
-const changePorfolio = new Dropdown('#dropdownButton', '#dropdownMenu', [...brokerLIst])
 const header = new Header('#header')
 const main = new Main('#main')
 

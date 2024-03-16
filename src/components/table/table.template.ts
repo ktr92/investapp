@@ -1,6 +1,9 @@
 
+import idGenerator from '../../utils/idGenerator'
 import {TableComponent} from './TableComponent'
 import {ViewComponent} from './ViewComponent'
+
+const idgen = idGenerator()
 
 export function renderTable(items: Array<TableComponent>, headers: Array<string>, footers: Array<unknown> | null = null): string {
   const header = renderHeader(headers)
@@ -10,8 +13,12 @@ export function renderTable(items: Array<TableComponent>, headers: Array<string>
     footer = renderFooter(footers)
   }
 
+  const tabid = {
+    id: idgen.next().value
+  }
+
   const table = `
-    <section class="dark:bg-gray-900 py-3 sm:py-5">
+    <section class="dark:bg-gray-900 py-3 sm:py-5" id=table${tabid.id}>
       <div class="mx-auto max-w-screen-2xl">
         <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <table class="w-full">
