@@ -15,9 +15,7 @@ import store from './store'
 import {moexTickerLast} from './utils/getStockPrice'
 import {Header} from './components/layout/Header';
 import {Main} from './components/layout/Main';
-
-const header = new Header('#header')
-const main = new Main('#main')
+import Dropdown from './components/UI/Dropdown';
 
 /* const port = store.getters.getPortfolio('SBER') */
 
@@ -37,6 +35,20 @@ const all = store.getters.getAllPortfolio();
     table.render()
   })
 })();
+
+const brokerLIst: Array<IListItem> = []
+
+all.forEach(broker => {
+  brokerLIst.push({
+    id: String(broker.id),
+    text: broker.name,
+    type: 'event'
+  })
+})
+
+const changePorfolio = new Dropdown('#dropdownButton', '#dropdownMenu', [...brokerLIst])
+const header = new Header('#header')
+const main = new Main('#main')
 
 /* store.actions.initMoex().then(() => console.log(store.getters.getMoex()))
  */

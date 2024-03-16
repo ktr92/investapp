@@ -3,7 +3,8 @@ import {moexTickerLast} from '../utils/getStockPrice'
 
 interface IState {
   moex: Array<IMoexApi>,
-  portfolio: Array<IPortfolio>
+  portfolio: Array<IPortfolio>,
+  currentPortfolio?: IPortfolio
 }
 
 const state: IState = {
@@ -71,14 +72,16 @@ const state: IState = {
 }
 
 const mutations = {
-
+  changeBroker: (id: number) => {
+    state.currentPortfolio = getters.getPortfolioById(id)
+  }
 }
 
 const getters = {
   getAllPortfolio: () => state.portfolio,
   getPortfolio: (name: string) => state.portfolio.filter(item => item.name === name)[0],
   getPortfolioId: (name: string) => state.portfolio.filter(item => item.name === name)[0].id,
-  getPortfolioName: (name: string) => state.portfolio.filter(item => item.name === name)[0].name,
+  getPortfolioById: (id: number) => state.portfolio.filter(item => item.id === id)[0],
   getPortfolioComm: (name: string) => state.portfolio.filter(item => item.name === name)[0].comm,
   getPortfolioDepo: (name: string) => state.portfolio.filter(item => item.name === name)[0].depo,
   getPortfolioPositions: (name: string) => state.portfolio.filter(item => item.name === name)[0].positions,
@@ -97,6 +100,9 @@ const actions = {
     const tickers = getters.getAllTickers()
     state.moex = await moexTickerLast(tickers)
     return state.moex
+  },
+  changeBroker: (id: number) => {
+    mutations.changeBroker(id)
   }
 }
 

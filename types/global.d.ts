@@ -24,3 +24,9 @@ declare interface IMoexApi {
   price: number,
   open: number
 }
+
+declare interface IListItem {
+  id: string,
+  text: string,
+  type: string
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  class="">
+<html lang="en"  class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,7 @@
     <div id="headerpanel" class='py-2 bg-slate-100 dark:bg-gray-600 mb-8'>
       <div class="flex items-center justify-between container">
         <div class='flex items-center'>
-          <div class="block">
+          <div class="block" id='ddHeaderLeft'>
             <button id="dropdownButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Dropdown button <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
               </svg>
@@ -25,20 +25,7 @@
               
               <!-- Dropdown menu -->
               <div id="dropdownMenu" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                  <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownButton">
-                    <li>
-                      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
-                    </li>
-                    <li>
-                      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                    </li>
-                    <li>
-                      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
-                    </li>
-                    <li>
-                      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
-                    </li>
-                  </ul>
+                 
               </div>
           </div><!-- /.block -->
         </div>
@@ -65,35 +52,7 @@
 </body>
 
 <script>
-  const $targetEl = document.getElementById('dropdownMenu');
-
-  // set the element that trigger the dropdown menu on click
-  const $triggerEl = document.getElementById('dropdownButton');
-
-  // options with default values
-  const options = {
-      placement: 'bottom',
-      triggerType: 'click',
-      offsetSkidding: 0,
-      offsetDistance: 10,
-      delay: 300,
-      ignoreClickOutsideClass: false,
-      onHide: () => {
-          console.log('dropdown has been hidden');
-      },
-      onShow: () => {
-          console.log('dropdown has been shown');
-      },
-      onToggle: () => {
-          console.log('dropdown has been toggled');
-      },
-  };
-
-  // instance options object
-  const instanceOptions = {
-    id: 'dropdownMenu',
-    override: true
-  };
+  
 </script>
 
 </html>

@@ -21,12 +21,17 @@ export abstract class DomComponent implements IObjIndexable {
     clickElements.forEach(element => {
       const method: string = (element as HTMLElement).dataset[eventType]
       const fn = (this[method] as (ev: Event) => unknown).bind(this)
-      this.on(element, eventType, fn)
+
+      this.on(element, eventType, fn, null)
     })
   }
 
-  on(element: Element, eventType: string, callback: (ev: Event) => unknown) {
+  on(element: Element, eventType: string, callback: (ev: Event, params?: unknown) => unknown, params: unknown) {
     element.addEventListener(eventType, callback)
+  }
+
+  content(value: string) {
+    this.$root.innerHTML = value
   }
 
   toggleClass(element: Element, className: string) {

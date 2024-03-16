@@ -30,6 +30,7 @@ export class Table extends DomComponent {
     const $root: HTMLElement = document.querySelector(this.selector)
     $root.insertAdjacentHTML('afterend', '<div class="table"></div>"')
     $root.classList.remove('table')
+    $root.classList.add('renderedTable')
     const root: HTMLElement = $root.appendChild(document.createElement('div'))
 
     const table = renderTable(this.instances.components, this.instances.headers, this.instances.footers)
