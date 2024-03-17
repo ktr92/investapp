@@ -2,7 +2,7 @@ export abstract class DomComponent implements IObjIndexable {
   constructor(selector: string) {
     this.$root = document.querySelector(selector)
   }
-  public $root: Element
+  public $root: HTMLElement | Element
   [index: string]: unknown
 
   $(selector: string) {
@@ -22,12 +22,24 @@ export abstract class DomComponent implements IObjIndexable {
       const method: string = (element as HTMLElement).dataset[eventType]
       const fn = (this[method] as (ev: Event) => unknown).bind(this)
 
-      this.on(element, eventType, fn, null)
+      this.onEvent(element, eventType, fn)
     })
   }
 
-  on(element: Element, eventType: string, callback: (ev: Event, params?: unknown) => unknown, params: unknown) {
+  onEvent(element: Element, eventType: string, callback: (ev: Event, params?: unknown) => unknown) {
     element.addEventListener(eventType, callback)
+  }
+
+  offEvent(eventType: string, callback: (ev: Event, params?: unknown) => unknown) {
+    this.$root.removeEventListener(eventType, callback)
+  }
+
+  on(eventType: string, callback: (ev: Event, params?: unknown) => unknown) {
+    this.$root.addEventListener(eventType, callback)
+  }
+
+  off(eventType: string, callback: (ev: Event, params?: unknown) => unknown) {
+    this.$root.removeEventListener(eventType, callback)
   }
 
   content(value: string) {
@@ -50,5 +62,23 @@ export abstract class DomComponent implements IObjIndexable {
     if (element) {
       element.classList.add(className)
     }
+  }
+
+  init() {
+    this.initDOMListeners()
+  }
+
+  $emit(eventName: string, ...args: any[]) {
+    this.emitter.emit(eventName, ...args)
+  }
+
+  $on(eventName: string, fn: CallbackFunction) {
+    const unsub = this.emitter.subscribe(eventName, fn)
+    this.unsubs.push(unsub)
+  }
+
+  destroy() {
+    this.removeDOMListeners()
+    this.unsubs.forEach((unsub: CallbackFunction) => unsub())
   }
 }

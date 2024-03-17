@@ -30,3 +30,21 @@ declare interface IListItem {
   text: string,
   type: string
 }
+
+declare type CallbackFunction = (param?: unknown) => unknown
+
+declare interface IListener {
+  [index: string]: Array<CallbackFunction>,
+  eventName?: Array<CallbackFunction>,
+}
+
+interface Emitter {
+  listeners: IListener
+}
+
+declare interface DomOptions {
+  name: string,
+  listeners: Array<string>,
+  emitter: Emitter,
+  unsubs: Array<CallbackFunction>
+}

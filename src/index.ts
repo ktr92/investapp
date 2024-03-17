@@ -16,6 +16,8 @@ import {moexTickerLast} from './utils/getStockPrice'
 import {Header} from './components/layout/Header';
 import {Main} from './components/layout/Main';
 import Dropdown from './components/UI/Dropdown';
+import {App} from './components/App';
+import {Modal} from './components/UI/Modal';
 
 /* const port = store.getters.getPortfolio('SBER') */
 
@@ -36,8 +38,12 @@ const all = store.getters.getAllPortfolio();
   })
 })();
 
-const header = new Header('#header')
-const main = new Main('#main')
+/* const header = new Header('#header')
+const main = new Main('#main') */
+
+const app = new App('#app', {
+  components: [Header, Main, Modal]
+})
 
 /* store.actions.initMoex().then(() => console.log(store.getters.getMoex()))
  */
