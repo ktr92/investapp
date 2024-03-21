@@ -37,14 +37,3 @@ declare interface IListener {
   [index: string]: Array<CallbackFunction>,
   eventName?: Array<CallbackFunction>,
 }
-
-interface Emitter {
-  listeners: IListener
-}
-
-declare interface DomOptions {
-  name: string,
-  listeners: Array<string>,
-  emitter: Emitter,
-  unsubs: Array<CallbackFunction>
-}
