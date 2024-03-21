@@ -23,8 +23,12 @@ import {Modal} from './components/UI/Modal';
 
 /* console.log(port) */
 
-const all = store.getters.getAllPortfolio();
+const app = new App('#app', {
+  components: [Header]
+})
+app.render()
 
+/* const all = store.getters.getAllPortfolio();
 (async function() {
   await store.actions.initMoex()
 
@@ -36,14 +40,10 @@ const all = store.getters.getAllPortfolio();
     const table = new Table('.table', TablePosition, item.positions)
     table.render()
   })
-})();
+})(); */
 
 /* const header = new Header('#header')
 const main = new Main('#main') */
-
-const app = new App('#app', {
-  components: [Header, Main, Modal]
-})
 
 /* store.actions.initMoex().then(() => console.log(store.getters.getMoex()))
  */

@@ -1,32 +1,33 @@
+import {AppComponent} from './AppComponent'
 import {DomComponent} from './DomComponent'
 import {Emitter} from './Emitter'
 
 interface Constructor {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new (...args: any): DomComponent,
+  new (...args: Array<unknown>): AppComponent,
+  id?: string
 }
 type ExcelArray = Array<Constructor>
-type InstancesArray = Array<DomComponent>
+type InstancesArray = Array<AppComponent>
 
 interface ExcelOptions {
   components: ExcelArray
 }
 
 export class App {
-  private $el: string
+  public $el: DomComponent
   private components: ExcelArray
   private instances: InstancesArray
   public emitter: Emitter
   constructor(
-    private selector: string,
-    private options: ExcelOptions
+    public selector: string,
+    public options: ExcelOptions
   ) {
-    this.$el = selector
+    this.$el = new DomComponent(selector)
     this.components = options.components || []
     this.emitter = new Emitter()
   }
 
-  private initApp() {
+  protected initApp() {
     const $root = document.createElement('div')
 
     const componentOptions = {
@@ -36,8 +37,18 @@ export class App {
     this.instances = this.components.map(Component => {
       const $el = document.createElement('div')
       const component = new Component($el, componentOptions)
+      $el.setAttribute('id', Component.id)
+      $el.innerHTML = component.toHTML()
       $root.append($el)
       return component
     })
+
+    return $root
+  }
+
+  public render() {
+    this.$el.append(this.initApp())
+    this.instances.forEach(component => component.init())
+    console.log(this.instances)
   }
 }

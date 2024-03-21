@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {DomComponent} from './DomComponent';
 import {DomListener} from './DomListener';
 import {Emitter} from './Emitter';
 
-declare interface DomOptions {
+ interface DomOptions {
   name: string,
   listeners: Array<string>,
   emitter: Emitter,
   unsubs: Array<CallbackFunction>
 }
 
-export abstract class AppComponent extends DomListener {
+export abstract class AppComponent extends DomListener implements IObjIndexable {
   constructor($root: DomComponent, options: DomOptions) {
     super($root, options.listeners)
     this.emitter = options.emitter
@@ -18,11 +17,14 @@ export abstract class AppComponent extends DomListener {
     this.prepare()
   }
 
+  public unsubs: Array<CallbackFunction>
+  static id: string
+  [index: string]: unknown
+
   prepare(): void {
     return void 0
   }
 
-  static className: string
   toHTML(): string {
     return ''
   }
@@ -31,7 +33,7 @@ export abstract class AppComponent extends DomListener {
     this.initDOMListeners()
   }
 
-  $emit(eventName: string, ...args: any[]) {
+  $emit(eventName: string, ...args: unknown[]) {
     (this.emitter as Emitter).emit(eventName, ...args)
   }
 

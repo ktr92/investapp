@@ -1,4 +1,4 @@
-export abstract class DomComponent implements IObjIndexable {
+export class DomComponent implements IObjIndexable {
   constructor(selector: string) {
     this.$root = document.querySelector(selector)
   }
@@ -16,8 +16,17 @@ export abstract class DomComponent implements IObjIndexable {
     }
   }
 
+  append(node: DomComponent | Element) {
+    if (node instanceof DomComponent) {
+      node = node.$root
+    }
+    this.$root.append(node)
+    return this
+  }
+
   initListeners(eventType: string) {
     const clickElements = this.$root.querySelectorAll(`[data-${eventType}]`)
+    console.log(clickElements)
     clickElements.forEach(element => {
       const method: string = (element as HTMLElement).dataset[eventType]
       const fn = (this[method] as (ev: Event) => unknown).bind(this)
@@ -62,23 +71,5 @@ export abstract class DomComponent implements IObjIndexable {
     if (element) {
       element.classList.add(className)
     }
-  }
-
-  init() {
-    this.initDOMListeners()
-  }
-
-  $emit(eventName: string, ...args: any[]) {
-    this.emitter.emit(eventName, ...args)
-  }
-
-  $on(eventName: string, fn: CallbackFunction) {
-    const unsub = this.emitter.subscribe(eventName, fn)
-    this.unsubs.push(unsub)
-  }
-
-  destroy() {
-    this.removeDOMListeners()
-    this.unsubs.forEach((unsub: CallbackFunction) => unsub())
   }
 }

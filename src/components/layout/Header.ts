@@ -6,14 +6,33 @@ import store from './../../store'
 import {Position} from '../position/Position';
 import {Portfolio} from '../Portfolio';
 import Dropdown from '../UI/Dropdown';
+import {AppComponent} from '../AppComponent';
+import {Emitter} from '../Emitter';
+import changeClass from '../../utils/toggleClass';
 
-export class Header extends DomComponent implements IObjIndexable {
-  constructor(selector: string, options: DomOptions) {
-    super(selector)
+interface DomOptions {
+  name: string,
+  listeners: Array<string>,
+  emitter: Emitter,
+  unsubs: Array<CallbackFunction>
+}
 
+export class Header extends AppComponent {
+  constructor(selector: DomComponent, options: DomOptions) {
+    super(selector, {
+      listeners: ['changeTheme', 'changeBroker', 'changeBroker'],
+      ...options
+    })
     this.emitter = options.emitter
     this.unsubs = []
+    /*   this.$root.insertAdjacentHTML('beforeend', this.render()) */
+  }
 
+  public el: DomComponent
+  public dropdownPortfolio: Dropdown
+  static id = 'header'
+
+  init(): void {
     const all = store.getters.getAllPortfolio();
     const brokerLIst: Array<IListItem> = []
 
@@ -24,18 +43,21 @@ export class Header extends DomComponent implements IObjIndexable {
         type: 'event'
       })
     })
-
-    this.$root.insertAdjacentHTML('beforeend', this.render())
+    /*
+    this.el = new DomComponent('#header') */
 
     this.dropdownPortfolio = new Dropdown('#dropdownButton', 'Select Portfolio', '#dropdownMenu', [...brokerLIst])
-    this.initListeners('click')
+
+    const theme = document.querySelector('[data-click="changeTheme"]')
+    theme.addEventListener('click', e => {
+      this.changeTheme()
+    })
+    /*  this.el.initListeners('click') */
   }
 
-  public dropdownPortfolio: Dropdown
-
-  render() {
+  toHTML(): string {
     return `
-    <div id='header'>
+    <div class="headerwrapper">
     <div id="headerpanel" class='py-2 bg-slate-100 dark:bg-gray-600 mb-8'>
       <div class="flex items-center justify-between container">
         <div class='flex items-center'>
@@ -72,10 +94,11 @@ export class Header extends DomComponent implements IObjIndexable {
   }
 
   changeTheme() {
-    const html = this.$('html')
+    const html = document.querySelector('html')
     if (html instanceof Element) {
-      this.toggleClass(html, 'dark')
+      changeClass(html, 'dark')
     }
+    this.$emit('header:theme')
   }
 
   showAllBrokers() {
@@ -94,6 +117,8 @@ export class Header extends DomComponent implements IObjIndexable {
     })
 
     this.dropdownPortfolio.reset()
+
+    this.$emit('header:allbrokers')
   }
 
   changeBroker(event: Event) {
@@ -107,5 +132,7 @@ export class Header extends DomComponent implements IObjIndexable {
     })
     const table = new Table('.table', TablePosition, pfolio.positions)
     table.render()
+
+    this.$emit('header:setbroker')
   }
 }
