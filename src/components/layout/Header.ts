@@ -20,7 +20,7 @@ interface DomOptions {
 export class Header extends AppComponent {
   constructor(selector: DomComponent, options: DomOptions) {
     super(selector, {
-      listeners: ['changeTheme', 'changeBroker', 'changeBroker'],
+      listeners: [],
       ...options
     })
     this.emitter = options.emitter
@@ -43,16 +43,16 @@ export class Header extends AppComponent {
         type: 'event'
       })
     })
-    /*
-    this.el = new DomComponent('#header') */
 
     this.dropdownPortfolio = new Dropdown('#dropdownButton', 'Select Portfolio', '#dropdownMenu', [...brokerLIst])
 
-    const theme = document.querySelector('[data-click="changeTheme"]')
-    theme.addEventListener('click', e => {
+    document.querySelector('[data-click="changeTheme"]').addEventListener('click', e => {
+      this.$emit('header:changeTheme')
+    })
+
+    this.$on('header:changeTheme', () => {
       this.changeTheme()
     })
-    /*  this.el.initListeners('click') */
   }
 
   toHTML(): string {
@@ -110,12 +110,12 @@ export class Header extends AppComponent {
     const allPortfolio = all.map(item => {
       return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions), item.comm)
     })
-
+    /*
     allPortfolio.forEach(item => {
-      const table = new Table('.table', TablePosition, item.positions)
+      const table = new Table('.table', TablePosition, item.positions, {})
       table.render()
     })
-
+ */
     this.dropdownPortfolio.reset()
 
     this.$emit('header:allbrokers')
@@ -130,8 +130,8 @@ export class Header extends AppComponent {
     document.querySelectorAll('.renderedTable').forEach(item => {
       item.innerHTML = ''
     })
-    const table = new Table('.table', TablePosition, pfolio.positions)
-    table.render()
+    /*  const table = new Table('.table', TablePosition, pfolio.positions)
+    table.render() */
 
     this.$emit('header:setbroker')
   }

@@ -18,29 +18,21 @@ import {Main} from './components/layout/Main';
 import Dropdown from './components/UI/Dropdown';
 import {App} from './components/App';
 import {Modal} from './components/UI/Modal';
+import {BlockTable} from './components/table/Blocktable';
 
 /* const port = store.getters.getPortfolio('SBER') */
 
 /* console.log(port) */
 
-const app = new App('#app', {
-  components: [Header]
-})
-app.render()
-
-/* const all = store.getters.getAllPortfolio();
 (async function() {
   await store.actions.initMoex()
+})();
 
-  const allPortfolio = all.map(item => {
-    return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions), item.comm)
-  })
-
-  allPortfolio.forEach(item => {
-    const table = new Table('.table', TablePosition, item.positions)
-    table.render()
-  })
-})(); */
+const app = new App('#app', {
+  components: [Header, BlockTable],
+  state: store.state
+});
+app.render();
 
 /* const header = new Header('#header')
 const main = new Main('#main') */
