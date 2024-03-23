@@ -36,7 +36,8 @@ export class App {
     const $root = document.createElement('div')
 
     const componentOptions = {
-      emitter: this.emitter
+      emitter: this.emitter,
+      state: this.state
     }
 
     this.instances = this.components.map(Component => {

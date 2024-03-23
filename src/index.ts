@@ -10,7 +10,6 @@ import {Table} from './components/table/Table'
 import {TablePosition} from './components/table/TablePosition'
 /* import {TableStock} from './components/table/TableStock' */
 import './scss/index.scss'
-import store from './store'
 
 import {moexTickerLast} from './utils/getStockPrice'
 import {Header} from './components/layout/Header';
@@ -19,18 +18,21 @@ import Dropdown from './components/UI/Dropdown';
 import {App} from './components/App';
 import {Modal} from './components/UI/Modal';
 import {BlockTable} from './components/table/Blocktable';
+import {Store} from './store';
 
 /* const port = store.getters.getPortfolio('SBER') */
 
 /* console.log(port) */
 
+const state = new Store;
+
 (async function() {
-  await store.actions.initMoex()
+  await state.actions.initMoex()
 })();
 
 const app = new App('#app', {
   components: [Header, BlockTable],
-  state: store.state
+  state: state
 });
 app.render();
 

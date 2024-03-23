@@ -1,11 +1,12 @@
 import {ViewComponent} from '../table/ViewComponent'
-import store from '../../store'
-
+interface IState {
+  moex: Array<IMoexApi>
+}
 export class Stock extends ViewComponent implements IObjIndexable {
-  constructor(public ticker: string) {
-    super()
+  constructor(public ticker: string, options: IState) {
+    super(options)
 
-    const moex: IMoexApi = store.state.moex.filter(item => item.ticker === ticker)[0]
+    const moex: IMoexApi = options.moex.filter(item => item.ticker === ticker)[0]
 
     this.name = moex.name
     this.currentPrice = moex.price

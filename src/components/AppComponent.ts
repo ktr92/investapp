@@ -1,3 +1,4 @@
+import {Store} from '../store';
 import {DomComponent} from './DomComponent';
 import {DomListener} from './DomListener';
 import {Emitter} from './Emitter';
@@ -6,13 +7,15 @@ import {Emitter} from './Emitter';
   name: string,
   listeners: Array<string>,
   emitter: Emitter,
-  unsubs: Array<CallbackFunction>
+  unsubs: Array<CallbackFunction>,
+  state: Store
 }
 
 export abstract class AppComponent extends DomListener implements IObjIndexable {
   constructor($root: DomComponent, options: DomOptions) {
     super($root, options.listeners)
     this.emitter = options.emitter
+    this.state = options.state
     this.unsubs = []
     this.prepare()
   }

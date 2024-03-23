@@ -7,6 +7,51 @@ interface IState {
   currentPortfolio?: IPortfolio
 }
 
+export class Store {
+  constructor() {
+    this.portfolio = state.portfolio
+  }
+
+  public portfolio: Array<IPortfolio>
+  public currentPortfolio: IPortfolio
+  public moex: Array<IMoexApi>
+
+  private mutations = {
+    changeBroker: (id: number) => {
+      this.currentPortfolio = this.getters.getPortfolioById(id)
+    }
+  }
+
+  public getters = {
+    getAllPortfolio: () => this.portfolio,
+    getPortfolio: (name: string) => this.portfolio.filter(item => item.name === name)[0],
+    getPortfolioId: (name: string) => this.portfolio.filter(item => item.name === name)[0].id,
+    getPortfolioById: (id: number) => this.portfolio.filter(item => item.id === id)[0],
+    getPortfolioComm: (name: string) => this.portfolio.filter(item => item.name === name)[0].comm,
+    getPortfolioDepo: (name: string) => this.portfolio.filter(item => item.name === name)[0].depo,
+    getPortfolioPositions: (name: string) => this.portfolio.filter(item => item.name === name)[0].positions,
+    getAllTickers: () => {
+      const tickers: Array<string> = []
+      this.portfolio.forEach(item => {
+        item.positions.forEach(position => tickers.push(position.ticker))
+      })
+      return tickers
+    },
+    getMoex: () => this.moex
+  }
+
+  public actions = {
+    initMoex: async () => {
+      const tickers = this.getters.getAllTickers()
+      this.moex = await moexTickerLast(tickers)
+      return this.moex
+    },
+    changeBroker: (id: number) => {
+      this.mutations.changeBroker(id)
+    }
+  }
+}
+
 const state: IState = {
   moex: [],
   portfolio: [
@@ -71,42 +116,7 @@ const state: IState = {
   ]
 }
 
-const mutations = {
-  changeBroker: (id: number) => {
-    state.currentPortfolio = getters.getPortfolioById(id)
-  }
-}
-
-const getters = {
-  getAllPortfolio: () => state.portfolio,
-  getPortfolio: (name: string) => state.portfolio.filter(item => item.name === name)[0],
-  getPortfolioId: (name: string) => state.portfolio.filter(item => item.name === name)[0].id,
-  getPortfolioById: (id: number) => state.portfolio.filter(item => item.id === id)[0],
-  getPortfolioComm: (name: string) => state.portfolio.filter(item => item.name === name)[0].comm,
-  getPortfolioDepo: (name: string) => state.portfolio.filter(item => item.name === name)[0].depo,
-  getPortfolioPositions: (name: string) => state.portfolio.filter(item => item.name === name)[0].positions,
-  getAllTickers: () => {
-    const tickers: Array<string> = []
-    state.portfolio.forEach(item => {
-      item.positions.forEach(position => tickers.push(position.ticker))
-    })
-    return tickers
-  },
-  getMoex: () => state.moex
-}
-
-const actions = {
-  initMoex: async () => {
-    const tickers = getters.getAllTickers()
-    state.moex = await moexTickerLast(tickers)
-    return state.moex
-  },
-  changeBroker: (id: number) => {
-    mutations.changeBroker(id)
-  }
-}
-
-export default {getters, actions, state}
+/* export default {getters, actions, state} */
 
 /* addDepo(cash) {
   depo += cash
