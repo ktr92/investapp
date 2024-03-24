@@ -29,7 +29,7 @@ export class BlockTable extends AppComponent {
     this.state = options.state
     this.unsubs = []
 
-    console.log(this)
+    console.log(this.state.moex)
     /*   this.$root.insertAdjacentHTML('beforeend', this.render()) */
   }
 
@@ -41,6 +41,7 @@ export class BlockTable extends AppComponent {
   init(): void {
     const all = this.state.getters.getAllPortfolio();
     this.createTable(all)
+    console.log(all)
   }
 
   toHTML(): string {
@@ -51,7 +52,7 @@ export class BlockTable extends AppComponent {
 
   createTable(source: Array<IPortfolio>) {
     const allPortfolio = source.map(item => {
-      return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions), item.comm)
+      return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions, this.state), item.comm)
     })
 
     allPortfolio.forEach(item => {

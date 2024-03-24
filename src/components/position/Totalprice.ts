@@ -1,9 +1,10 @@
 import numberWithSpaces from '../../utils/formatNumber'
 import {ViewComponent} from '../table/ViewComponent'
+import {Store} from '../../store';
 
 export class Totalprice extends ViewComponent {
-  constructor(public single: number = null, public count: number = null) {
-    super()
+  constructor(public single: number = null, public count: number = null, options: Store) {
+    super(options)
     this.total = Number((this.single * this.count).toFixed(2))
   }
 

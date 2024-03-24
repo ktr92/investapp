@@ -1,9 +1,9 @@
 import numberWithSpaces from '../../utils/formatNumber'
 import {ViewComponent} from '../table/ViewComponent'
-
+import {Store} from '../../store';
 export class Count extends ViewComponent {
-  constructor(public count: number = 1) {
-    super()
+  constructor(public count: number = 1, options: Store) {
+    super(options)
   }
 
   render() {

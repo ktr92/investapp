@@ -10,6 +10,7 @@ interface IState {
 export class Store {
   constructor() {
     this.portfolio = state.portfolio
+    this.moex = []
   }
 
   public portfolio: Array<IPortfolio>

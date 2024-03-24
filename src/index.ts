@@ -27,14 +27,14 @@ import {Store} from './store';
 const state = new Store;
 
 (async function() {
-  await state.actions.initMoex()
-})();
+  state.moex = await state.actions.initMoex()
 
-const app = new App('#app', {
-  components: [Header, BlockTable],
-  state: state
-});
-app.render();
+  const app = new App('#app', {
+    components: [Header, BlockTable],
+    state: state
+  });
+  app.render();
+})();
 
 /* const header = new Header('#header')
 const main = new Main('#main') */

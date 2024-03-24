@@ -2,12 +2,18 @@
 declare interface IObjIndexable {
   [index: string]: unknown
 }
+interface IState {
+  moex: Array<IMoexApi>,
+  portfolio: Array<IPortfolio>,
+  currentPortfolio?: IPortfolio
+}
 
 declare interface IPosition {
   ticker: string,
   buyPrice: number,
   count: number,
   myStop: number,
+  options?: IState
 }
 
 declare interface IPortfolio {

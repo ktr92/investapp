@@ -1,9 +1,10 @@
+import {Store} from '../../store';
 import numberWithSpaces from '../../utils/formatNumber';
 import {ViewComponent} from '../table/ViewComponent';
 
 export class Price extends ViewComponent {
-  constructor(public value: number = null) {
-    super()
+  constructor(public value: number = null, options: Store) {
+    super(options)
   }
 
   render() {

@@ -2,19 +2,20 @@ import {DomComponent} from '../DomComponent';
 import {Table} from '../table/Table';
 import {TablePosition} from '../../components/table/TablePosition'
 
-import store from './../../store'
 import {Position} from '../position/Position';
 import {Portfolio} from '../Portfolio';
 import Dropdown from '../UI/Dropdown';
 import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
 import changeClass from '../../utils/toggleClass';
+import {Store} from '../../store';
 
 interface DomOptions {
   name: string,
   listeners: Array<string>,
   emitter: Emitter,
-  unsubs: Array<CallbackFunction>
+  unsubs: Array<CallbackFunction>,
+  state: Store
 }
 
 export class Header extends AppComponent {
@@ -23,17 +24,18 @@ export class Header extends AppComponent {
       listeners: [],
       ...options
     })
+    this.state = options.state
     this.emitter = options.emitter
     this.unsubs = []
     /*   this.$root.insertAdjacentHTML('beforeend', this.render()) */
   }
-
+  public state: Store
   public el: DomComponent
   public dropdownPortfolio: Dropdown
   static id = 'header'
 
   init(): void {
-    const all = store.getters.getAllPortfolio();
+    const all = this.state.getters.getAllPortfolio();
     const brokerLIst: Array<IListItem> = []
 
     all.forEach(broker => {
@@ -106,9 +108,9 @@ export class Header extends AppComponent {
       item.innerHTML = ''
     })
 
-    const all = store.getters.getAllPortfolio();
+    const all = this.state.getters.getAllPortfolio();
     const allPortfolio = all.map(item => {
-      return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions), item.comm)
+      return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions, this.state), item.comm)
     })
     /*
     allPortfolio.forEach(item => {
@@ -123,9 +125,9 @@ export class Header extends AppComponent {
 
   changeBroker(event: Event) {
     const id = +(event.target as HTMLElement).dataset['params']
-    store.actions.changeBroker(id)
+    this.state.actions.changeBroker(id)
 
-    const pfolio = new Portfolio(store.state.currentPortfolio.id, store.state.currentPortfolio.name, store.state.currentPortfolio.depo, Position.createPosition(store.state.currentPortfolio.positions), store.state.currentPortfolio.comm)
+    const pfolio = new Portfolio(this.state.currentPortfolio.id, this.state.currentPortfolio.name, this.state.currentPortfolio.depo, Position.createPosition(this.state.currentPortfolio.positions, this.state), this.state.currentPortfolio.comm)
 
     document.querySelectorAll('.renderedTable').forEach(item => {
       item.innerHTML = ''
