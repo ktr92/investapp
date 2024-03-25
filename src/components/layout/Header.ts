@@ -9,6 +9,7 @@ import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
 import changeClass from '../../utils/toggleClass';
 import {Store} from '../../store';
+import {CreateForm} from '../form/CreateForm';
 
 interface DomOptions {
   name: string,
@@ -57,7 +58,7 @@ export class Header extends AppComponent {
     document.querySelector('[data-modal="newPosition"]').addEventListener('click', e => {
       this.$emit('modal:renderModal', {
         title: 'Add new position',
-        content: 'FORM'
+        content: new CreateForm('#modalContent', this.state).content
       })
     })
     document.querySelector('[data-modal="sellPosition"]').addEventListener('click', e => {

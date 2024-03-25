@@ -1,8 +1,8 @@
 export default function closeByClickOutside(element, button, callback) {
   function close() {
+    document.querySelector(button).classList.remove('active')
+    document.querySelector(element).classList.add('hidden')
     if (callback instanceof Function) {
-      document.querySelector(button).classList.remove('active')
-      document.querySelector(element).classList.add('hidden')
       callback();
     }
   }

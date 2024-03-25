@@ -10,7 +10,7 @@ interface IDropdownOptions {
   position?: string
 }
 export default class Dropdown {
-  constructor(public trigger: string, public triggerText: string, public target: string, public items: Array<IListItem>, callback: CallbackFunction, public options: IDropdownOptions = {
+  constructor(public trigger: string, public triggerText: string, public target: string, public items: Array<IListItem>, callback?: CallbackFunction, public options: IDropdownOptions = {
     width: '300px',
     placement: 'bottom',
     delay: 200,
