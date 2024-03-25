@@ -78,13 +78,5 @@ export class BlockTable extends AppComponent {
       const all = this.state.getters.getAllPortfolio();
       this.createTable(all)
     }
-
-    /*  const pfolio = new Portfolio(this.state.currentPortfolio.id, this.state.currentPortfolio.name, this.state.currentPortfolio.depo, Position.createPosition(this.state.currentPortfolio.positions, this.state), this.state.currentPortfolio.comm)
-
-    document.querySelectorAll('.renderedTable').forEach(item => {
-      item.innerHTML = ''
-    })
-    const table = new Table('.table', TablePosition, pfolio.positions)
-    table.render() */
   }
 }

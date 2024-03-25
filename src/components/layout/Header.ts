@@ -54,6 +54,18 @@ export class Header extends AppComponent {
     document.querySelector('[data-click="showAllBrokers"]').addEventListener('click', e => {
       this.$emit('table:showAllBrokers')
     })
+    document.querySelector('[data-modal="newPosition"]').addEventListener('click', e => {
+      this.$emit('modal:renderModal', {
+        title: 'Add new position',
+        content: 'FORM'
+      })
+    })
+    document.querySelector('[data-modal="sellPosition"]').addEventListener('click', e => {
+      this.$emit('modal:renderModal', {
+        title: 'Sell position',
+        content: 'FORM'
+      })
+    })
 
     this.$on('header:changeTheme', () => {
       this.changeTheme()
@@ -79,6 +91,12 @@ export class Header extends AppComponent {
           </div><!-- /.block -->
           <div class="block ml-8  ">
             <button data-click="showAllBrokers" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Total portfolio</button>
+          </div><!-- /.block -->
+          <div class="block ml-8  ">
+            <button data-modal="newPosition" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">New Position</button>
+          </div><!-- /.block -->
+          <div class="block ml-8  ">
+            <button data-modal="sellPosition" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Sell Position</button>
           </div><!-- /.block -->
         </div>
         <div class="cursor-pointer group" data-click='changeTheme' >
@@ -107,38 +125,12 @@ export class Header extends AppComponent {
   }
 
   showAllBrokers() {
-    this.$emit('table:changeBroker')
-    /*   document.querySelectorAll('.renderedTable').forEach(item => {
-      item.innerHTML = ''
-    })
-
-    const all = this.state.getters.getAllPortfolio();
-    const allPortfolio = all.map(item => {
-      return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions, this.state), item.comm)
-    }) */
-    /*
-    allPortfolio.forEach(item => {
-      const table = new Table('.table', TablePosition, item.positions, {})
-      table.render()
-    })
- */
-    this.dropdownPortfolio.reset()
-
     this.$emit('header:allbrokers')
+    this.dropdownPortfolio.reset()
   }
 
   changeBroker(event: Event) {
     const id = +(event.target as HTMLElement).dataset['params']
     this.$emit('table:changeBroker', id)
-
-    /*   this.state.actions.changeBroker(id)
-
-    const pfolio = new Portfolio(this.state.currentPortfolio.id, this.state.currentPortfolio.name, this.state.currentPortfolio.depo, Position.createPosition(this.state.currentPortfolio.positions, this.state), this.state.currentPortfolio.comm)
-
-    document.querySelectorAll('.renderedTable').forEach(item => {
-      item.innerHTML = ''
-    }) */
-    /*  const table = new Table('.table', TablePosition, pfolio.positions)
-    table.render() */
   }
 }

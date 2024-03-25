@@ -30,7 +30,7 @@ const state = new Store;
   state.moex = await state.actions.initMoex()
 
   const app = new App('#app', {
-    components: [Header, BlockTable],
+    components: [Header, BlockTable, Modal],
     state: state
   });
   app.render();
