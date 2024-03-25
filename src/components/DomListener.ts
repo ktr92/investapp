@@ -1,7 +1,5 @@
 import {DomComponent} from './DomComponent';
 
-type CallbackFunction = (param?: unknown) => unknown
-
 export abstract class DomListener {
   constructor(public $root: DomComponent, public listeners: Array<string>) {
     if (!$root) {

@@ -46,7 +46,7 @@ export class Header extends AppComponent {
       })
     })
 
-    this.dropdownPortfolio = new Dropdown('#dropdownButton', 'Select Portfolio', '#dropdownMenu', [...brokerLIst])
+    this.dropdownPortfolio = new Dropdown('#dropdownButton', 'Select Portfolio', '#dropdownMenu', [...brokerLIst], this.changeBroker.bind(this))
 
     document.querySelector('[data-click="changeTheme"]').addEventListener('click', e => {
       this.$emit('header:changeTheme')
@@ -125,16 +125,16 @@ export class Header extends AppComponent {
 
   changeBroker(event: Event) {
     const id = +(event.target as HTMLElement).dataset['params']
-    this.state.actions.changeBroker(id)
+    this.$emit('table:changeBroker', id)
+
+    /*   this.state.actions.changeBroker(id)
 
     const pfolio = new Portfolio(this.state.currentPortfolio.id, this.state.currentPortfolio.name, this.state.currentPortfolio.depo, Position.createPosition(this.state.currentPortfolio.positions, this.state), this.state.currentPortfolio.comm)
 
     document.querySelectorAll('.renderedTable').forEach(item => {
       item.innerHTML = ''
-    })
+    }) */
     /*  const table = new Table('.table', TablePosition, pfolio.positions)
     table.render() */
-
-    this.$emit('header:setbroker')
   }
 }

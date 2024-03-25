@@ -55,6 +55,5 @@ export class App {
   public render() {
     this.$el.append(this.initApp())
     this.instances.forEach(component => component.init())
-    console.log(this.instances)
   }
 }

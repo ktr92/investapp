@@ -4,22 +4,24 @@ import {moexTickerLast} from '../utils/getStockPrice'
 interface IState {
   moex: Array<IMoexApi>,
   portfolio: Array<IPortfolio>,
-  currentPortfolio?: IPortfolio
+  currentPortfolio?: IPortfolio[]
 }
 
 export class Store {
   constructor() {
     this.portfolio = state.portfolio
     this.moex = []
+    this.currentPortfolio = []
   }
 
   public portfolio: Array<IPortfolio>
-  public currentPortfolio: IPortfolio
+  public currentPortfolio: Array<IPortfolio>
   public moex: Array<IMoexApi>
 
   private mutations = {
     changeBroker: (id: number) => {
-      this.currentPortfolio = this.getters.getPortfolioById(id)
+      this.currentPortfolio = []
+      this.currentPortfolio.push(this.getters.getPortfolioById(id))
     }
   }
 

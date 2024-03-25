@@ -10,7 +10,7 @@ interface IDropdownOptions {
   position?: string
 }
 export default class Dropdown {
-  constructor(public trigger: string, public triggerText: string, public target: string, public items: Array<IListItem>, public options: IDropdownOptions = {
+  constructor(public trigger: string, public triggerText: string, public target: string, public items: Array<IListItem>, callback: CallbackFunction, public options: IDropdownOptions = {
     width: '300px',
     placement: 'bottom',
     delay: 200,
@@ -20,10 +20,12 @@ export default class Dropdown {
     this.$targetEl = document.querySelector(target)
     this.$triggerEl = document.querySelector(trigger)
     this.triggerText = triggerText
+    this.callback = callback
     this.initDropdown()
   }
   private $targetEl: HTMLElement
   private $triggerEl: HTMLElement
+  public callback: CallableFunction
 
   initDropdown() {
     this.$targetEl.classList.add(this.options.position)
@@ -68,6 +70,7 @@ export default class Dropdown {
       if (e.target instanceof HTMLElement) {
         if (e.target.dataset.value) {
           this.$triggerEl.firstChild.textContent = e.target.dataset.value
+          this.callback(e)
         }
       }
     })

@@ -26,7 +26,6 @@ export class DomComponent implements IObjIndexable {
 
   initListeners(eventType: string) {
     const clickElements = this.$root.querySelectorAll(`[data-${eventType}]`)
-    console.log(clickElements)
     clickElements.forEach(element => {
       const method: string = (element as HTMLElement).dataset[eventType]
       const fn = (this[method] as (ev: Event) => unknown).bind(this)

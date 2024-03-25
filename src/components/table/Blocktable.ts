@@ -29,7 +29,6 @@ export class BlockTable extends AppComponent {
     this.state = options.state
     this.unsubs = []
 
-    console.log(this.state.moex)
     /*   this.$root.insertAdjacentHTML('beforeend', this.render()) */
   }
 
@@ -41,7 +40,10 @@ export class BlockTable extends AppComponent {
   init(): void {
     const all = this.state.getters.getAllPortfolio();
     this.createTable(all)
-    console.log(all)
+
+    this.$on('table:changeBroker', (id: number) => {
+      this.changeBroker(id)
+    })
   }
 
   toHTML(): string {
@@ -59,5 +61,24 @@ export class BlockTable extends AppComponent {
       const table = new Table('.table', TablePosition, item.positions)
       table.render()
     })
+  }
+
+  changeBroker(id: number) {
+    this.state.actions.changeBroker(id)
+    document.querySelectorAll('.renderedTable').forEach(item => {
+      item.innerHTML = ''
+    })
+
+    console.log(this.state)
+
+    this.createTable(this.state.currentPortfolio)
+
+    /*  const pfolio = new Portfolio(this.state.currentPortfolio.id, this.state.currentPortfolio.name, this.state.currentPortfolio.depo, Position.createPosition(this.state.currentPortfolio.positions, this.state), this.state.currentPortfolio.comm)
+
+    document.querySelectorAll('.renderedTable').forEach(item => {
+      item.innerHTML = ''
+    })
+    const table = new Table('.table', TablePosition, pfolio.positions)
+    table.render() */
   }
 }
