@@ -44,6 +44,9 @@ export class BlockTable extends AppComponent {
     this.$on('table:changeBroker', (id: number) => {
       this.changeBroker(id)
     })
+    this.$on('table:showAllBrokers', () => {
+      this.changeBroker()
+    })
   }
 
   toHTML(): string {
@@ -63,15 +66,18 @@ export class BlockTable extends AppComponent {
     })
   }
 
-  changeBroker(id: number) {
-    this.state.actions.changeBroker(id)
+  changeBroker(id?: number) {
     document.querySelectorAll('.renderedTable').forEach(item => {
       item.innerHTML = ''
     })
 
-    console.log(this.state)
-
-    this.createTable(this.state.currentPortfolio)
+    if (id) {
+      this.state.actions.changeBroker(id)
+      this.createTable(this.state.currentPortfolio)
+    } else {
+      const all = this.state.getters.getAllPortfolio();
+      this.createTable(all)
+    }
 
     /*  const pfolio = new Portfolio(this.state.currentPortfolio.id, this.state.currentPortfolio.name, this.state.currentPortfolio.depo, Position.createPosition(this.state.currentPortfolio.positions, this.state), this.state.currentPortfolio.comm)
 

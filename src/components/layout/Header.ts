@@ -51,6 +51,9 @@ export class Header extends AppComponent {
     document.querySelector('[data-click="changeTheme"]').addEventListener('click', e => {
       this.$emit('header:changeTheme')
     })
+    document.querySelector('[data-click="showAllBrokers"]').addEventListener('click', e => {
+      this.$emit('table:showAllBrokers')
+    })
 
     this.$on('header:changeTheme', () => {
       this.changeTheme()
@@ -104,14 +107,15 @@ export class Header extends AppComponent {
   }
 
   showAllBrokers() {
-    document.querySelectorAll('.renderedTable').forEach(item => {
+    this.$emit('table:changeBroker')
+    /*   document.querySelectorAll('.renderedTable').forEach(item => {
       item.innerHTML = ''
     })
 
     const all = this.state.getters.getAllPortfolio();
     const allPortfolio = all.map(item => {
       return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions, this.state), item.comm)
-    })
+    }) */
     /*
     allPortfolio.forEach(item => {
       const table = new Table('.table', TablePosition, item.positions, {})
