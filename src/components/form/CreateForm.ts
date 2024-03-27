@@ -5,12 +5,17 @@ export class CreateForm {
   constructor(selector: string, public state: Store, public callback?: CallbackFunction) {
     this.$el = document.querySelector(selector)
     this.content = this.init()
+    this.$el.innerHTML = this.content
     this.render()
   }
 
   public $el: HTMLElement
   public content: string
   public dropdownBroker: Dropdown
+
+  render() {
+    this.initSelect()
+  }
 
   initSelect() {
     const all = this.state.getters.getAllPortfolio();
@@ -24,15 +29,12 @@ export class CreateForm {
       })
     })
 
-    this.dropdownBroker = new Dropdown('#brokerButton', 'Select Portfolio', '#dropdownBroker', [...brokerLIst])
+    this.dropdownBroker = new Dropdown('#brokerButton', 'Select Portfolio', '#dropdownBroker', [...brokerLIst], () => {
+      return 1
+    })
+    console.log(document.querySelectorAll('#dropdownBroker'))
 
-    const options = this.state.getters.getAllPortfolio()
-    console.log(options)
-    return ``
-  }
-
-  render() {
-    this.initSelect()
+    console.log(this.dropdownBroker)
   }
 
   init() {
@@ -53,7 +55,7 @@ export class CreateForm {
                   </div>
                   <div class="sm:col-span-2">
                       <label for="category1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-                      <button id="brokerButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 justify-center" type="button"> <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                      <button id="brokerButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-40 justify-center" type="button"> <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                       </svg>
                       </button>

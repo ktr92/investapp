@@ -43,7 +43,7 @@ export default class Dropdown {
       } else {
         listContent += `
         <li>
-          <span data-click="changeBroker" data-params="${item.id}" data-value="${item.text}" class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.text}</span>
+          <span  data-params="${item.id}" data-value="${item.text}" class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.text}</span>
         </li>
       `
       }
@@ -70,7 +70,9 @@ export default class Dropdown {
       if (e.target instanceof HTMLElement) {
         if (e.target.dataset.value) {
           this.$triggerEl.firstChild.textContent = e.target.dataset.value
-          this.callback(e)
+          if (this.callback) {
+            this.callback(e)
+          }
         }
       }
     })
