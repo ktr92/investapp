@@ -32,42 +32,50 @@ export class CreateForm {
 
   initForm() {
     const $form = document.createElement('form')
-    $form.insertAdjacentHTML('afterbegin', this.init(this.initBrokers()))
+    $form.setAttribute('id', 'createForm')
     this.$el.insertAdjacentElement('beforeend', $form)
+
+    $form.insertAdjacentHTML('afterbegin', this.init(this.initBrokers()))
+
     this.$el.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault()
-      console.log(new FormData($form))
+      const formdata = new FormData(this.$el.querySelector('form'))
+
+      for (const [key, value] of formdata) {
+        console.log(key, value);
+      }
     })
   }
   init(selectBroker: string) {
     return `
     
-              <div class="">
                     <div class="sm:col-span-2 mb-4">
-                        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-                        <select id="category" name="broker" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <label for="portfolio" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select portfolio</label>
+                        <select id="portfolio" name="portfolio" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                           ${selectBroker}
                         </select>
                     </div>
-                  
-                  </div>
+                    <div class="sm:col-span-2 mb-4">
+                        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
+                        <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                          <option value="Stocks">Stocks</option>
+                          <option value="Bonds">Bonds</option>
+                          <option value="Cash">Cash</option>
+                        </select>
+                    </div>
                   <div class="sm:col-span-2  mb-4">
-                      <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Name</label>
-                      <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" >
-                  </div>
-                  <div class="w-full  mb-4">
-                      <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brand</label>
-                      <input type="text" name="brand" id="brand" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Product brand" >
+                      <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                      <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticker" >
                   </div>
                   <div class="w-full  mb-4">
                       <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                      <input type="number" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="$2999" >
+                      <input type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Product brand" >
                   </div>
-                 
-                  <div class=" mb-4">
-                      <label for="item-weight" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Item Weight (kg)</label>
-                      <input type="number" name="item-weight" id="item-weight" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="12" >
-                  </div> 
+                  <div class="w-full  mb-4">
+                      <label for="count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Count</label>
+                      <input type="text" name="count" id="count" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Product brand" >
+                  </div>
+                  
                   <div class="sm:col-span-2 mb-4">
                       <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                       <textarea id="description" rows="8" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Your description here"></textarea>
