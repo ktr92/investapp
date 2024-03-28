@@ -56,11 +56,14 @@ export class Header extends AppComponent {
       this.$emit('table:showAllBrokers')
     })
     document.querySelector('[data-modal="newPosition"]').addEventListener('click', e => {
+      const create = new CreateForm('#modalContent', this.state)
       this.$emit('modal:renderModal', {
         title: 'Add new position',
-        content: new CreateForm('#modalContent', this.state).content
+        content: create.$el.innerHTML
       })
+      create.initForm()
     })
+
     document.querySelector('[data-modal="sellPosition"]').addEventListener('click', e => {
       this.$emit('modal:renderModal', {
         title: 'Sell position',

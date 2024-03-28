@@ -19,6 +19,7 @@ export default class Dropdown {
   }) {
     this.$targetEl = document.querySelector(target)
     this.$triggerEl = document.querySelector(trigger)
+
     this.triggerText = triggerText
     this.callback = callback
     this.initDropdown()

@@ -34,7 +34,7 @@ export class Modal extends AppComponent {
   init(): void {
     document.querySelectorAll('[data-modal-toggle]').forEach((item) => {
       item.addEventListener('click', () => {
-        this.closeModal()
+        this.$emit('modal:closeModal')
       })
     })
 
@@ -43,10 +43,14 @@ export class Modal extends AppComponent {
       document.querySelector('#modalContent').innerHTML = content.content
       document.querySelector('#modalTitle').innerHTML = content.title
     })
-
-    closeByClickOutside('#modalBlock', '[data-modal]', () => {
-      document.querySelector(`#modalBlock`).classList.remove('hidden')
+    this.$on('modal:closeModal', () => {
       document.querySelector(`#modalWrapper`).classList.add('hidden')
+      document.querySelector('#modalContent').innerHTML = ''
+      document.querySelector('#modalTitle').innerHTML = ''
+    })
+
+    closeByClickOutside('#modalBlock', '[data-modal]', '#modalWrapper', () => {
+      this.$emit('modal:closeModal')
     })
   }
 
@@ -70,11 +74,5 @@ export class Modal extends AppComponent {
       </div>
   </div>
   `
-  }
-
-  closeModal() {
-    document.querySelector(`#modalWrapper`).classList.add('hidden')
-    document.querySelector('#modalContent').innerHTML = ''
-    document.querySelector('#modalTitle').innerHTML = ''
   }
 }
