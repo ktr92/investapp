@@ -22,6 +22,12 @@ export class Store {
     changeBroker: (id: number) => {
       this.currentPortfolio = []
       this.currentPortfolio.push(this.getters.getPortfolioById(id))
+    },
+    addPosition: (pfolioId: number, newPostion: IPosition) => {
+      const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
+      pfolio.positions.push(newPostion)
+
+      console.log(this.portfolio)
     }
   }
 
@@ -51,6 +57,9 @@ export class Store {
     },
     changeBroker: (id: number) => {
       this.mutations.changeBroker(id)
+    },
+    addPosition: (id: number, pos: IPosition) => {
+      this.mutations.addPosition(id, pos)
     }
   }
 }

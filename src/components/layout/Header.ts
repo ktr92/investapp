@@ -56,7 +56,7 @@ export class Header extends AppComponent {
       this.$emit('table:showAllBrokers')
     })
     document.querySelector('[data-modal="newPosition"]').addEventListener('click', e => {
-      const create = new CreateForm('#modalContent', this.state)
+      const create = new CreateForm('#modalContent', this.state, this.addPosition.bind(this))
       this.$emit('modal:renderModal', {
         title: 'Add new position',
         content: create.$el.innerHTML
@@ -74,6 +74,15 @@ export class Header extends AppComponent {
     this.$on('header:changeTheme', () => {
       this.changeTheme()
     })
+    this.$on('app:moexUpdate', async () => {
+      this.state.moex = await this.state.actions.initMoex()
+    })
+  }
+
+  addPosition(brokerId: number, position: IPosition) {
+    this.state.actions.addPosition(brokerId, position)
+
+    this.$emit('app:moexUpdate')
   }
 
   toHTML(): string {
