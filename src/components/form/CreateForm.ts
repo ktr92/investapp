@@ -40,11 +40,6 @@ export class CreateForm {
     this.$el.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault()
       const formdata = new FormData(this.$el.querySelector('form'))
-      for (const [key, value] of formdata) {
-        console.log(key, value);
-      }
-
-      console.log(formdata.get('portfolio'))
 
       // validtaion
       this.onSubmit(

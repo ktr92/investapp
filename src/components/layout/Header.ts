@@ -74,15 +74,20 @@ export class Header extends AppComponent {
     this.$on('header:changeTheme', () => {
       this.changeTheme()
     })
-    this.$on('app:moexUpdate', async () => {
+    this.$on('header:moexUpdate', async (id?: number) => {
       this.state.moex = await this.state.actions.initMoex()
+      this.$emit('table:changeBroker', id)
+      this.dropdownPortfolio.setValue(this.state.getters.getPortfolioById(id).name)
+      /*  if (this.state.getters.getCurrent().length && this.state.getters.getCurrent()[0].id !== id) {
+        this.$emit('table:changeBroker', id)
+      } */
     })
   }
 
   addPosition(brokerId: number, position: IPosition) {
     this.state.actions.addPosition(brokerId, position)
-
-    this.$emit('app:moexUpdate')
+    this.$emit('header:moexUpdate', brokerId)
+    this.$emit('modal:closeModal')
   }
 
   toHTML(): string {

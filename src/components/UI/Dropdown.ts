@@ -66,6 +66,10 @@ export default class Dropdown {
     closeByClickOutside(this.target, this.trigger)
   }
 
+  setValue(value: string) {
+    this.$triggerEl.firstChild.textContent = value
+  }
+
   changeText() {
     this.$targetEl.addEventListener('click', (e) => {
       if (e.target instanceof HTMLElement) {

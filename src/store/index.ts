@@ -46,6 +46,7 @@ export class Store {
       })
       return tickers
     },
+    getCurrent: () => this.currentPortfolio,
     getMoex: () => this.moex
   }
 
