@@ -23,9 +23,15 @@ export class Store {
       this.currentPortfolio = []
       this.currentPortfolio.push(this.getters.getPortfolioById(id))
     },
-    addPosition: (pfolioId: number, newPostion: IPosition) => {
+    addPosition: (pfolioId: number, newPostion: IPosition, clone: boolean) => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
-      pfolio.positions.push(newPostion)
+      if (clone) {
+        pfolio.positions.push(newPostion)
+      } else {
+        const pos = pfolio.positions.filter(item => item.ticker === newPostion.ticker)[0]
+        pos.buyPrice = (newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) / (newPostion.count + pos.count)
+        pos.count += newPostion.count
+      }
 
       console.log(this.portfolio)
     }
@@ -59,8 +65,8 @@ export class Store {
     changeBroker: (id: number) => {
       this.mutations.changeBroker(id)
     },
-    addPosition: (id: number, pos: IPosition) => {
-      this.mutations.addPosition(id, pos)
+    addPosition: (id: number, pos: IPosition, clone?: boolean) => {
+      this.mutations.addPosition(id, pos, clone)
     }
   }
 }

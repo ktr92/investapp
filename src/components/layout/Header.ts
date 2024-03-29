@@ -85,7 +85,7 @@ export class Header extends AppComponent {
   }
 
   addPosition(brokerId: number, position: IPosition) {
-    this.state.actions.addPosition(brokerId, position)
+    this.state.actions.addPosition(brokerId, position, false)
     this.$emit('header:moexUpdate', brokerId)
     this.$emit('modal:closeModal')
   }
