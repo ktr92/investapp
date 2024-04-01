@@ -18,8 +18,8 @@ export class Stock extends ViewComponent implements IObjIndexable {
     return `
     <div class="">
       <a href="#" target="_blank" class="flex items-center">
-        <span class="w-auto h-8 mr-3">
-          <img src=${this.logo} width="40" height="40">
+        <span class="w-auto h-8 mr-3 ">
+          <img src=${this.logo} width="40" width="40" height="40" class="min-w-[40px] rounded-full">
         </span>
         <span>
           <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white">${this.name}</span>

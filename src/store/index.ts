@@ -11,12 +11,16 @@ export class Store {
   constructor() {
     this.portfolio = state.portfolio
     this.moex = []
+    this.moexList = []
+    this.moexAll = []
     this.currentPortfolio = []
   }
 
   public portfolio: Array<IPortfolio>
   public currentPortfolio: Array<IPortfolio>
   public moex: Array<IMoexApi>
+  public moexList: Array<Array<string>>
+  public moexAll: Array<Array<string>>
 
   private mutations = {
     changeBroker: (id: number) => {
@@ -25,15 +29,14 @@ export class Store {
     },
     addPosition: (pfolioId: number, newPostion: IPosition, clone: boolean) => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
-      if (clone) {
+      const ispos = pfolio.positions.filter(item => item.ticker === newPostion.ticker)
+      if (clone || !ispos.length) {
         pfolio.positions.push(newPostion)
       } else {
-        const pos = pfolio.positions.filter(item => item.ticker === newPostion.ticker)[0]
+        const pos = ispos[0]
         pos.buyPrice = (newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) / (newPostion.count + pos.count)
         pos.count += newPostion.count
       }
-
-      console.log(this.portfolio)
     }
   }
 
@@ -53,13 +56,25 @@ export class Store {
       return tickers
     },
     getCurrent: () => this.currentPortfolio,
+    getMoexList: () => this.moexList,
+    getMoexAll: () => this.moexAll,
+    getMoexByName: (str: string) => {
+      const substr = str.toLocaleLowerCase()
+      const list = this.moexList.filter(item => item[0].toLocaleLowerCase().startsWith(str) || item[2].toLocaleLowerCase().startsWith(str) || item[20].toLocaleLowerCase().startsWith(str))
+
+      return list
+    },
+    getMoexPrice: (ticker: string) => this.moexAll.filter(item => item[0] === ticker)[0],
     getMoex: () => this.moex
   }
 
   public actions = {
     initMoex: async () => {
       const tickers = this.getters.getAllTickers()
-      this.moex = await moexTickerLast(tickers)
+      const moex = (await moexTickerLast(tickers))
+      this.moex = moex.items
+      this.moexList = moex.moexlist
+      this.moexAll = moex.moexAll
       return this.moex
     },
     changeBroker: (id: number) => {
@@ -67,7 +82,8 @@ export class Store {
     },
     addPosition: (id: number, pos: IPosition, clone?: boolean) => {
       this.mutations.addPosition(id, pos, clone)
-    }
+    },
+
   }
 }
 

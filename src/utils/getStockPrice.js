@@ -1,5 +1,5 @@
 export async function moexTickerLast(tickers) {
-  const json = await fetch('https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?q=GAZP,SBER')
+  const json = await fetch('https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json')
       .then((res) => {
         return res.json()
       });
@@ -14,7 +14,12 @@ export async function moexTickerLast(tickers) {
     }
   });
 
-  return moexTransformer(fMarketdata, fSecurities, indexes)
+  const items = moexTransformer(fMarketdata, fSecurities, indexes)
+  return {
+    items,
+    moexlist: fSecurities,
+    moexAll: fMarketdata
+  }
 }
 
 function moexFilter(data) {
