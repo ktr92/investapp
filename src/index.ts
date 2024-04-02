@@ -28,6 +28,7 @@ const state = new Store;
 
 (async function() {
   state.moex = await state.actions.initMoex()
+  state.moexBonds = await state.actions.initMoexBonds()
 
   const app = new App('#app', {
     components: [Header, BlockTable, Modal],

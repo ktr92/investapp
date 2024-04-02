@@ -88,14 +88,14 @@ export class TablePosition {
     items.forEach(item => {
       total += item.startPrice.value * item.count.count
     })
-    return numberWithSpaces(total)
+    return numberWithSpaces(total.toFixed(2))
   }
   calcCurrent(items: IPosition[]) {
     let total = 0
     items.forEach(item => {
       total += item.currentPrice.total
     })
-    return numberWithSpaces(total)
+    return numberWithSpaces(total.toFixed(2))
   }
   calcChange(items: IPosition[]) {
     let change = 0

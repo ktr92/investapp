@@ -2,6 +2,7 @@ import closeByClickOutside from '../../utils/clickOutside'
 import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
+import {moexBonds} from '../../utils/getStockPrice'
 
 export class CreateForm {
   constructor(selector: string, public state: Store, public onSubmit?: (id: number, position: IPosition, isclone: boolean,) => void) {
@@ -15,6 +16,7 @@ export class CreateForm {
   public foundList: Array<Array<string>>
   public isvalid: boolean
   public currentTicker: string
+  public category: string
 
   initBrokers() {
     const all = this.state.getters.getAllPortfolio();
@@ -36,8 +38,16 @@ export class CreateForm {
     return selectBroker
   }
 
-  searchItem(key: string) {
-    const res = this.state.getters.getMoexByName(key)
+  async searchItem(key: string) {
+    let res: Array<Array<string>> = []
+    if (this.category === 'stocks') {
+      res = this.state.getters.getMoexByName(key)
+    }
+
+    if (this.category === 'bonds') {
+      res = this.state.getters.getMoexByName(key)
+    }
+
     return res
   }
 
@@ -73,6 +83,7 @@ export class CreateForm {
     this.$el.insertAdjacentElement('beforeend', $form)
 
     $form.insertAdjacentHTML('afterbegin', this.init(this.initBrokers()))
+    this.category = 'stock'
 
     const $ticker = this.$el.querySelector('[name="name"]') as HTMLInputElement
 
@@ -83,15 +94,18 @@ export class CreateForm {
         this.calc(this.currentTicker, false)
       })
     })
+    this.$el.querySelector('[name="category"]').addEventListener('change', (e) => {
+      this.category = (e.target as HTMLSelectElement).value
+    })
 
-    $ticker.addEventListener('input', (e) => {
+    $ticker.addEventListener('input', async (e) => {
       const $input = e.target
       const val = (e.target as HTMLInputElement).value
       const dropdown: HTMLElement = this.$el.querySelector('[data-dropdown="name"]')
       dropdown.innerHTML = ''
 
       if (val.length > 1) {
-        this.foundList = this.searchItem(val)
+        this.foundList = await this.searchItem(val)
         dropdown.classList.remove('hidden')
         closeByClickOutside('[data-dropdown="name"]', '[name="name"]')
 
@@ -131,18 +145,36 @@ export class CreateForm {
       }
     })
 
-    this.$el.querySelector('form').addEventListener('submit', (e) => {
+    this.$el.querySelector('form').addEventListener('submit', async (e) => {
       e.preventDefault()
       const formdata = new FormData(this.$el.querySelector('form'))
 
-      const result = {
-        ticker: String(formdata.get('name')),
-        buyPrice: Number(formdata.get('price')),
-        count: Number(formdata.get('count')),
-        myStop: Number(formdata.get('stop')),
+      let result = null
+      if (this.category === 'stocks') {
+        result = {
+          ticker: String(formdata.get('name')),
+          type: 'stock',
+          buyPrice: Number(formdata.get('price')),
+          count: Number(formdata.get('count')),
+          myStop: Number(formdata.get('stop')),
+        }
       }
-
-      console.log(result)
+      if (this.category === 'bonds') {
+        result = {
+          ticker: String(formdata.get('name')),
+          type: 'bonds',
+          buyPrice: Number(formdata.get('price')),
+          count: Number(formdata.get('count')),
+        }
+      }
+      if (this.category === 'cash') {
+        result = {
+          ticker: 'cash',
+          type: 'cash',
+          buyPrice: Number(formdata.get('price')),
+          count: 1,
+        }
+      }
 
       if (this.isvalid) {
         this.onSubmit(
@@ -165,9 +197,9 @@ export class CreateForm {
                     <div class="sm:col-span-2 mb-4">
                         <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
                         <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          <option value="Stocks">Stocks</option>
-                          <option value="Bonds">Bonds</option>
-                          <option value="Cash">Cash</option>
+                          <option value="stocks">Stocks</option>
+                          <option value="bonds">Bonds</option>
+                          <option value="cash">Cash</option>
                         </select>
                     </div>
                   <div class="sm:col-span-2  mb-4 relative">

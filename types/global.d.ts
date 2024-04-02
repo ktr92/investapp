@@ -10,9 +10,11 @@ interface IState {
 
 declare interface IPosition {
   ticker: string,
+  type: string,
+
   buyPrice: number,
   count: number,
-  myStop: number,
+  myStop?: number,
   options?: IState
 }
 
@@ -21,7 +23,8 @@ declare interface IPortfolio {
   name: string,
   depo: number,
   comm: number,
-  positions: Array<IPosition>
+  positions: Array<IPosition>,
+  bonds?: Array<IPosition>,
 }
 
 declare interface IMoexApi {

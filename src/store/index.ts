@@ -1,5 +1,5 @@
 import {Position} from '../components/position/Position'
-import {moexTickerLast} from '../utils/getStockPrice'
+import {moexTickerLast, moexBonds} from '../utils/getStockPrice'
 
 interface IState {
   moex: Array<IMoexApi>,
@@ -11,6 +11,7 @@ export class Store {
   constructor() {
     this.portfolio = state.portfolio
     this.moex = []
+    this.moexBonds = []
     this.moexList = []
     this.moexAll = []
     this.currentPortfolio = []
@@ -19,6 +20,7 @@ export class Store {
   public portfolio: Array<IPortfolio>
   public currentPortfolio: Array<IPortfolio>
   public moex: Array<IMoexApi>
+  public moexBonds: Array<IMoexApi>
   public moexList: Array<Array<string>>
   public moexAll: Array<Array<string>>
 
@@ -55,6 +57,16 @@ export class Store {
       })
       return tickers
     },
+    getBondsTickers: () => {
+      const tickers: Array<string> = []
+
+      this.portfolio.forEach(item => {
+        if (item.bonds) {
+          item.bonds.forEach(position => tickers.push(position.ticker))
+        }
+      })
+      return tickers
+    },
     getCurrent: () => this.currentPortfolio,
     getMoexList: () => this.moexList,
     getMoexAll: () => this.moexAll,
@@ -64,6 +76,7 @@ export class Store {
 
       return list
     },
+
     getMoexPrice: (ticker: string) => this.moexAll.filter(item => item[0] === ticker)[0],
     getMoex: () => this.moex
   }
@@ -76,6 +89,12 @@ export class Store {
       this.moexList = moex.moexlist
       this.moexAll = moex.moexAll
       return this.moex
+    },
+    initMoexBonds: async () => {
+      const tickers = this.getters.getBondsTickers()
+      const moex = (await moexBonds(tickers))
+      this.moexBonds = moex.items
+      return this.moexBonds
     },
     changeBroker: (id: number) => {
       this.mutations.changeBroker(id)
@@ -98,10 +117,14 @@ const state: IState = {
       positions: [
         {
           ticker: 'ASTR',
+          type: 'stock',
           buyPrice: 554,
           count: 100,
           myStop: 500,
         },
+      ],
+      bonds: [
+
       ]
     },
     {
@@ -112,17 +135,22 @@ const state: IState = {
       positions: [
         {
           ticker: 'LKOH',
+          type: 'stock',
           buyPrice: 6990,
           count: 22,
           myStop: 7000,
         },
         {
           ticker: 'SVCB',
+          type: 'stock',
           buyPrice: 16,
           count: 3000,
           myStop: 0,
 
         }
+      ],
+      bonds: [
+
       ]
     },
     {
@@ -134,19 +162,29 @@ const state: IState = {
       positions: [
         {
           ticker: 'SVET',
+          type: 'stock',
           buyPrice: 32,
           count: 1000,
           myStop: 25,
         },
         {
           ticker: 'HYDR',
+          type: 'stock',
           buyPrice: 0.8885,
           count: 3000,
           myStop: 0.7000,
         },
 
-      ]
+      ],
 
+      bonds: [
+        {
+          ticker: 'RU000A105A95',
+          type: 'bonds',
+          buyPrice: 110,
+          count: 1
+        }
+      ]
     }
   ]
 }
