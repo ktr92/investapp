@@ -1,3 +1,4 @@
+import {getUSD} from '../utils/currecyValue'
 import {Position} from '../components/position/Position'
 import {moexTickerLast, moexBonds} from '../utils/getStockPrice'
 
@@ -10,6 +11,7 @@ interface IState {
 export class Store {
   constructor() {
     this.portfolio = state.portfolio
+    this.currency = []
     this.moex = []
     this.moexBonds = []
     this.moexList = []
@@ -20,6 +22,7 @@ export class Store {
   public portfolio: Array<IPortfolio>
   public currentPortfolio: Array<IPortfolio>
   public moex: Array<IMoexApi>
+  public currency: Array<ICurrency>
   public moexBonds: Array<IMoexApi>
   public moexList: Array<Array<string>>
   public moexAll: Array<Array<string>>
@@ -76,7 +79,7 @@ export class Store {
 
       return list
     },
-
+    getCurrency: (id: string) => this.currency.filter(item => item.id === 'usd')[0].value,
     getMoexPrice: (ticker: string) => this.moexAll.filter(item => item[0] === ticker)[0],
     getMoex: () => this.moex
   }
@@ -95,6 +98,14 @@ export class Store {
       const moex = (await moexBonds(tickers))
       this.moexBonds = moex.items
       return this.moexBonds
+    },
+    initCurrency: async () => {
+      const usd = await getUSD()
+      this.currency.push({
+        id: 'usd',
+        value: usd
+      })
+      return this.currency
     },
     changeBroker: (id: number) => {
       this.mutations.changeBroker(id)
@@ -182,8 +193,20 @@ const state: IState = {
           ticker: 'RU000A105A95',
           type: 'bonds',
           buyPrice: 110,
-          count: 1
-        }
+          count: 1,
+          nominal: 1000,
+          currency: 'USD',
+
+        },
+        {
+          ticker: 'RU000A107B43',
+          type: 'bonds',
+          buyPrice: 84,
+          count: 1,
+          nominal: 1000,
+          currency: 'USD',
+
+        },
       ]
     }
   ]

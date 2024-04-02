@@ -11,9 +11,10 @@ interface IState {
 declare interface IPosition {
   ticker: string,
   type: string,
-
   buyPrice: number,
   count: number,
+  nominal?: number,
+  currency?: string,
   myStop?: number,
   options?: IState
 }
@@ -38,6 +39,11 @@ declare interface IListItem {
   id: string,
   text: string,
   type: string
+}
+
+declare interface ICurrency {
+  id: string,
+  value: number
 }
 
 declare type CallbackFunction = (param?: unknown) => unknown

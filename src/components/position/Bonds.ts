@@ -1,18 +1,31 @@
+import {getUSD} from '../../utils/currecyValue'
 import {Store} from '../../store'
 import {ViewComponent} from '../table/ViewComponent'
 
 export class Bonds extends ViewComponent implements IObjIndexable {
-  constructor(public ticker: string, options: Store) {
+  constructor(public ticker: string, nominal: number, currency: string, options: Store) {
     super(options)
     const moex: IMoexApi = this.options.moexBonds.filter(item => item.ticker === ticker)[0]
 
     this.name = moex.name
-    this.currentPrice = moex.price
+
+    this.currentPrice = moex.price * 1000
     this.dayChange = moex.open - moex.price
     this.logo = `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${ticker}.png`
+
+    this.initData(currency, moex, nominal)
   }
   public currentPrice: number
   [index: string]: unknown
+
+  async initData(currency: string, moex: IMoexApi, nominal: number) {
+    if (currency.length) {
+      this.currentPrice = moex.price * nominal
+      if (currency === 'USD') {
+        this.currentPrice = this.currentPrice / 100 * this.options.getters.getCurrency('usd')
+      }
+    }
+  }
 
   render() {
     return `

@@ -12,6 +12,8 @@ export class Position implements IObjIndexable {
       type: string,
       buyPrice: number,
       count: number,
+      nominal: number,
+      currency: string,
       myStop: number = null,
       salePrice: number = null,
       options: Store
@@ -22,7 +24,7 @@ export class Position implements IObjIndexable {
       this.stock = new Stock(ticker, options )
     }
     if (this.type === 'bonds') {
-      this.stock = new Bonds(ticker, options )
+      this.stock = new Bonds(ticker, nominal, currency, options )
     }
     this.startPrice = new Price(buyPrice, options )
     this.count = new Count(count, options)
@@ -44,7 +46,7 @@ export class Position implements IObjIndexable {
 
   static createPosition(items: Array<IPosition>, state: Store, type: string) {
     const result = items.map((item: IPosition) => {
-      return new Position(item.ticker, type, item.buyPrice, item.count, item.myStop, null, state)
+      return new Position(item.ticker, type, item.buyPrice, item.count, item.nominal, item.currency, item.myStop, null, state)
     })
 
     return result
