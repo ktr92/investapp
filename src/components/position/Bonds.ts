@@ -12,7 +12,7 @@ export class Bonds extends ViewComponent implements IObjIndexable {
     this.currentPrice = moex.price * nominal / 100
     this.dayChange = moex.open - moex.price
     if (market === 'TQOB') {
-      this.logo = `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${options.moexList[market].filter((item) => item[0] === ticker)[0][28]}.png`
+      this.logo = `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${options.moexSecurities[market].filter((item) => item[0] === ticker)[0][28]}.png`
     } else {
       this.logo = `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${ticker}.png`
     }

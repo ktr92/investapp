@@ -2,12 +2,12 @@ import closeByClickOutside from '../../utils/clickOutside'
 import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
-import {moexBonds} from '../../utils/getStockPrice'
 
 export class CreateForm {
   constructor(selector: string, public state: Store, public onSubmit?: (id: number, position: IPosition, isclone: boolean,) => void) {
     this.$el = document.querySelector(selector)
     this.isvalid = false
+    console.log(state)
   /*   this.initForm() */
   }
 
@@ -40,13 +40,7 @@ export class CreateForm {
 
   async searchItem(key: string) {
     let res: Array<Array<string>> = []
-    if (this.category === 'stocks') {
-      res = this.state.getters.getMoexByName(key)
-    }
-
-    if (this.category === 'bonds') {
-      res = this.state.getters.getMoexByName(key)
-    }
+    res = this.state.getters.getMoexByName(key)
 
     return res
   }
@@ -94,8 +88,11 @@ export class CreateForm {
         this.calc(this.currentTicker, false)
       })
     })
-    this.$el.querySelector('[name="category"]').addEventListener('change', (e) => {
+    this.$el.querySelector('[name="category"]').addEventListener('change', async (e) => {
       this.category = (e.target as HTMLSelectElement).value
+      await this.state.actions.initSearch(this.category)
+      console.log(this.state.getters.getMoexSearch())
+      console.log(this.state.moexSecurities)
     })
 
     $ticker.addEventListener('input', async (e) => {
@@ -104,7 +101,7 @@ export class CreateForm {
       const dropdown: HTMLElement = this.$el.querySelector('[data-dropdown="name"]')
       dropdown.innerHTML = ''
 
-      if (val.length > 1) {
+      if (val.length > 2) {
         this.foundList = await this.searchItem(val)
         dropdown.classList.remove('hidden')
         closeByClickOutside('[data-dropdown="name"]', '[name="name"]')
@@ -200,8 +197,9 @@ export class CreateForm {
                     <div class="sm:col-span-2 mb-4">
                         <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
                         <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          <option value="stocks">Stocks</option>
-                          <option value="bonds">Bonds</option>
+                          <option value="TQBR">Stocks</option>
+                          <option value="TQCB">Corporative Bonds</option>
+                          <option value="TQOB">Bonds</option>
                           <option value="cash">Cash</option>
                         </select>
                     </div>

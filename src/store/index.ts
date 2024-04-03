@@ -1,6 +1,5 @@
 import {getUSD} from '../utils/currecyValue'
-import {Position} from '../components/position/Position'
-import {moexTickerLast, moexBonds} from '../utils/getStockPrice'
+import {moexTickerLast} from '../utils/getStockPrice'
 
 interface IState {
   moex: Array<IMoexApi>,
@@ -17,13 +16,17 @@ export class Store {
       TQCB: [],
       TQOB: []
     }
-    this.moexBonds = []
-    this.moexList ={
+    this.moexSecurities ={
       TQBR: [],
       TQCB: [],
       TQOB: []
     }
-    this.moexAll = {
+    this.moexMarketData = {
+      TQBR: [],
+      TQCB: [],
+      TQOB: []
+    }
+    this.moexSearch = {
       TQBR: [],
       TQCB: [],
       TQOB: []
@@ -36,8 +39,9 @@ export class Store {
   public moex: IMarketsApi
   public currency: Array<ICurrency>
   public moexBonds: Array<IMoexApi>
-  public moexList: IMarketsList
-  public moexAll: IMarketsList
+  public moexSecurities: IMarketsList
+  public moexMarketData: IMarketsList
+  public moexSearch: IMarketsList
   public marketList: Array<string>
 
   private mutations = {
@@ -86,16 +90,29 @@ export class Store {
       return tickers
     },
     getCurrent: () => this.currentPortfolio,
-    getMoexList: () => this.moexList,
-    getMoexAll: () => this.moexAll,
-    getMoexByName: (str: string, market = 'TQBR') => {
+    getmoexSecurities: () => this.moexSecurities,
+    getmoexMarketData: () => this.moexMarketData,
+    getMoexByName: (str: string,) => {
       const substr = str.toLocaleLowerCase()
-      const list = this.moexList[market].filter(item => item[0].toLocaleLowerCase().startsWith(substr) || item[2].toLocaleLowerCase().startsWith(substr) || item[20].toLocaleLowerCase().startsWith(substr))
+
+      const list = this.moexSearch.moexSecurities.filter(item => {
+        let searchField = ''
+        if (typeof item[20] === 'string') {
+          searchField = item[20]
+        } else if (typeof item[28] === 'string') {
+          searchField = item[28]
+        } else if (typeof item[29] === 'string') {
+          searchField = item[29]
+        }
+
+        return item[0].toLocaleLowerCase().includes(substr) || item[2].toLocaleLowerCase().includes(substr) || searchField.toLocaleLowerCase().includes(substr)
+      })
 
       return list
     },
     getCurrency: (id: string) => this.currency.filter(item => item.id === id)[0].value,
-    getMoexPrice: (ticker: string, market = 'TQBR') => this.moexAll[market].filter(item => item[0] === ticker)[0],
+    getMoexPrice: (ticker: string) => this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0],
+    getMoexSearch: () => this.moexSearch,
     getMoex: () => this.moex
   }
 
@@ -107,8 +124,8 @@ export class Store {
         if (tickers[item].length) {
           const moex = await moexTickerLast(item, tickers[item])
           this.moex[item] = moex.items
-          this.moexList[item] = moex.moexlist
-          this.moexAll[item] = moex.moexAll
+          this.moexSecurities[item] = moex.moexSecurities
+          this.moexMarketData[item] = moex.moexMarketData
           return this.moex
         }
       }))
@@ -122,12 +139,11 @@ export class Store {
       this.moexAll = moex.moexAll
       return this.moex */
     },
-    initMoexBonds: async () => {
-      const tickers = this.getters.getBondsTickers()
-      const moex = (await moexBonds(tickers))
-      this.moexBonds = moex.items
-      return this.moexBonds
+
+    initSearch: async (category: string) => {
+      this.moexSearch = await moexTickerLast(category, [])
     },
+
     initCurrency: async () => {
       const usd = await getUSD()
       this.currency.push({
