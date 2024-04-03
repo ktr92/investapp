@@ -57,22 +57,27 @@ export class BlockTable extends AppComponent {
 
   createTable(source: Array<IPortfolio>) {
     source.forEach(portfolio => {
-      const allStocks = this.state.marketList.map(item => {
+      let positions: Array<Position> = []
+      this.state.marketList.forEach(item => {
         if (portfolio.markets[item] && portfolio.markets[item].length) {
-          return new Portfolio(portfolio.id, portfolio.name, portfolio.depo, Position.createPosition(portfolio.markets[item], this.state, item === 'TQBR' ? 'stock' : 'bonds', item), portfolio.comm)
+          const pp = new Portfolio(portfolio.id, portfolio.name, portfolio.depo, Position.createPosition(portfolio.markets[item], this.state, item === 'TQBR' ? 'stock' : 'bonds', item), portfolio.comm)
+          positions = positions.concat(pp.positions)
         }
       })
 
       /*   const allBonds = new Portfolio(portfolio.id, portfolio.name, portfolio.depo, Position.createPosition(portfolio.markets.TQCB, this.state, 'bonds'), portfolio.comm) */
 
-      if (allStocks.length) {
-        allStocks.forEach(item => {
+      const table = new Table('.table', TablePosition, positions)
+      table.render()
+
+      /* if (positions.length) {
+        positions.forEach(item => {
           if (item && item.positions && item.positions.length) {
             const table = new Table('.table', TablePosition, item.positions)
             table.render()
           }
         })
-      }
+      } */
     })
 
     /* const allStocks = source.map(item => {
