@@ -2,29 +2,29 @@ import {AppComponent} from './AppComponent'
 import {DomComponent} from './DomComponent'
 import {Emitter} from './Emitter'
 interface IState {
-  moex: Array<IMoexApi>
+  moex: IMarketsApi
 }
 interface Constructor {
   new (...args: Array<unknown>): AppComponent,
   id?: string
 }
-type ExcelArray = Array<Constructor>
+type AppArray = Array<Constructor>
 type InstancesArray = Array<AppComponent>
 
-interface ExcelOptions {
-  components: ExcelArray,
+interface AppOptions {
+  components: AppArray,
   state: IState
 }
 
 export class App {
   public $el: DomComponent
-  private components: ExcelArray
+  private components: AppArray
   private instances: InstancesArray
   public emitter: Emitter
   public state: IState
   constructor(
     public selector: string,
-    public options: ExcelOptions
+    public options: AppOptions
   ) {
     this.state = options.state,
     this.$el = new DomComponent(selector)

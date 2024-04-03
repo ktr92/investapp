@@ -3,18 +3,39 @@ declare interface IObjIndexable {
   [index: string]: unknown
 }
 interface IState {
-  moex: Array<IMoexApi>,
+  moex: IMarketsApi,
   portfolio: Array<IPortfolio>,
   currentPortfolio?: IPortfolio
+}
+
+declare interface IMarkets {
+  [index: string]: Array<IPosition>,
+  TQBR?: Array<IPosition>,
+  TQCB?: Array<IPosition>,
+  TQOB?: Array<IPosition>
+}
+declare interface IMarketsApi {
+  [index: string]: Array<IMoexApi>,
+  TQBR?: Array<IMoexApi>,
+  TQCB?: Array<IMoexApi>,
+  TQOB?: Array<IMoexApi>
+}
+declare interface IMarketsList {
+  [index: string]: Array<Array<string>>,
+  TQBR?: Array<Array<string>>,
+  TQCB?: Array<Array<string>>,
+  TQOB?: Array<Array<string>>
 }
 
 declare interface IPosition {
   ticker: string,
   type: string,
+  market: string,
   buyPrice: number,
   count: number,
   nominal?: number,
   currency?: string,
+  buyCurrency?: number,
   myStop?: number,
   options?: IState
 }
@@ -24,7 +45,7 @@ declare interface IPortfolio {
   name: string,
   depo: number,
   comm: number,
-  positions: Array<IPosition>,
+  markets: IMarkets,
   bonds?: Array<IPosition>,
 }
 

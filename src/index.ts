@@ -22,15 +22,13 @@ import {Store} from './store';
 
 /* const port = store.getters.getPortfolio('SBER') */
 
-/* console.log(port) */
-
 const state = new Store;
 
 (async function() {
   state.moex = await state.actions.initMoex()
-  state.moexBonds = await state.actions.initMoexBonds()
   state.currency = await state.actions.initCurrency()
-
+  /*  state.moexBonds = await state.actions.initMoexBonds()
+ */
   const app = new App('#app', {
     components: [Header, BlockTable, Modal],
     state: state
@@ -41,12 +39,8 @@ const state = new Store;
 /* const header = new Header('#header')
 const main = new Main('#main') */
 
-/* store.actions.initMoex().then(() => console.log(store.getters.getMoex()))
- */
-
 /* const moex = moexTickerLast('')
 moex.then((res) => {
-  console.log(res)
 })
  */
 // сделать массив Портфолио
@@ -62,8 +56,7 @@ moex.then((res) => {
 /* const allPortfolio = all.map(pp => {
   new Portfolio(pp.id, pp.name, pp.depo, pp.positions, pp.comm)
 })
-
-console.log(allPortfolio) */
+ */
 
 /* const portfolio1 = new Portfolio(port.id, port.name, port.depo, positions1, port.comm) */
 

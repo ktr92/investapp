@@ -9,11 +9,15 @@ import {Bonds} from './Bonds';
 export class Position implements IObjIndexable {
   constructor(
       ticker:string,
+      market: string,
+
       type: string,
       buyPrice: number,
       count: number,
       nominal: number,
       currency: string,
+      buyCurrency: number,
+
       myStop: number = null,
       salePrice: number = null,
       options: Store
@@ -22,15 +26,22 @@ export class Position implements IObjIndexable {
     this.type = type
     if (this.type === 'stock') {
       this.stock = new Stock(ticker, options )
+      this.startPrice = new Price(buyPrice, options )
+      this.startTotal = new Totalprice(buyPrice, count, options )
+      this.change = new Change(buyPrice, this.stock.currentPrice, count, options)
     }
     if (this.type === 'bonds') {
-      this.stock = new Bonds(ticker, nominal, currency, options )
+      this.stock = new Bonds(ticker, nominal, currency, options, market )
+      let price = buyPrice * nominal / 100
+      if (buyCurrency) {
+        price *= buyCurrency
+      }
+      this.startPrice = new Price(price, options )
+      this.startTotal = new Totalprice(price, count, options )
+      this.change = new Change(price, this.stock.currentPrice, count, options)
     }
-    this.startPrice = new Price(buyPrice, options )
     this.count = new Count(count, options)
-    this.startTotal = new Totalprice(buyPrice, count, options )
     this.currentPrice = new Totalprice(this.stock.currentPrice, count, options)
-    this.change = new Change(buyPrice, this.stock.currentPrice, count, options)
     this.myStop = new Price(myStop, options )
     this.salePrice = new Totalprice(salePrice, null, options )
   }
@@ -44,9 +55,9 @@ export class Position implements IObjIndexable {
   public currentPrice: Totalprice
   public options: Store
 
-  static createPosition(items: Array<IPosition>, state: Store, type: string) {
+  static createPosition(items: Array<IPosition>, state: Store, type: string, market = 'TQBR') {
     const result = items.map((item: IPosition) => {
-      return new Position(item.ticker, type, item.buyPrice, item.count, item.nominal, item.currency, item.myStop, null, state)
+      return new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, state)
     })
 
     return result

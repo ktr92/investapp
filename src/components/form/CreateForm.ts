@@ -154,6 +154,7 @@ export class CreateForm {
         result = {
           ticker: String(formdata.get('name')),
           type: 'stock',
+          market: 'TQCB',
           buyPrice: Number(formdata.get('price')),
           count: Number(formdata.get('count')),
           myStop: Number(formdata.get('stop')),
@@ -163,6 +164,7 @@ export class CreateForm {
         result = {
           ticker: String(formdata.get('name')),
           type: 'bonds',
+          market: 'TQOB',
           buyPrice: Number(formdata.get('price')),
           count: Number(formdata.get('count')),
         }
@@ -171,6 +173,7 @@ export class CreateForm {
         result = {
           ticker: 'cash',
           type: 'cash',
+          market: '',
           buyPrice: Number(formdata.get('price')),
           count: 1,
         }

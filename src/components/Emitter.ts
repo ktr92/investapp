@@ -29,6 +29,5 @@ export class Emitter {
   }
 }
 
-// const unsub = emitter.subscribe('event:event1', () => {console.log()});
 // emit('event:event1', 55);
 // unsub()

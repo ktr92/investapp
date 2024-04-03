@@ -75,7 +75,7 @@ export class Header extends AppComponent {
       this.changeTheme()
     })
     this.$on('header:moexUpdate', async (id?: number) => {
-      this.state.moex = await this.state.actions.initMoex()
+    /*   this.state.moex = await this.state.actions.initMoex() */
       this.$emit('table:changeBroker', id)
       this.dropdownPortfolio.setValue(this.state.getters.getPortfolioById(id).name)
       /*  if (this.state.getters.getCurrent().length && this.state.getters.getCurrent()[0].id !== id) {
@@ -85,7 +85,6 @@ export class Header extends AppComponent {
   }
 
   addPosition(brokerId: number, position: IPosition, isclone: boolean) {
-    console.log(position)
     this.state.actions.addPosition(brokerId, position, isclone)
     this.$emit('header:moexUpdate', brokerId)
     this.$emit('modal:closeModal')
