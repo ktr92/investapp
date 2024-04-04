@@ -118,7 +118,7 @@ export class Store {
       return list
     },
     getCurrency: (id: string) => this.currency.filter(item => item.id === id)[0].value,
-    getMoexPrice: (ticker: string) => this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0],
+    getMoexInfo: (ticker: string) => this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0],
     getMoexSearch: () => this.moexSearch,
     getMoex: () => this.moex
   }

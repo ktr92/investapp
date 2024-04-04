@@ -3,6 +3,7 @@ import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'
+import {getPrice} from '../../utils/getStockPrice'
 
 export class CreateForm {
   constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean,) => void) {
@@ -62,7 +63,7 @@ export class CreateForm {
     const broker = (document.querySelector('#portfolio') as HTMLSelectElement).value
 
     if (isload) {
-      price = Number(this.state.getters.getMoexPrice(ticker)[12]);
+      price = getPrice(ticker, this.category, this.state);
       stop = Number(price) * 0.98;
       count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
     } else {
@@ -87,6 +88,7 @@ export class CreateForm {
     this.$el.querySelector('[name="category"]').addEventListener('change', async (e) => {
       this.category = (e.target as HTMLSelectElement).value
       await this.initMarketData()
+      console.log(this.state.getters.getMoexSearch())
     })
   }
 
