@@ -2,10 +2,11 @@ import {Store} from '../../store'
 import {ViewComponent} from '../table/ViewComponent'
 
 export class Stock extends ViewComponent implements IObjIndexable {
-  constructor(public ticker: string, options: Store, market = 'TQBR') {
+  constructor(public ticker: string, options: Store, market = options.defaultCategory) {
     super(options)
     const moex: IMoexApi = this.options.getters.getMoex()[market].filter(item => item.ticker === ticker)[0]
 
+    console.log(this.options.getters.getMoex()[market].filter(item => item.ticker === ticker))
     this.name = moex.name
     this.currentPrice = moex.price
     this.dayChange = moex.open - moex.price

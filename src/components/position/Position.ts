@@ -25,7 +25,7 @@ export class Position implements IObjIndexable {
     this.options = options
     this.type = type
     if (this.type === 'stock') {
-      this.stock = new Stock(ticker, options )
+      this.stock = new Stock(ticker, options, market )
       this.startPrice = new Price(buyPrice, options )
       this.startTotal = new Totalprice(buyPrice, count, options )
       this.change = new Change(buyPrice, this.stock.currentPrice, count, options)

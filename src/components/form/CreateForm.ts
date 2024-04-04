@@ -5,7 +5,7 @@ import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'
 
 export class CreateForm {
-  constructor(selector: string, public state: Store, public onSubmit?: (id: number, position: IPosition, isclone: boolean,) => void) {
+  constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean,) => void) {
     this.$el = document.querySelector(selector)
     this.isvalid = false
     this.category = this.state.getters.getCategory(this.state.defaultPortfolio)
@@ -19,7 +19,7 @@ export class CreateForm {
   public category: string
   public mDataList: IMarketsList
 
-  static async create(selector: string, state: Store, onSubmit?: (id: number, position: IPosition, isclone: boolean,) => void) {
+  static async create(selector: string, state: Store, onSubmit?: (id: string, position: IPosition, isclone: boolean,) => void) {
     const instance = new CreateForm(selector, state, onSubmit)
     await instance.initMarketData()
     return instance
@@ -27,7 +27,6 @@ export class CreateForm {
 
   async initMarketData() {
     await this.state.actions.initSearch(this.category)
-    console.log(this.state.getters.getMoexSearch())
   }
 
   initForm() {
@@ -36,8 +35,8 @@ export class CreateForm {
     this.$el.insertAdjacentElement('beforeend', $form)
 
     $form.insertAdjacentHTML('afterbegin', this.init(this.initBrokers()))
-    this.category = (document.querySelector('#portfolio') as HTMLSelectElement).value
-
+    /*     this.category = (document.querySelector('#portfolio') as HTMLSelectElement).value
+ */
     const $ticker = this.$el.querySelector('[name="name"]') as HTMLInputElement
 
     $ticker.focus()
@@ -150,7 +149,7 @@ export class CreateForm {
         result = {
           ticker: String(formdata.get('name')),
           type: 'stock',
-          market: 'TQCB',
+          market: 'TQBR',
           buyPrice: Number(formdata.get('price')),
           count: Number(formdata.get('count')),
           myStop: Number(formdata.get('stop')),
@@ -160,7 +159,7 @@ export class CreateForm {
         result = {
           ticker: String(formdata.get('name')),
           type: 'bonds',
-          market: 'TQOB',
+          market: 'TQCB',
           buyPrice: Number(formdata.get('price')),
           count: Number(formdata.get('count')),
         }
@@ -186,7 +185,7 @@ export class CreateForm {
 
       if (this.isvalid) {
         this.onSubmit(
-            Number(formdata.get('portfolio')),
+            String(formdata.get('portfolio')),
             result,
             Boolean(formdata.get('isclone'))
         )

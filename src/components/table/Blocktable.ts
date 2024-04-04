@@ -111,7 +111,8 @@ export class BlockTable extends AppComponent {
     })
 
     if (id) {
-      this.state.actions.changeBroker(id)
+      this.state.actions.changeBroker(String(id))
+
       this.createTable(this.state.currentPortfolio)
     } else {
       const all = this.state.getters.getAllPortfolio();

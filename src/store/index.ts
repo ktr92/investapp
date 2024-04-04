@@ -11,6 +11,7 @@ export class Store {
   constructor() {
     this.portfolio = state.portfolio
     this.defaultPortfolio = this.portfolio[0].id
+    this.defaultCategory = this.portfolio[0].defaultCategory
     this.currency = []
     this.moex = {
       TQBR: [],
@@ -37,6 +38,7 @@ export class Store {
 
   public portfolio: Array<IPortfolio>
   public defaultPortfolio: string
+  public defaultCategory: string
   public currentPortfolio: Array<IPortfolio>
   public moex: IMarketsApi
   public currency: Array<ICurrency>
@@ -51,7 +53,7 @@ export class Store {
       this.currentPortfolio = []
       this.currentPortfolio.push(this.getters.getPortfolioById(id))
     },
-    addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market= 'TQBR') => {
+    addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market = this.defaultCategory) => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
       const ispos = pfolio.markets[market].filter(item => item.ticker === newPostion.ticker)
       if (clone || !ispos.length) {
@@ -74,7 +76,7 @@ export class Store {
     getPortfolioDepo: (name: string) => this.portfolio.filter(item => item.name === name)[0].depo,
     getCategory: (id: string) => this.portfolio.filter(item => item.id === id)[0].defaultCategory,
 
-    getPortfolioPositions: (name: string, market = 'TQBR') => this.portfolio.filter(item => item.name === name)[0].markets[market],
+    getPortfolioPositions: (name: string, market = this.defaultCategory) => this.portfolio.filter(item => item.name === name)[0].markets[market],
     getAllTickers: (market: string) => {
       const tickers: Array<string> = []
       this.portfolio.forEach(item => {
@@ -161,8 +163,8 @@ export class Store {
     changeBroker: (id: string) => {
       this.mutations.changeBroker(id)
     },
-    addPosition: (id: string, pos: IPosition, clone?: boolean) => {
-      this.mutations.addPosition(id, pos, clone)
+    addPosition: (id: string, pos: IPosition, clone?: boolean, market = this.defaultCategory) => {
+      this.mutations.addPosition(id, pos, clone, market)
     },
 
   }
