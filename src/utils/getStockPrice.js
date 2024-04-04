@@ -67,6 +67,9 @@ function moexBondsTransformer(market, security, indexes) {
           ticker: market[index][0],
           price: market[index][3],
           open: security[index][3],
+          nominal: security[index][38],
+          currency: security[index][25]
+
         })
   })
 
@@ -75,7 +78,6 @@ function moexBondsTransformer(market, security, indexes) {
 
 export function getPrice(ticker, category, state) {
   let price = 0
-  console.log(state.moexSearch.moexMarketData)
 
   if (category === 'TQBR') {
     price = Number(state.getters.getMoexInfo(ticker)[12])
@@ -88,4 +90,62 @@ export function getPrice(ticker, category, state) {
   }
 
   return price
+}
+
+export function initPositionData(category, formdata) {
+  let result = null
+  if (category === 'TQBR') {
+    result = {
+      ticker: String(formdata.get('name')),
+      type: 'stock',
+      market: 'TQBR',
+      buyPrice: Number(formdata.get('price')),
+      count: Number(formdata.get('count')),
+      myStop: Number(formdata.get('stop')),
+    }
+  }
+  if (category === 'TQCB') {
+    result = {
+      ticker: String(formdata.get('name')),
+      type: 'bonds',
+      market: 'TQCB',
+      buyPrice: Number(formdata.get('price')),
+      count: Number(formdata.get('count')),
+    }
+  }
+  if (category === 'TQOB') {
+    result = {
+      ticker: String(formdata.get('name')),
+      type: 'bonds',
+      market: 'TQOB',
+      buyPrice: Number(formdata.get('price')),
+      count: Number(formdata.get('count')),
+    }
+  }
+  if (category === 'cash') {
+    result = {
+      ticker: 'cash',
+      type: 'cash',
+      market: '',
+      buyPrice: Number(formdata.get('price')),
+      count: 1,
+    }
+  }
+
+  return result
+}
+
+export function getPositionType(item) {
+  let positionType = null
+  if (item === 'TQBR') {
+    positionType = 'stock'
+  }
+  if (item === 'TQCB') {
+    positionType = 'bonds'
+  }
+  if (item === 'TQOB') {
+    positionType = 'bonds'
+  }
+
+  return positionType
 }

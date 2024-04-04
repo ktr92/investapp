@@ -3,10 +3,10 @@ import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'
-import {getPrice} from '../../utils/getStockPrice'
+import {getPrice, initPositionData} from '../../utils/getStockPrice'
 
 export class CreateForm {
-  constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean,) => void) {
+  constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean, market: string) => void) {
     this.$el = document.querySelector(selector)
     this.isvalid = false
     this.category = this.state.getters.getCategory(this.state.defaultPortfolio)
@@ -88,7 +88,6 @@ export class CreateForm {
     this.$el.querySelector('[name="category"]').addEventListener('change', async (e) => {
       this.category = (e.target as HTMLSelectElement).value
       await this.initMarketData()
-      console.log(this.state.getters.getMoexSearch())
     })
   }
 
@@ -147,51 +146,18 @@ export class CreateForm {
       const formdata = new FormData(this.$el.querySelector('form'))
 
       let result = null
-      if (this.category === 'TQBR') {
-        result = {
-          ticker: String(formdata.get('name')),
-          type: 'stock',
-          market: 'TQBR',
-          buyPrice: Number(formdata.get('price')),
-          count: Number(formdata.get('count')),
-          myStop: Number(formdata.get('stop')),
-        }
-      }
-      if (this.category === 'TQCB') {
-        result = {
-          ticker: String(formdata.get('name')),
-          type: 'bonds',
-          market: 'TQCB',
-          buyPrice: Number(formdata.get('price')),
-          count: Number(formdata.get('count')),
-        }
-      }
-      if (this.category === 'TQOB') {
-        result = {
-          ticker: String(formdata.get('name')),
-          type: 'bonds',
-          market: 'TQOB',
-          buyPrice: Number(formdata.get('price')),
-          count: Number(formdata.get('count')),
-        }
-      }
-      if (this.category === 'cash') {
-        result = {
-          ticker: 'cash',
-          type: 'cash',
-          market: '',
-          buyPrice: Number(formdata.get('price')),
-          count: 1,
-        }
-      }
+
+      result = initPositionData(this.category, formdata)
 
       if (this.isvalid) {
         this.onSubmit(
             String(formdata.get('portfolio')),
             result,
-            Boolean(formdata.get('isclone'))
+            Boolean(formdata.get('isclone')),
+            this.category
         )
       }
+      console.log(this.state)
     });
   }
   initBrokers() {
@@ -219,7 +185,7 @@ export class CreateForm {
                     <div class="sm:col-span-2 mb-4">
                         <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
                         <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          <option value="TQBR" selected="selected">Stocks</option>
+                          <option value="TQBR">Stocks</option>
                           <option value="TQCB">Corporative Bonds</option>
                           <option value="TQOB">Bonds</option>
                           <option value="cash">Cash</option>

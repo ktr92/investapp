@@ -6,7 +6,7 @@ export class Bonds extends ViewComponent implements IObjIndexable {
   constructor(public ticker: string, nominal: number, currency: string, options: Store, market = 'TQCB') {
     super(options)
     const moex: IMoexApi = this.options.getters.getMoex()[market].filter(item => item.ticker === ticker)[0]
-
+    console.log( moex)
     this.name = moex.name
 
     this.currentPrice = moex.price * nominal / 100
@@ -23,7 +23,7 @@ export class Bonds extends ViewComponent implements IObjIndexable {
   [index: string]: unknown
 
   async initData(currency: string, moex: IMoexApi, nominal: number) {
-    if (currency.length) {
+    if (currency && currency.length) {
       if (currency === 'USD') {
         this.currentPrice = this.currentPrice * this.options.getters.getCurrency('usd')
       }

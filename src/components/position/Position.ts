@@ -55,7 +55,7 @@ export class Position implements IObjIndexable {
   public currentPrice: Totalprice
   public options: Store
 
-  static createPosition(items: Array<IPosition>, state: Store, type: string, market = 'TQBR') {
+  static createPosition(items: Array<IPosition>, state: Store, type: string, market: string) {
     const result = items.map((item: IPosition) => {
       return new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, state)
     })

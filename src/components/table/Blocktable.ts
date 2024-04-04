@@ -10,6 +10,7 @@ import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
 import changeClass from '../../utils/toggleClass';
 import {Store} from '../../store';
+import {getPositionType} from '../../utils/getStockPrice';
 
 interface DomOptions {
   name: string,
@@ -59,8 +60,14 @@ export class BlockTable extends AppComponent {
     source.forEach(portfolio => {
       let positions: Array<Position> = []
       this.state.marketList.forEach(item => {
+        const positionType = getPositionType(item)
         if (portfolio.markets[item] && portfolio.markets[item].length) {
-          const pp = new Portfolio(portfolio.id, portfolio.name, portfolio.depo, Position.createPosition(portfolio.markets[item], this.state, item === 'TQBR' ? 'stock' : 'bonds', item), portfolio.comm)
+          const pp = new Portfolio(
+              portfolio.id,
+              portfolio.name,
+              portfolio.depo,
+              Position.createPosition(portfolio.markets[item], this.state, positionType, item), portfolio.comm
+          )
           positions = positions.concat(pp.positions)
         }
       })

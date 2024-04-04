@@ -53,7 +53,7 @@ export class Store {
       this.currentPortfolio = []
       this.currentPortfolio.push(this.getters.getPortfolioById(id))
     },
-    addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market = this.defaultCategory) => {
+    addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market: string) => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
       const ispos = pfolio.markets[market].filter(item => item.ticker === newPostion.ticker)
       if (clone || !ispos.length) {
@@ -163,7 +163,7 @@ export class Store {
     changeBroker: (id: string) => {
       this.mutations.changeBroker(id)
     },
-    addPosition: (id: string, pos: IPosition, clone?: boolean, market = this.defaultCategory) => {
+    addPosition: (id: string, pos: IPosition, clone: boolean, market: string) => {
       this.mutations.addPosition(id, pos, clone, market)
     },
 
