@@ -10,6 +10,7 @@ import {Emitter} from '../Emitter';
 import changeClass from '../../utils/toggleClass';
 import {Store} from '../../store';
 import {CreateForm} from '../form/CreateForm';
+import {getBrokerList} from '../AppUtils';
 
 interface DomOptions {
   name: string,
@@ -36,16 +37,7 @@ export class Header extends AppComponent {
   static id = 'header'
 
   init(): void {
-    const all = this.state.getters.getAllPortfolio();
-    const brokerLIst: Array<IListItem> = []
-
-    all.forEach(broker => {
-      brokerLIst.push({
-        id: String(broker.id),
-        text: broker.name,
-        type: 'event'
-      })
-    })
+    const brokerLIst = getBrokerList(this.state)
 
     this.dropdownPortfolio = new Dropdown('#dropdownButton', 'Select Portfolio', '#dropdownMenu', [...brokerLIst], this.changeBroker.bind(this))
 
@@ -55,8 +47,8 @@ export class Header extends AppComponent {
     document.querySelector('[data-click="showAllBrokers"]').addEventListener('click', e => {
       this.$emit('table:showAllBrokers')
     })
-    document.querySelector('[data-modal="newPosition"]').addEventListener('click', e => {
-      const create = new CreateForm('#modalContent', this.state, this.addPosition.bind(this))
+    document.querySelector('[data-modal="newPosition"]').addEventListener('click', async (e) => {
+      const create = await CreateForm.create('#modalContent', this.state, this.addPosition.bind(this))
       this.$emit('modal:renderModal', {
         title: 'Add new position',
         content: create.$el.innerHTML
@@ -74,7 +66,7 @@ export class Header extends AppComponent {
     this.$on('header:changeTheme', () => {
       this.changeTheme()
     })
-    this.$on('header:moexUpdate', async (id?: number) => {
+    this.$on('header:moexUpdate', async (id?: string) => {
     /*   this.state.moex = await this.state.actions.initMoex() */
       this.$emit('table:changeBroker', id)
       this.dropdownPortfolio.setValue(this.state.getters.getPortfolioById(id).name)
@@ -84,7 +76,7 @@ export class Header extends AppComponent {
     })
   }
 
-  addPosition(brokerId: number, position: IPosition, isclone: boolean) {
+  addPosition(brokerId: string, position: IPosition, isclone: boolean) {
     this.state.actions.addPosition(brokerId, position, isclone)
     this.$emit('header:moexUpdate', brokerId)
     this.$emit('modal:closeModal')

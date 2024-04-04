@@ -10,6 +10,7 @@ interface IState {
 export class Store {
   constructor() {
     this.portfolio = state.portfolio
+    this.defaultPortfolio = this.portfolio[0].id
     this.currency = []
     this.moex = {
       TQBR: [],
@@ -35,6 +36,7 @@ export class Store {
   }
 
   public portfolio: Array<IPortfolio>
+  public defaultPortfolio: string
   public currentPortfolio: Array<IPortfolio>
   public moex: IMarketsApi
   public currency: Array<ICurrency>
@@ -45,11 +47,11 @@ export class Store {
   public marketList: Array<string>
 
   private mutations = {
-    changeBroker: (id: number) => {
+    changeBroker: (id: string) => {
       this.currentPortfolio = []
       this.currentPortfolio.push(this.getters.getPortfolioById(id))
     },
-    addPosition: (pfolioId: number, newPostion: IPosition, clone: boolean, market= 'TQBR') => {
+    addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market= 'TQBR') => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
       const ispos = pfolio.markets[market].filter(item => item.ticker === newPostion.ticker)
       if (clone || !ispos.length) {
@@ -66,9 +68,12 @@ export class Store {
     getAllPortfolio: () => this.portfolio,
     getPortfolio: (name: string) => this.portfolio.filter(item => item.name === name)[0],
     getPortfolioId: (name: string) => this.portfolio.filter(item => item.name === name)[0].id,
-    getPortfolioById: (id: number) => this.portfolio.filter(item => item.id === id)[0],
+    getPortfolioById: (id: string) => this.portfolio.filter(item => item.id === id)[0],
     getPortfolioComm: (name: string) => this.portfolio.filter(item => item.name === name)[0].comm,
+    getPortfolioSumm: (id: string) => this.portfolio.filter(item => item.id === id)[0].defaultSumm,
     getPortfolioDepo: (name: string) => this.portfolio.filter(item => item.name === name)[0].depo,
+    getCategory: (id: string) => this.portfolio.filter(item => item.id === id)[0].defaultCategory,
+
     getPortfolioPositions: (name: string, market = 'TQBR') => this.portfolio.filter(item => item.name === name)[0].markets[market],
     getAllTickers: (market: string) => {
       const tickers: Array<string> = []
@@ -130,7 +135,7 @@ export class Store {
         }
       }))
 
-      return this.moex
+      return {...this.moex}
 
       /*  const tickers = this.getters.getAllTickers()
       const moex = (await moexTickerLast(tickers))
@@ -142,6 +147,7 @@ export class Store {
 
     initSearch: async (category: string) => {
       this.moexSearch = await moexTickerLast(category, [])
+      return {...this.moexSearch}
     },
 
     initCurrency: async () => {
@@ -150,12 +156,12 @@ export class Store {
         id: 'usd',
         value: usd
       })
-      return this.currency
+      return [...this.currency]
     },
-    changeBroker: (id: number) => {
+    changeBroker: (id: string) => {
       this.mutations.changeBroker(id)
     },
-    addPosition: (id: number, pos: IPosition, clone?: boolean) => {
+    addPosition: (id: string, pos: IPosition, clone?: boolean) => {
       this.mutations.addPosition(id, pos, clone)
     },
 
@@ -215,10 +221,12 @@ const state: IState = {
       ]
     }, */
     {
-      id: 3,
+      id: '3',
       name: 'Finam',
-      depo: 50000,
+      depo: 500000,
       comm: 0.065,
+      defaultSumm: 50000,
+      defaultCategory: 'TQBR',
       markets: {
         TQBR: [
           {

@@ -2,13 +2,13 @@ import closeByClickOutside from '../../utils/clickOutside'
 import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
+import {getBrokerList} from '../AppUtils'
 
 export class CreateForm {
   constructor(selector: string, public state: Store, public onSubmit?: (id: number, position: IPosition, isclone: boolean,) => void) {
     this.$el = document.querySelector(selector)
     this.isvalid = false
-    console.log(state)
-  /*   this.initForm() */
+    this.category = this.state.getters.getCategory(this.state.defaultPortfolio)
   }
 
   public $el: HTMLElement
@@ -17,31 +17,38 @@ export class CreateForm {
   public isvalid: boolean
   public currentTicker: string
   public category: string
+  public mDataList: IMarketsList
 
-  initBrokers() {
-    const all = this.state.getters.getAllPortfolio();
-    const brokerLIst: Array<IListItem> = []
+  static async create(selector: string, state: Store, onSubmit?: (id: number, position: IPosition, isclone: boolean,) => void) {
+    const instance = new CreateForm(selector, state, onSubmit)
+    await instance.initMarketData()
+    return instance
+  }
 
-    all.forEach(broker => {
-      brokerLIst.push({
-        id: String(broker.id),
-        text: broker.name,
-        type: 'event'
-      })
-    })
+  async initMarketData() {
+    await this.state.actions.initSearch(this.category)
+    console.log(this.state.getters.getMoexSearch())
+  }
 
-    let selectBroker = ''
-    brokerLIst.forEach(broker => {
-      selectBroker += `<option value="${broker.id}">${broker.text}</option>`
-    })
+  initForm() {
+    const $form = document.createElement('form')
+    $form.setAttribute('id', 'createForm')
+    this.$el.insertAdjacentElement('beforeend', $form)
 
-    return selectBroker
+    $form.insertAdjacentHTML('afterbegin', this.init(this.initBrokers()))
+    this.category = (document.querySelector('#portfolio') as HTMLSelectElement).value
+
+    const $ticker = this.$el.querySelector('[name="name"]') as HTMLInputElement
+
+    $ticker.focus()
+    this.initFormListeners()
+    this.initTickerInput($ticker)
+    this.initFormSubmit()
   }
 
   async searchItem(key: string) {
     let res: Array<Array<string>> = []
     res = this.state.getters.getMoexByName(key)
-
     return res
   }
 
@@ -53,11 +60,12 @@ export class CreateForm {
     const $stop = document.querySelector('input[name="stop"]') as HTMLInputElement
     const $count = document.querySelector('input[name="count"]') as HTMLInputElement
     const $result = document.querySelector('[data-result="total"]') as HTMLDivElement
+    const broker = (document.querySelector('#portfolio') as HTMLSelectElement).value
 
     if (isload) {
       price = Number(this.state.getters.getMoexPrice(ticker)[12]);
       stop = Number(price) * 0.98;
-      count = Math.round(50000/Number(price))
+      count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
     } else {
       price = Number($price.value)
       stop = Number($stop.value)
@@ -71,18 +79,7 @@ export class CreateForm {
     $result.textContent = numberWithSpaces(String((Number(price) * count).toFixed(2)));
   }
 
-  initForm() {
-    const $form = document.createElement('form')
-    $form.setAttribute('id', 'createForm')
-    this.$el.insertAdjacentElement('beforeend', $form)
-
-    $form.insertAdjacentHTML('afterbegin', this.init(this.initBrokers()))
-    this.category = 'stock'
-
-    const $ticker = this.$el.querySelector('[name="name"]') as HTMLInputElement
-
-    $ticker.focus()
-
+  initFormListeners() {
     this.$el.querySelectorAll('input[data-calc="totalprice"]').forEach(item => {
       item.addEventListener('input', (e) => {
         this.calc(this.currentTicker, false)
@@ -90,18 +87,18 @@ export class CreateForm {
     })
     this.$el.querySelector('[name="category"]').addEventListener('change', async (e) => {
       this.category = (e.target as HTMLSelectElement).value
-      await this.state.actions.initSearch(this.category)
-      console.log(this.state.getters.getMoexSearch())
-      console.log(this.state.moexSecurities)
+      await this.initMarketData()
     })
+  }
 
+  initTickerInput($ticker: HTMLInputElement) {
     $ticker.addEventListener('input', async (e) => {
       const $input = e.target
       const val = (e.target as HTMLInputElement).value
       const dropdown: HTMLElement = this.$el.querySelector('[data-dropdown="name"]')
       dropdown.innerHTML = ''
 
-      if (val.length > 2) {
+      if (val.length > 2 && this.state.getters.getMoexSearch()) {
         this.foundList = await this.searchItem(val)
         dropdown.classList.remove('hidden')
         closeByClickOutside('[data-dropdown="name"]', '[name="name"]')
@@ -141,13 +138,15 @@ export class CreateForm {
         dropdown.classList.add('hidden')
       }
     })
+  }
 
+  initFormSubmit() {
     this.$el.querySelector('form').addEventListener('submit', async (e) => {
       e.preventDefault()
       const formdata = new FormData(this.$el.querySelector('form'))
 
       let result = null
-      if (this.category === 'stocks') {
+      if (this.category === 'TQBR') {
         result = {
           ticker: String(formdata.get('name')),
           type: 'stock',
@@ -157,7 +156,16 @@ export class CreateForm {
           myStop: Number(formdata.get('stop')),
         }
       }
-      if (this.category === 'bonds') {
+      if (this.category === 'TQCB') {
+        result = {
+          ticker: String(formdata.get('name')),
+          type: 'bonds',
+          market: 'TQOB',
+          buyPrice: Number(formdata.get('price')),
+          count: Number(formdata.get('count')),
+        }
+      }
+      if (this.category === 'TQOB') {
         result = {
           ticker: String(formdata.get('name')),
           type: 'bonds',
@@ -183,7 +191,20 @@ export class CreateForm {
             Boolean(formdata.get('isclone'))
         )
       }
+    });
+  }
+  initBrokers() {
+    const brokerLIst = getBrokerList(this.state)
+
+    let selectBroker = ''
+    brokerLIst.forEach((broker, index) => {
+      let attr = ''
+      if (index === 0) {
+        attr += 'selected="selected"'
+      }
+      selectBroker += `<option value="${broker.id}" ${attr}>${broker.text}</option>`
     })
+    return selectBroker
   }
   init(selectBroker: string) {
     return `
@@ -197,7 +218,7 @@ export class CreateForm {
                     <div class="sm:col-span-2 mb-4">
                         <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
                         <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          <option value="TQBR">Stocks</option>
+                          <option value="TQBR" selected="selected">Stocks</option>
                           <option value="TQCB">Corporative Bonds</option>
                           <option value="TQOB">Bonds</option>
                           <option value="cash">Cash</option>

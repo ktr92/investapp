@@ -41,7 +41,7 @@ export class BlockTable extends AppComponent {
     const all = this.state.getters.getAllPortfolio();
     this.createTable(all)
 
-    this.$on('table:changeBroker', (id: number) => {
+    this.$on('table:changeBroker', (id: string) => {
       this.changeBroker(id)
     })
     this.$on('table:showAllBrokers', () => {
@@ -105,7 +105,7 @@ export class BlockTable extends AppComponent {
     } */
   }
 
-  changeBroker(id?: number) {
+  changeBroker(id?: string) {
     document.querySelectorAll('.renderedTable').forEach(item => {
       item.innerHTML = ''
     })

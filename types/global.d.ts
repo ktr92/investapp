@@ -41,11 +41,13 @@ declare interface IPosition {
 }
 
 declare interface IPortfolio {
-  id: number,
+  id: string,
   name: string,
   depo: number,
   comm: number,
   markets: IMarkets,
+  defaultSumm?: number,
+  defaultCategory?: string,
   bonds?: Array<IPosition>,
 }
 
