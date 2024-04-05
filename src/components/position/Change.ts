@@ -12,13 +12,22 @@ export class Change extends ViewComponent implements IObjIndexable {
   [index: string]: unknown
 
   render() {
+    console.log(this.percent)
+    let textclass = ''
+    if (this.percent > 0) {
+      textclass = 'text-green-500'
+    } else if (this.percent < 0) {
+      textclass = 'text-red-500'
+    } else {
+      textclass = 'text-slate-400'
+    }
     return `
       <div class="">
           <span class="w-auto block mr-3">
-          <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white ${this.value > 0 ? 'text-green-500' : 'text-red-500'}">${numberWithSpaces(this.value) }</span>
+          <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white ${textclass}">${numberWithSpaces(this.value) }</span>
           </span>
           <span>
-            <span class="block  bg-primary-100 text-xs font-medium rounded dark:bg-primary-900 dark:text-primary-300 ${this.percent > 0 ? 'text-green-500' : 'text-red-500'}">${numberWithSpaces(this.percent)}%</span>
+            <span class="block  bg-primary-100 text-xs font-medium rounded dark:bg-primary-900 dark:text-primary-300 ${textclass}">${numberWithSpaces(this.percent)}%</span>
             </span>  
       </div>
     `

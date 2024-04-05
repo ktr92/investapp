@@ -1,5 +1,5 @@
 import {getUSD} from '../utils/currecyValue'
-import {moexTickerLast} from '../utils/getStockPrice'
+import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
 
 interface IState {
   moex: Array<IMoexApi>,
@@ -56,6 +56,7 @@ export class Store {
     addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market: string) => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
       const ispos = pfolio.markets[market].filter(item => item.ticker === newPostion.ticker)
+
       if (clone || !ispos.length) {
         pfolio.markets[market].push(newPostion)
       } else {
@@ -103,14 +104,7 @@ export class Store {
       const substr = str.toLocaleLowerCase()
 
       const list = this.moexSearch.moexSecurities.filter(item => {
-        let searchField = ''
-        if (typeof item[20] === 'string') {
-          searchField = item[20]
-        } else if (typeof item[28] === 'string') {
-          searchField = item[28]
-        } else if (typeof item[29] === 'string') {
-          searchField = item[29]
-        }
+        const searchField = getSearchField(item)
 
         return item[0].toLocaleLowerCase().includes(substr) || item[2].toLocaleLowerCase().includes(substr) || searchField.toLocaleLowerCase().includes(substr)
       })

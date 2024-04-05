@@ -6,10 +6,9 @@ export class Bonds extends ViewComponent implements IObjIndexable {
   constructor(public ticker: string, nominal: number, currency: string, options: Store, market = 'TQCB') {
     super(options)
     const moex: IMoexApi = this.options.getters.getMoex()[market].filter(item => item.ticker === ticker)[0]
-    console.log( moex)
     this.name = moex.name
 
-    this.currentPrice = moex.price * nominal / 100
+    this.currentPrice = moex.price * moex.nominal / 100
     this.dayChange = moex.open - moex.price
     if (market === 'TQOB') {
       this.logo = `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${options.moexSecurities[market].filter((item) => item[0] === ticker)[0][28]}.png`

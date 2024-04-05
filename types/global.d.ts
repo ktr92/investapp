@@ -55,7 +55,8 @@ declare interface IMoexApi {
   name: string,
   ticker: string,
   price: number,
-  open: number
+  open: number,
+  nominal: number
 }
 
 declare interface IListItem {

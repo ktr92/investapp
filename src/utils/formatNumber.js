@@ -4,6 +4,10 @@ export default function numberWithSpaces(x) {
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     return parts.join('.');
   } else {
-    return ''
+    if (x===0) {
+      return '0'
+    } else {
+      return ''
+    }
   }
 }

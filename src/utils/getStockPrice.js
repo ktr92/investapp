@@ -92,34 +92,53 @@ export function getPrice(ticker, category, state) {
   return price
 }
 
-export function initPositionData(category, formdata) {
+export function initPositionData(category, formdata, moexSearch) {
   let result = null
+
+  let price = Number(formdata.get('price'))
+  let nominal = 1
+  let buyCurrency = 1
+  let currency = ''
+
   if (category === 'TQBR') {
     result = {
       ticker: String(formdata.get('name')),
       type: 'stock',
       market: 'TQBR',
-      buyPrice: Number(formdata.get('price')),
+      buyPrice: price,
       count: Number(formdata.get('count')),
       myStop: Number(formdata.get('stop')),
     }
   }
   if (category === 'TQCB') {
+    const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
+    buyCurrency = Number(formdata.get('currencyValue'))
+    nominal = moexData[38]
+    currency = moexData[25]
+    price = Number(formdata.get('price'))
     result = {
       ticker: String(formdata.get('name')),
       type: 'bonds',
       market: 'TQCB',
-      buyPrice: Number(formdata.get('price')),
+      buyPrice: price,
       count: Number(formdata.get('count')),
+      buyCurrency: buyCurrency,
+      currency: currency,
+      nominal: nominal
     }
   }
   if (category === 'TQOB') {
+    const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
+    nominal = moexData[38]
+    price = Number(formdata.get('price'))
     result = {
       ticker: String(formdata.get('name')),
       type: 'bonds',
       market: 'TQOB',
-      buyPrice: Number(formdata.get('price')),
+      buyPrice: price,
       count: Number(formdata.get('count')),
+      nominal: nominal
+
     }
   }
   if (category === 'cash') {
@@ -133,6 +152,21 @@ export function initPositionData(category, formdata) {
   }
 
   return result
+}
+
+export function getSearchField(item) {
+  let searchField = ''
+  if (typeof item[20] === 'string') {
+    searchField = item[20]
+  } else if (typeof item[28] === 'string' && typeof item[29] === 'string') {
+    searchField = item[28] + item[29]
+  } else if (typeof item[28] === 'string') {
+    searchField = item[28]
+  } else if (typeof item[29] === 'string') {
+    searchField = item[29]
+  }
+
+  return searchField
 }
 
 export function getPositionType(item) {
