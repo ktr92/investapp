@@ -127,6 +127,13 @@ export class Store {
       return list
     },
     getCurrency: (id: string) => this.currency.filter(item => item.id === id)[0].value,
+    getCurrencyValue: (ticker: string, category: string) => {
+      if (category === 'TQBR') {
+        return this.getters.getCurrency(this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][23])
+      } else {
+        return this.getters.getCurrency(this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][25])
+      }
+    },
     getCurrencyByTicker: (ticker: string, category: string) => {
       if (category === 'TQBR') {
         return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][23]
@@ -134,7 +141,15 @@ export class Store {
         return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][25]
       }
     },
+    getNominalByTicker: (ticker: string, category: string) => {
+      if (category !== 'TQBR') {
+        return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][38]
+      } else {
+        return 1
+      }
+    },
     getMoexInfo: (ticker: string) => this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0],
+    getInfoByTicker: (ticker: string) => this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0],
     getMoexSearch: () => this.moexSearch,
     getMoex: () => this.moex
   }

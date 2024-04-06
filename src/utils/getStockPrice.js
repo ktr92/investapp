@@ -60,12 +60,13 @@ function moexTransformer(market, security, indexes) {
 }
 function moexBondsTransformer(market, security, indexes) {
   const result = []
+  console.log(market)
   indexes.forEach(index => {
     result.push(
         {
           name: security[index][2],
           ticker: market[index][0],
-          price: market[index][3],
+          price: market[index][11],
           open: security[index][3],
           nominal: security[index][38],
           currency: security[index][25]

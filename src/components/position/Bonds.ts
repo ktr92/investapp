@@ -2,7 +2,7 @@ import {Store} from '../../store'
 import {ViewComponent} from '../table/ViewComponent'
 
 export class Bonds extends ViewComponent implements IObjIndexable {
-  constructor(public ticker: string, nominal: number, currency: string, options: Store, market = 'TQCB') {
+  constructor(public ticker: string, nominal: number, currency: string, options: Store, market: string) {
     super(options)
     const moex: IMoexApi = this.options.getters.getMoex()[market].filter(item => item.ticker === ticker)[0]
     this.name = moex.name

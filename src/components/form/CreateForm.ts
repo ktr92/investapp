@@ -62,6 +62,55 @@ export class CreateForm {
     }
   }
 
+  showInfo() {
+    const info = this.state.getters.getInfoByTicker(this.currentTicker)
+    if (this.category === 'TQRB') {
+      document.querySelector('label[for="name"]').textContent = info[9]
+    }
+    if (this.category === 'TQCB') {
+      document.querySelector('label[for="name"]').textContent = info[19]
+      document.querySelector('#bonds_dohod').textContent = 'Доходность к погашению: ' + info[4] + ' %'
+      document.querySelector('#bonds_nkd').textContent = 'НКД: ' + info[7]
+      document.querySelector('#bonds_currency').textContent = 'Валюта: ' + info[25]
+      document.querySelector('#bonds_nextcoupon').textContent = 'НКД: ' + info[5]
+      document.querySelector('#bonds_coupon').textContent = 'Купон: ' + info[35] + ' %'
+    }
+    if (this.category === 'TQOB') {
+      document.querySelector('label[for="name"]').textContent = info[19]
+      document.querySelector('#bonds_dohod').textContent = 'Доходность к погашению: ' + info[4] + ' %'
+      document.querySelector('#bonds_nkd').textContent = 'НКД: ' + info[7]
+      document.querySelector('#bonds_currency').textContent = 'Валюта: ' + info[25]
+      document.querySelector('#bonds_nextcoupon').textContent = 'НКД: ' + info[5]
+      document.querySelector('#bonds_coupon').textContent = 'Купон: ' + info[35] + ' %'
+    }
+  }
+
+  changeFields() {
+    const $ticker: HTMLInputElement = document.querySelector('[name="name"]')
+    $ticker.value = ''
+    this.calc('', false)
+    if (this.category === 'TQCB' || this.category === 'TQOB') {
+      document.querySelector('[data-input="stopValue"]').classList.add('hidden')
+    } else {
+      document.querySelector('[data-input="stopValue"]').classList.remove('hidden')
+    }
+    $ticker.focus()
+  }
+
+  calcCurrency() {
+    const $currency: HTMLElement = document.querySelector('[data-input="currencyValue"]')
+    const $currencyInput: HTMLInputElement = $currency.querySelector('input')
+
+    const isCurrency = this.state.getters.getCurrencyByTicker(this.currentTicker, this.category)
+    if (isCurrency && isCurrency !== 'SUR') {
+      $currency.classList.remove('hidden')
+      $currencyInput.value = String(this.state.getters.getCurrency(isCurrency))
+    } else {
+      $currency.classList.add('hidden')
+      $currencyInput.value = '1'
+    }
+  }
+
   calc(ticker: string, isload: boolean) {
     let price = 0;
     let stop = 0;
@@ -72,11 +121,24 @@ export class CreateForm {
     const $result = document.querySelector('[data-result="total"]') as HTMLDivElement
     const broker = (document.querySelector('#portfolio') as HTMLSelectElement).value
 
+    if (ticker === '') {
+      $price.value = ''
+      $stop.value = ''
+      $count.value = ''
+      $result.textContent = '0'
+
+      return
+    }
+
     if (isload) {
       price = getPrice(ticker, this.category, this.state);
       stop = Number(price) * 0.98;
       if (price) {
-        count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
+        if (this.state.getters.getCurrencyByTicker(this.currentTicker, this.category) === 'SUR') {
+          count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
+        } else {
+          count = 1
+        }
       } else {
         count = 1
       }
@@ -90,7 +152,9 @@ export class CreateForm {
     $count.value = String(count);
     $stop.value = String(stop.toFixed(2));
 
-    $result.textContent = numberWithSpaces(String((Number(price) * count).toFixed(2)));
+    const nominal = this.state.getters.getNominalByTicker(this.currentTicker, this.category)
+    const currency = this.state.getters.getCurrencyValue(this.currentTicker, this.category)
+    $result.textContent = numberWithSpaces(String((Number(price) * Number(nominal) / 100 * Number(currency) * count).toFixed(2)));
   }
 
   initFormListeners() {
@@ -103,6 +167,7 @@ export class CreateForm {
       this.category = (e.target as HTMLSelectElement).value
       this.changeForm(true)
       await this.initMarketData()
+      this.changeFields()
 
       this.changeForm(false)
     })
@@ -142,18 +207,8 @@ export class CreateForm {
                 dropdown.classList.add('hidden')
                 this.currentTicker = e.target.dataset.ticker
                 this.calc(this.currentTicker, true)
-
-                const $currency: HTMLElement = document.querySelector('[data-input="currencyValue"]')
-                const $currencyInput: HTMLInputElement = $currency.querySelector('input')
-
-                const isCurrency = this.state.getters.getCurrencyByTicker(this.currentTicker, this.category)
-                if (isCurrency && isCurrency !== 'SUR') {
-                  $currency.classList.remove('hidden')
-                  $currencyInput.value = String(this.state.getters.getCurrency(isCurrency))
-                } else {
-                  $currency.classList.add('hidden')
-                  $currencyInput.value = '1'
-                }
+                this.calcCurrency()
+                this.showInfo()
               }
             }
           })
@@ -201,6 +256,7 @@ export class CreateForm {
     })
     return selectBroker
   }
+
   init(selectBroker: string) {
     return `
           <div id="modalLoader" class="hidden loader absolute w-full h-full flex items-center justify-center left-0 right-0 top-0 bottom-0 z-40 bg-[rgba(233,233,233,0.2)]">
@@ -228,8 +284,15 @@ export class CreateForm {
                         </select>
                     </div>
                   <div class="sm:col-span-2  mb-4 relative">
+                     
                       <label for="name"class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                      <input autocomplete="off" value="" type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticker, name" >
+                      <div id="bonds_dohod"></div>
+                      <div id="bonds_nkd"></div>
+                      <div id="bonds_finish"></div>
+                      <div id="bonds_currency"></div>
+                      <div id="bonds_coupon"></div>
+                      <div id="bonds_nextcoupon"></div>
+                      <input autocomplete="off" value="" type="text" name="name" id="name" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticker, name" >
 
                       <div  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute hidden" data-dropdown='name'>
                           
@@ -248,11 +311,11 @@ export class CreateForm {
                       <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
                       <input data-calc="totalprice" value="" type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Price" >
                   </div>
-                  <div class="w-full  mb-4">
-                      <label for="count"class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Count</label>
+                  <div class="w-full  mb-4" data-input="count">
+                      <label for="count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Count</label>
                       <input data-calc="totalprice" value="50"  type="text" name="count" id="count" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Count" >
                   </div>
-                  <div class="w-full  mb-4">
+                  <div class="w-full  mb-4" data-input="stopValue">
                       <label for="stop" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stop-Loss</label>
                       <input type="text" name="stop" id="stop" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Stop" >
                   </div>
@@ -261,12 +324,12 @@ export class CreateForm {
                     <input type="text" name="currencyValue" id="currencyValue" value="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Currency value at buy moment" >
                 </div>
                   
-                  <div class="sm:col-span-2 mb-4">
+                  <div class="sm:col-span-2 mb-4" >
                       <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                       <textarea id="description" rows="4" class="block p-1 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Notes"></textarea>
                   </div>
               </div>
-              <div class="flex">
+              <div class="flex items-center">
                 <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Confirm
                 </button>
