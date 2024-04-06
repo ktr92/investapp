@@ -1,4 +1,4 @@
-import {getUSD} from '../utils/currecyValue'
+import {fetchCurrency} from '../utils/currecyValue'
 import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
 
 interface IState {
@@ -13,6 +13,20 @@ export class Store {
     this.defaultPortfolio = this.portfolio[0].id
     this.defaultCategory = this.portfolio[0].defaultCategory
     this.currency = []
+    this.currencyList = [
+      {
+        id: 'USD',
+        value: 1
+      },
+      {
+        id: 'EUR',
+        value: 1
+      },
+      {
+        id: 'SUR',
+        value: 1
+      },
+    ]
     this.moex = {
       TQBR: [],
       TQCB: [],
@@ -47,6 +61,7 @@ export class Store {
   public moexMarketData: IMarketsList
   public moexSearch: IMarketsList
   public marketList: Array<string>
+  public currencyList: Array<ICurrency>
 
   private mutations = {
     changeBroker: (id: string) => {
@@ -112,6 +127,13 @@ export class Store {
       return list
     },
     getCurrency: (id: string) => this.currency.filter(item => item.id === id)[0].value,
+    getCurrencyByTicker: (ticker: string, category: string) => {
+      if (category === 'TQBR') {
+        return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][23]
+      } else {
+        return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][25]
+      }
+    },
     getMoexInfo: (ticker: string) => this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0],
     getMoexSearch: () => this.moexSearch,
     getMoex: () => this.moex
@@ -147,11 +169,7 @@ export class Store {
     },
 
     initCurrency: async () => {
-      const usd = await getUSD()
-      this.currency.push({
-        id: 'usd',
-        value: usd
-      })
+      this.currency = await fetchCurrency()
       return [...this.currency]
     },
     changeBroker: (id: string) => {

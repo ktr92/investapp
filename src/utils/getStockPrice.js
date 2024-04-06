@@ -78,7 +78,6 @@ function moexBondsTransformer(market, security, indexes) {
 
 export function getPrice(ticker, category, state) {
   let price = 0
-
   if (category === 'TQBR') {
     price = Number(state.getters.getMoexInfo(ticker)[12])
   }

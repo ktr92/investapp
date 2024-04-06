@@ -75,7 +75,11 @@ export class CreateForm {
     if (isload) {
       price = getPrice(ticker, this.category, this.state);
       stop = Number(price) * 0.98;
-      count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
+      if (price) {
+        count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
+      } else {
+        count = 1
+      }
     } else {
       price = Number($price.value)
       stop = Number($stop.value)
@@ -99,15 +103,7 @@ export class CreateForm {
       this.category = (e.target as HTMLSelectElement).value
       this.changeForm(true)
       await this.initMarketData()
-      const $currency: HTMLElement = document.querySelector('[data-input="currencyValue"]')
-      const $currencyInput: HTMLInputElement = $currency.querySelector('input')
-      if (this.category === 'TQCB') {
-        $currency.classList.remove('hidden')
-        $currencyInput.value = String(this.state.getters.getCurrency('usd'))
-      } else {
-        $currency.classList.add('hidden')
-        $currencyInput.value = '1'
-      }
+
       this.changeForm(false)
     })
   }
@@ -146,6 +142,18 @@ export class CreateForm {
                 dropdown.classList.add('hidden')
                 this.currentTicker = e.target.dataset.ticker
                 this.calc(this.currentTicker, true)
+
+                const $currency: HTMLElement = document.querySelector('[data-input="currencyValue"]')
+                const $currencyInput: HTMLInputElement = $currency.querySelector('input')
+
+                const isCurrency = this.state.getters.getCurrencyByTicker(this.currentTicker, this.category)
+                if (isCurrency && isCurrency !== 'SUR') {
+                  $currency.classList.remove('hidden')
+                  $currencyInput.value = String(this.state.getters.getCurrency(isCurrency))
+                } else {
+                  $currency.classList.add('hidden')
+                  $currencyInput.value = '1'
+                }
               }
             }
           })

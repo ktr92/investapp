@@ -1,4 +1,3 @@
-import {getUSD} from '../../utils/currecyValue'
 import {Store} from '../../store'
 import {ViewComponent} from '../table/ViewComponent'
 
@@ -23,8 +22,9 @@ export class Bonds extends ViewComponent implements IObjIndexable {
 
   async initData(currency: string, moex: IMoexApi, nominal: number) {
     if (currency && currency.length) {
-      if (currency === 'USD') {
-        this.currentPrice = this.currentPrice * this.options.getters.getCurrency('usd')
+      const curVal = this.options.getters.getCurrency(currency)
+      if (curVal) {
+        this.currentPrice = this.currentPrice * this.options.getters.getCurrency(currency)
       }
     }
   }

@@ -12,7 +12,6 @@ export class Change extends ViewComponent implements IObjIndexable {
   [index: string]: unknown
 
   render() {
-    console.log(this.percent)
     let textclass = ''
     if (this.percent > 0) {
       textclass = 'text-green-500'
