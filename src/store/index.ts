@@ -126,7 +126,15 @@ export class Store {
 
       return list
     },
-    getCurrency: (id: string) => this.currency.filter(item => item.id === id)[0].value,
+    getCurrency: (id: string) => {
+      const isExist = this.currency.filter(item => item.id === id)
+
+      if (isExist && isExist[0]) {
+        return isExist[0].value
+      } else {
+        return 1
+      }
+    },
     getCurrencyValue: (ticker: string, category: string) => {
       if (category === 'TQBR') {
         return this.getters.getCurrency(this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][23])
@@ -142,14 +150,35 @@ export class Store {
       }
     },
     getNominalByTicker: (ticker: string, category: string) => {
-      if (category !== 'TQBR') {
-        return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][38]
+      if (ticker && category) {
+        if (category !== 'TQBR') {
+          return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][38]
+        } else {
+          return 1
+        }
       } else {
         return 1
       }
     },
     getMoexInfo: (ticker: string) => this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0],
     getInfoByTicker: (ticker: string) => this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0],
+    getNameByTicker: (ticker: string, category: string) => {
+      const item = this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0]
+      if (item && category) {
+        if (category === 'TQBR') {
+          return item[9]
+        }
+        if (category === 'TQCB') {
+          return item [19]
+        }
+        if (category === 'TQOB') {
+          return item[19]
+        }
+        return 'Unknown'
+      } else {
+        return 'Unknown'
+      }
+    },
     getMoexSearch: () => this.moexSearch,
     getMoex: () => this.moex
   }
@@ -200,55 +229,60 @@ export class Store {
 const state: IState = {
   moex: [],
   portfolio: [
-  /*   {
-      id: 1,
+    {
+      id: '1',
       name: 'SBER',
       depo: 450000,
       comm: 0.06,
       markets: {
-        TQCB: [
+        TQBR: [
           {
             ticker: 'ASTR',
             type: 'stock',
-            market: 'TQCB',
+            market: 'TQBR',
             buyPrice: 554,
             count: 100,
             myStop: 500,
           },
         ],
+        TQCB: [
+        ],
         TQOB: []
       }
     },
     {
-      id: 2,
+      id: '2',
       name: 'IIS',
       depo: 200000,
       comm: 0.06,
-      positions: [
-        {
-          ticker: 'LKOH',
-          type: 'stock',
-          market: 'TQCB',
+      markets: {
+        TQBR: [
+          {
+            ticker: 'LKOH',
+            type: 'stock',
+            market: 'TQCB',
 
-          buyPrice: 6990,
-          count: 22,
-          myStop: 7000,
-        },
-        {
-          ticker: 'SVCB',
-          type: 'stock',
-          market: 'TQCB',
+            buyPrice: 6990,
+            count: 22,
+            myStop: 7000,
+          },
+          {
+            ticker: 'SVCB',
+            type: 'stock',
+            market: 'TQCB',
 
-          buyPrice: 16,
-          count: 3000,
-          myStop: 0,
+            buyPrice: 16,
+            count: 3000,
+            myStop: 0,
 
-        }
-      ],
-      bonds: [
+          }
+        ],
+        TQCB: [
+        ],
+        TQOB: []
+      }
 
-      ]
-    }, */
+    },
     {
       id: '3',
       name: 'Finam',

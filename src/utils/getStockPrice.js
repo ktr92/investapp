@@ -60,7 +60,6 @@ function moexTransformer(market, security, indexes) {
 }
 function moexBondsTransformer(market, security, indexes) {
   const result = []
-  console.log(market)
   indexes.forEach(index => {
     result.push(
         {
@@ -90,6 +89,53 @@ export function getPrice(ticker, category, state) {
   }
 
   return price
+}
+
+export function moexDataInit(state, category, ticker) {
+  const marketData = state.getters.getMoexSearch().moexMarketData.filter(item => item[0] === ticker)[0]
+  const securityData = state.getters.getMoexSearch().moexSecurities.filter(item => item[0] === ticker)[0]
+  if (marketData && securityData) {
+    let result = null
+    if (marketData && securityData) {
+      if (category === 'TQBR') {
+        result = {
+          ticker: marketData[0],
+          name: securityData[2],
+          fullname: securityData[9],
+          engname: securityData[20],
+          price: marketData[2] ? marketData[2] : marketData[36],
+          startPrice: marketData[9],
+          currency: securityData[16],
+          nominal: 1
+        }
+      }
+      if (category === 'TQCB') {
+        result = {
+          ticker: marketData[0],
+          name: securityData[2],
+          fullname: securityData[19],
+          engname: securityData[29],
+          price: marketData[3],
+          startPrice: marketData[8],
+          currency: securityData[25],
+          nominal: securityData[38],
+        }
+      }
+      if (category === 'TQOB') {
+        result = {
+          ticker: marketData[0],
+          name: securityData[2],
+          fullname: securityData[19],
+          engname: securityData[29],
+          price: marketData[3],
+          startPrice: marketData[8],
+          currency: securityData[25],
+          nominal: securityData[38],
+        }
+      }
+    }
+    return result
+  }
 }
 
 export function initPositionData(category, formdata, moexSearch) {

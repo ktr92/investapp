@@ -51,6 +51,17 @@ declare interface IPortfolio {
   bonds?: Array<IPosition>,
 }
 
+declare interface IItem {
+  ticker: string,
+  name: string,
+  fullname: string,
+  engname: string,
+  price: number,
+  startPrice: number,
+  currency: string,
+  nominal: number
+}
+
 declare interface IMoexApi {
   name: string,
   ticker: string,

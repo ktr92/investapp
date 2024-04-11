@@ -3,7 +3,7 @@ import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'
-import {getPrice, initPositionData} from '../../utils/getStockPrice'
+import {getPrice, initPositionData, moexDataInit} from '../../utils/getStockPrice'
 
 export class CreateForm {
   constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean, market: string) => void) {
@@ -20,6 +20,7 @@ export class CreateForm {
   public category: string
   public mDataList: IMarketsList
   public isLoading: boolean
+  public currentItem: IItem
 
   static async create(selector: string, state: Store, onSubmit?: (id: string, position: IPosition, isclone: boolean,) => void) {
     const instance = new CreateForm(selector, state, onSubmit)
@@ -63,25 +64,28 @@ export class CreateForm {
   }
 
   showInfo() {
-    const info = this.state.getters.getInfoByTicker(this.currentTicker)
-    if (this.category === 'TQRB') {
-      document.querySelector('label[for="name"]').textContent = info[9]
-    }
-    if (this.category === 'TQCB') {
-      document.querySelector('label[for="name"]').textContent = info[19]
-      document.querySelector('#bonds_dohod').textContent = 'Доходность к погашению: ' + info[4] + ' %'
-      document.querySelector('#bonds_nkd').textContent = 'НКД: ' + info[7]
-      document.querySelector('#bonds_currency').textContent = 'Валюта: ' + info[25]
-      document.querySelector('#bonds_nextcoupon').textContent = 'НКД: ' + info[5]
-      document.querySelector('#bonds_coupon').textContent = 'Купон: ' + info[35] + ' %'
-    }
-    if (this.category === 'TQOB') {
-      document.querySelector('label[for="name"]').textContent = info[19]
-      document.querySelector('#bonds_dohod').textContent = 'Доходность к погашению: ' + info[4] + ' %'
-      document.querySelector('#bonds_nkd').textContent = 'НКД: ' + info[7]
-      document.querySelector('#bonds_currency').textContent = 'Валюта: ' + info[25]
-      document.querySelector('#bonds_nextcoupon').textContent = 'НКД: ' + info[5]
-      document.querySelector('#bonds_coupon').textContent = 'Купон: ' + info[35] + ' %'
+    if (this.currentTicker) {
+      document.querySelector('label[for="name"]').textContent = this.currentTicker
+      /*       const info = this.state.getters.getInfoByTicker(this.currentTicker)*/
+      const name = this.state.getters.getNameByTicker(this.currentTicker, this.category)
+      if (name.length) {
+        document.querySelector('label[for="name"]').textContent = name
+      }
+      /* const info = this.state.getters.getInfoByTicker(this.currentTicker)
+      if (info.length) {
+        if (this.category === 'TQRB') {
+          document.querySelector('label[for="name"]').textContent = info[0]
+          document.querySelector('#tickerName').textContent = info[9]
+        } else {
+          document.querySelector('label[for="name"]').textContent = info[0]
+          document.querySelector('#tickerName').textContent = info[19]
+          document.querySelector('#bonds_dohod').textContent = 'Доходность к погашению: ' + info[4] + ' %'
+          document.querySelector('#bonds_nkd').textContent = 'НКД: ' + info[7]
+          document.querySelector('#bonds_currency').textContent = 'Валюта: ' + info[25]
+          document.querySelector('#bonds_nextcoupon').textContent = 'НКД: ' + info[5]
+          document.querySelector('#bonds_coupon').textContent = 'Купон: ' + info[35] + ' %'
+        }
+      } */
     }
   }
 
@@ -131,7 +135,7 @@ export class CreateForm {
     }
 
     if (isload) {
-      price = getPrice(ticker, this.category, this.state);
+      price = this.currentItem.price
       stop = Number(price) * 0.98;
       if (price) {
         if (this.state.getters.getCurrencyByTicker(this.currentTicker, this.category) === 'SUR') {
@@ -152,15 +156,17 @@ export class CreateForm {
     $count.value = String(count);
     $stop.value = String(stop.toFixed(2));
 
-    const nominal = this.state.getters.getNominalByTicker(this.currentTicker, this.category)
-    const currency = this.state.getters.getCurrencyValue(this.currentTicker, this.category)
+    const nominal = this.currentItem.nominal
+    const currency = this.currentItem.currency
     $result.textContent = numberWithSpaces(String((Number(price) * Number(nominal) / 100 * Number(currency) * count).toFixed(2)));
   }
 
   initFormListeners() {
     this.$el.querySelectorAll('input[data-calc="totalprice"]').forEach(item => {
       item.addEventListener('input', (e) => {
-        this.calc(this.currentTicker, false)
+        if (this.currentTicker) {
+          this.calc(this.currentTicker, false)
+        }
       })
     })
     this.$el.querySelector('[name="category"]').addEventListener('change', async (e) => {
@@ -171,6 +177,28 @@ export class CreateForm {
 
       this.changeForm(false)
     })
+  }
+
+  onSelect(e: Event, $input: EventTarget, dropdown: HTMLElement) {
+    if (e.target instanceof HTMLElement) {
+      if (e.target.dataset.ticker) {
+        ($input as HTMLInputElement).value = e.target.dataset.ticker
+        this.isvalid = true
+        dropdown.remove()
+        this.currentTicker = e.target.dataset.ticker
+
+        this.currentItem = moexDataInit(this.state,
+            this.category,
+            this.currentTicker
+        )
+
+        this.calc(this.currentTicker, true)
+        this.calcCurrency()
+        this.showInfo()
+
+        console.log('currentItem: ', this.currentItem)
+      }
+    }
   }
 
   initTickerInput($ticker: HTMLInputElement) {
@@ -198,20 +226,7 @@ export class CreateForm {
           const listhtml = document.createElement('div')
           listhtml.innerHTML = content
           dropdown.appendChild(listhtml)
-
-          dropdown.addEventListener('click', (e) => {
-            if (e.target instanceof HTMLElement) {
-              if (e.target.dataset.ticker) {
-                ($input as HTMLInputElement).value = e.target.dataset.ticker
-                this.isvalid = true
-                dropdown.classList.add('hidden')
-                this.currentTicker = e.target.dataset.ticker
-                this.calc(this.currentTicker, true)
-                this.calcCurrency()
-                this.showInfo()
-              }
-            }
-          })
+          dropdown.addEventListener('click', (e) => this.onSelect(e, $input, dropdown))
         } else {
           ($input as HTMLInputElement).classList.add('!border-red-500')
           this.isvalid = false
@@ -284,14 +299,16 @@ export class CreateForm {
                         </select>
                     </div>
                   <div class="sm:col-span-2  mb-4 relative">
-                     
-                      <label for="name"class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                     <div class="">
+                      <div id="tickerName"></div>
                       <div id="bonds_dohod"></div>
                       <div id="bonds_nkd"></div>
                       <div id="bonds_finish"></div>
                       <div id="bonds_currency"></div>
                       <div id="bonds_coupon"></div>
                       <div id="bonds_nextcoupon"></div>
+                    </div>
+                      <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ticker / name</label>
                       <input autocomplete="off" value="" type="text" name="name" id="name" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticker, name" >
 
                       <div  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute hidden" data-dropdown='name'>
