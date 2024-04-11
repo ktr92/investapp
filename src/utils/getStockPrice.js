@@ -1,3 +1,5 @@
+import {mapMarket} from './maps'
+
 export async function moexTickerLast(market, tickers) {
   let url = ''
 
@@ -76,21 +78,6 @@ function moexBondsTransformer(market, security, indexes) {
   return result
 }
 
-export function getPrice(ticker, category, state) {
-  let price = 0
-  if (category === 'TQBR') {
-    price = Number(state.getters.getMoexInfo(ticker)[12])
-  }
-  if (category === 'TQCB') {
-    price = Number(state.getters.getMoexInfo(ticker)[11])
-  }
-  if (category === 'TQOB') {
-    price = Number(state.getters.getMoexInfo(ticker)[11])
-  }
-
-  return price
-}
-
 export function moexDataInit(state, category, ticker) {
   const marketData = state.getters.getMoexSearch().moexMarketData.filter(item => item[0] === ticker)[0]
   const securityData = state.getters.getMoexSearch().moexSecurities.filter(item => item[0] === ticker)[0]
@@ -115,7 +102,7 @@ export function moexDataInit(state, category, ticker) {
           name: securityData[2],
           fullname: securityData[19],
           engname: securityData[29],
-          price: marketData[3],
+          price: marketData[3] ?? marketData[11],
           startPrice: marketData[8],
           currency: securityData[25],
           nominal: securityData[38],
@@ -201,31 +188,9 @@ export function initPositionData(category, formdata, moexSearch) {
 }
 
 export function getSearchField(item) {
-  let searchField = ''
-  if (typeof item[20] === 'string') {
-    searchField = item[20]
-  } else if (typeof item[28] === 'string' && typeof item[29] === 'string') {
-    searchField = item[28] + item[29]
-  } else if (typeof item[28] === 'string') {
-    searchField = item[28]
-  } else if (typeof item[29] === 'string') {
-    searchField = item[29]
-  }
-
-  return searchField
+  return String(item[20] ?? '') + String(item[28] ?? '') + String(item[29] ?? '')
 }
 
 export function getPositionType(item) {
-  let positionType = null
-  if (item === 'TQBR') {
-    positionType = 'stock'
-  }
-  if (item === 'TQCB') {
-    positionType = 'bonds'
-  }
-  if (item === 'TQOB') {
-    positionType = 'bonds'
-  }
-
-  return positionType
+  return mapMarket()[item].type
 }

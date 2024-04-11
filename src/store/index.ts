@@ -1,5 +1,5 @@
 import {fetchCurrency} from '../utils/currecyValue'
-import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
+import {getSearchField, moexDataInit, moexTickerLast} from '../utils/getStockPrice'
 
 interface IState {
   moex: Array<IMoexApi>,
@@ -102,20 +102,11 @@ export class Store {
         [market]: tickers
       }
     },
-    getBondsTickers: () => {
-      const tickers: Array<string> = []
 
-      this.portfolio.forEach(item => {
-        if (item.bonds) {
-          item.bonds.forEach(position => tickers.push(position.ticker))
-        }
-      })
-      return tickers
-    },
     getCurrent: () => this.currentPortfolio,
-    getmoexSecurities: () => this.moexSecurities,
-    getmoexMarketData: () => this.moexMarketData,
-    getMoexByName: (str: string,) => {
+    getMoexSecurities: () => this.moexSecurities,
+    getMoexMarketData: () => this.moexMarketData,
+    getMoexByName: (str: string) => {
       const substr = str.toLocaleLowerCase()
 
       const list = this.moexSearch.moexSecurities.filter(item => {
@@ -133,50 +124,6 @@ export class Store {
         return isExist[0].value
       } else {
         return 1
-      }
-    },
-    getCurrencyValue: (ticker: string, category: string) => {
-      if (category === 'TQBR') {
-        return this.getters.getCurrency(this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][23])
-      } else {
-        return this.getters.getCurrency(this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][25])
-      }
-    },
-    getCurrencyByTicker: (ticker: string, category: string) => {
-      if (category === 'TQBR') {
-        return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][23]
-      } else {
-        return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][25]
-      }
-    },
-    getNominalByTicker: (ticker: string, category: string) => {
-      if (ticker && category) {
-        if (category !== 'TQBR') {
-          return this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0][38]
-        } else {
-          return 1
-        }
-      } else {
-        return 1
-      }
-    },
-    getMoexInfo: (ticker: string) => this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0],
-    getInfoByTicker: (ticker: string) => this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0],
-    getNameByTicker: (ticker: string, category: string) => {
-      const item = this.moexSearch.moexSecurities.filter(item => item[0] === ticker)[0]
-      if (item && category) {
-        if (category === 'TQBR') {
-          return item[9]
-        }
-        if (category === 'TQCB') {
-          return item [19]
-        }
-        if (category === 'TQOB') {
-          return item[19]
-        }
-        return 'Unknown'
-      } else {
-        return 'Unknown'
       }
     },
     getMoexSearch: () => this.moexSearch,
@@ -198,13 +145,6 @@ export class Store {
       }))
 
       return {...this.moex}
-
-      /*  const tickers = this.getters.getAllTickers()
-      const moex = (await moexTickerLast(tickers))
-      this.moex = moex.items
-      this.moexList = moex.moexlist
-      this.moexAll = moex.moexAll
-      return this.moex */
     },
 
     initSearch: async (category: string) => {
@@ -234,6 +174,8 @@ const state: IState = {
       name: 'SBER',
       depo: 450000,
       comm: 0.06,
+      defaultSumm: 50000,
+      defaultCategory: 'TQBR',
       markets: {
         TQBR: [
           {
@@ -255,6 +197,8 @@ const state: IState = {
       name: 'IIS',
       depo: 200000,
       comm: 0.06,
+      defaultSumm: 50000,
+      defaultCategory: 'TQBR',
       markets: {
         TQBR: [
           {

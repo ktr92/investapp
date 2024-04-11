@@ -3,7 +3,7 @@ import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'
-import {getPrice, initPositionData, moexDataInit} from '../../utils/getStockPrice'
+import {initPositionData, moexDataInit} from '../../utils/getStockPrice'
 
 export class CreateForm {
   constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean, market: string) => void) {
@@ -66,7 +66,7 @@ export class CreateForm {
   showInfo() {
     if (this.currentTicker) {
       document.querySelector('label[for="name"]').textContent = this.currentTicker
-      const name = this.state.getters.getNameByTicker(this.currentTicker, this.category)
+      const name = this.currentItem.name
       if (name.length) {
         document.querySelector('label[for="name"]').textContent = name
       }
@@ -89,7 +89,7 @@ export class CreateForm {
     const $currency: HTMLElement = document.querySelector('[data-input="currencyValue"]')
     const $currencyInput: HTMLInputElement = $currency.querySelector('input')
 
-    const isCurrency = this.state.getters.getCurrencyByTicker(this.currentTicker, this.category)
+    const isCurrency = this.currentItem.currency
     if (isCurrency && isCurrency !== 'SUR') {
       $currency.classList.remove('hidden')
       $currencyInput.value = String(this.state.getters.getCurrency(isCurrency))
@@ -122,7 +122,7 @@ export class CreateForm {
       price = this.currentItem.price
       stop = Number(price) * 0.98;
       if (price) {
-        if (this.state.getters.getCurrencyByTicker(this.currentTicker, this.category) === 'SUR') {
+        if (this.currentItem.currency === 'SUR') {
           count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
         } else {
           count = 1
@@ -141,7 +141,7 @@ export class CreateForm {
     $stop.value = String(stop.toFixed(2));
 
     const nominal = this.currentItem.nominal
-    const currency = this.currentItem.currency
+    const currency = this.state.getters.getCurrency(this.currentItem.currency)
     $result.textContent = numberWithSpaces(String((Number(price) * Number(nominal) / 100 * Number(currency) * count).toFixed(2)));
   }
 

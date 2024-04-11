@@ -46,9 +46,8 @@ declare interface IPortfolio {
   depo: number,
   comm: number,
   markets: IMarkets,
-  defaultSumm?: number,
-  defaultCategory?: string,
-  bonds?: Array<IPosition>,
+  defaultSumm: number,
+  defaultCategory: string,
 }
 
 declare interface IItem {
