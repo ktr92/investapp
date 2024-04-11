@@ -66,26 +66,10 @@ export class CreateForm {
   showInfo() {
     if (this.currentTicker) {
       document.querySelector('label[for="name"]').textContent = this.currentTicker
-      /*       const info = this.state.getters.getInfoByTicker(this.currentTicker)*/
       const name = this.state.getters.getNameByTicker(this.currentTicker, this.category)
       if (name.length) {
         document.querySelector('label[for="name"]').textContent = name
       }
-      /* const info = this.state.getters.getInfoByTicker(this.currentTicker)
-      if (info.length) {
-        if (this.category === 'TQRB') {
-          document.querySelector('label[for="name"]').textContent = info[0]
-          document.querySelector('#tickerName').textContent = info[9]
-        } else {
-          document.querySelector('label[for="name"]').textContent = info[0]
-          document.querySelector('#tickerName').textContent = info[19]
-          document.querySelector('#bonds_dohod').textContent = 'Доходность к погашению: ' + info[4] + ' %'
-          document.querySelector('#bonds_nkd').textContent = 'НКД: ' + info[7]
-          document.querySelector('#bonds_currency').textContent = 'Валюта: ' + info[25]
-          document.querySelector('#bonds_nextcoupon').textContent = 'НКД: ' + info[5]
-          document.querySelector('#bonds_coupon').textContent = 'Купон: ' + info[35] + ' %'
-        }
-      } */
     }
   }
 
@@ -179,12 +163,11 @@ export class CreateForm {
     })
   }
 
-  onSelect(e: Event, $input: EventTarget, dropdown: HTMLElement) {
+  onSelect(e: Event, $input: EventTarget, $block?: HTMLElement, listener?: CallbackFunction) {
     if (e.target instanceof HTMLElement) {
       if (e.target.dataset.ticker) {
         ($input as HTMLInputElement).value = e.target.dataset.ticker
         this.isvalid = true
-        dropdown.remove()
         this.currentTicker = e.target.dataset.ticker
 
         this.currentItem = moexDataInit(this.state,
@@ -195,8 +178,10 @@ export class CreateForm {
         this.calc(this.currentTicker, true)
         this.calcCurrency()
         this.showInfo()
-
+        /* $block.removeEventListener('click', (e) => this.onSelect(e, $input)) */
+        $block.classList.add('hidden')
         console.log('currentItem: ', this.currentItem)
+        $block.removeEventListener('click', listener)
       }
     }
   }
@@ -226,7 +211,12 @@ export class CreateForm {
           const listhtml = document.createElement('div')
           listhtml.innerHTML = content
           dropdown.appendChild(listhtml)
-          dropdown.addEventListener('click', (e) => this.onSelect(e, $input, dropdown))
+
+          const listener = (e: Event) => {
+            this.onSelect(e, $input, dropdown, listener)
+          }
+
+          dropdown.addEventListener('click', listener)
         } else {
           ($input as HTMLInputElement).classList.add('!border-red-500')
           this.isvalid = false
