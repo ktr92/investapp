@@ -84,42 +84,7 @@ export function moexDataInit(state, category, ticker) {
   if (marketData && securityData) {
     let result = null
     if (marketData && securityData) {
-      if (category === 'TQBR') {
-        result = {
-          ticker: marketData[0],
-          name: securityData[2],
-          fullname: securityData[9],
-          engname: securityData[20],
-          price: marketData[2] ? marketData[2] : marketData[36],
-          startPrice: marketData[9],
-          currency: securityData[16],
-          nominal: 1
-        }
-      }
-      if (category === 'TQCB') {
-        result = {
-          ticker: marketData[0],
-          name: securityData[2],
-          fullname: securityData[19],
-          engname: securityData[29],
-          price: marketData[3] ?? marketData[11],
-          startPrice: marketData[8],
-          currency: securityData[25],
-          nominal: securityData[38],
-        }
-      }
-      if (category === 'TQOB') {
-        result = {
-          ticker: marketData[0],
-          name: securityData[2],
-          fullname: securityData[19],
-          engname: securityData[29],
-          price: marketData[3],
-          startPrice: marketData[8],
-          currency: securityData[25],
-          nominal: securityData[38],
-        }
-      }
+      result = mapMarket(marketData, securityData)[category].data
     }
     return result
   }
@@ -127,11 +92,13 @@ export function moexDataInit(state, category, ticker) {
 
 export function initPositionData(category, formdata, moexSearch) {
   let result = null
+  const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
+  const nominal = moexData[mapMarket()[category].nominalIndex]
+  const currency = moexData[mapMarket()[category].currencyIndex]
 
-  let price = Number(formdata.get('price'))
-  let nominal = 1
-  let buyCurrency = 1
-  let currency = ''
+  const price = Number(formdata.get('price'))
+
+  let buyCurrency = Number(formdata.get('currencyValue')) ? Number(formdata.get('currencyValue')) : 1
 
   if (category === 'TQBR') {
     result = {
@@ -144,26 +111,20 @@ export function initPositionData(category, formdata, moexSearch) {
     }
   }
   if (category === 'TQCB') {
-    const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
     buyCurrency = Number(formdata.get('currencyValue'))
-    nominal = moexData[38]
-    currency = moexData[25]
-    price = Number(formdata.get('price'))
+    price,
     result = {
       ticker: String(formdata.get('name')),
       type: 'bonds',
       market: 'TQCB',
       buyPrice: price,
       count: Number(formdata.get('count')),
-      buyCurrency: buyCurrency,
+      buyCurrency,
       currency: currency,
       nominal: nominal
     }
   }
   if (category === 'TQOB') {
-    const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
-    nominal = moexData[38]
-    price = Number(formdata.get('price'))
     result = {
       ticker: String(formdata.get('name')),
       type: 'bonds',
@@ -179,7 +140,7 @@ export function initPositionData(category, formdata, moexSearch) {
       ticker: 'cash',
       type: 'cash',
       market: '',
-      buyPrice: Number(formdata.get('price')),
+      buyPrice: price,
       count: 1,
     }
   }
