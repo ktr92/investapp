@@ -81,10 +81,21 @@ function moexBondsTransformer(market, security, indexes) {
 export function moexDataInit(state, category, ticker) {
   const marketData = state.getters.getMoexSearch().moexMarketData.filter(item => item[0] === ticker)[0]
   const securityData = state.getters.getMoexSearch().moexSecurities.filter(item => item[0] === ticker)[0]
+  console.log(marketData)
   if (marketData && securityData) {
     let result = null
     if (marketData && securityData) {
-      result = mapMarket(marketData, securityData)[category].data
+    /*   result = mapMarket(marketData, securityData)[category].data */
+      result = {
+        ticker: marketData[mapMarket()[category].tickerIndex],
+        name: securityData[mapMarket()[category].nameIndex],
+        fullname: securityData[mapMarket()[category].fnameIndex],
+        engname: securityData[mapMarket()[category].engnameIndex],
+        price: marketData[mapMarket()[category].priceIndex_1] ?? marketData[mapMarket()[category].priceIndex_2],
+        startPrice: marketData[mapMarket()[category].openPriceIndex],
+        currency: securityData[mapMarket()[category].currencyIndex],
+        nominal: securityData[mapMarket()[category].nominalIndex],
+      }
     }
     return result
   }

@@ -182,8 +182,6 @@ export class CreateForm {
         $block.classList.add('hidden')
         console.log('currentItem: ', this.currentItem)
         $block.removeEventListener('click', listener)
-
-        console.log(this.state.moexSearch)
       }
     }
   }

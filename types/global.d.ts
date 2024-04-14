@@ -86,3 +86,21 @@ declare interface IListener {
   [index: string]: Array<CallbackFunction>,
   eventName?: Array<CallbackFunction>,
 }
+
+declare interface IMoexObject {
+  [index: string]: IMoexIndex,
+
+}
+declare interface IMoexIndex {
+  type: string,
+  market: string,
+  priceIndex_1: number,
+  priceIndex_2: number,
+  nominalIndex: number,
+  currencyIndex: number,
+  tickerIndex: number,
+  nameIndex: number,
+  fnameIndex: number,
+  engnameIndex: number,
+  openPriceIndex: number,
+}
