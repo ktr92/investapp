@@ -103,4 +103,5 @@ declare interface IMoexIndex {
   fnameIndex: number,
   engnameIndex: number,
   openPriceIndex: number,
+  nkdIndex: number | null
 }

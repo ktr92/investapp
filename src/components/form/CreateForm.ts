@@ -170,10 +170,20 @@ export class CreateForm {
         this.isvalid = true
         this.currentTicker = e.target.dataset.ticker
 
-        this.currentItem = moexDataInit(this.state,
+        /*  this.currentItem = moexDataInit(this.state,
             this.category,
             this.currentTicker
-        )
+        ) */
+        this.currentItem = {
+          ticker: this.currentTicker,
+          name: this.state.getters.getName_moex(this.currentTicker, this.category),
+          fullname: this.state.getters.getFullName_moex(this.currentTicker, this.category),
+          engname: this.state.getters.getEngName_moex(this.currentTicker, this.category),
+          price: this.state.getters.getPrice_moex(this.currentTicker, this.category),
+          startPrice: this.state.getters.getStartPrice_moex(this.currentTicker, this.category),
+          currency: this.state.getters.getCurrency_moex(this.currentTicker, this.category),
+          nominal: this.state.getters.getNominal_moex(this.currentTicker, this.category),
+        }
 
         this.calc(this.currentTicker, true)
         this.calcCurrency()

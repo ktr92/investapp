@@ -12,6 +12,7 @@ export function mapMarket(): IMoexObject {
       fnameIndex: 9,
       engnameIndex: 20,
       openPriceIndex: 9,
+      nkdIndex: null,
     /*   data: isData ? {
         ticker: marketData[0],
         name: securityData[2],
@@ -35,6 +36,7 @@ export function mapMarket(): IMoexObject {
       fnameIndex: 19,
       engnameIndex: 29,
       openPriceIndex: 8,
+      nkdIndex: 7,
       /* data: isData ?
         {
           ticker: marketData[0],
@@ -60,6 +62,7 @@ export function mapMarket(): IMoexObject {
       fnameIndex: 19,
       engnameIndex: 29,
       openPriceIndex: 8,
+      nkdIndex: 7,
     /*   data: isData ? {
         ticker: marketData[0],
         name: securityData[2],

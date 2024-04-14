@@ -1,3 +1,4 @@
+import {mapMarket} from '../utils/maps'
 import {fetchCurrency} from '../utils/currecyValue'
 import {getSearchField, moexDataInit, moexTickerLast} from '../utils/getStockPrice'
 
@@ -127,6 +128,38 @@ export class Store {
       }
     },
     getMoexSearch: () => this.moexSearch,
+    getPrice_moex: (ticker: string, category: string) => {
+      return Number(this.moexSearch.moexMarketData
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].priceIndex_1 ? mapMarket()[category].priceIndex_1 : mapMarket()[category].priceIndex_2])
+    },
+    getName_moex: (ticker: string, category: string) => {
+      return this.moexSearch.moexSecurities
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].nameIndex]
+    },
+    getFullName_moex: (ticker: string, category: string) => {
+      return this.moexSearch.moexSecurities
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].fnameIndex]
+    },
+    getEngName_moex: (ticker: string, category: string) => {
+      return this.moexSearch.moexSecurities
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].engnameIndex]
+    },
+    getStartPrice_moex: (ticker: string, category: string) => {
+      return Number(this.moexSearch.moexMarketData
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].openPriceIndex])
+    },
+    getCurrency_moex: (ticker: string, category: string) => {
+      return this.moexSearch.moexSecurities
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].currencyIndex]
+    },
+    getCurrencyValue_moex: (ticker: string, category: string) => {
+      return this.getters.getCurrency(this.moexSearch.moexSecurities
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].currencyIndex]) || 1
+    },
+    getNominal_moex: (ticker: string, category: string) => {
+      return Number(this.moexSearch.moexSecurities
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].nominalIndex]) || 1
+    },
     getMoex: () => this.moex
   }
 
