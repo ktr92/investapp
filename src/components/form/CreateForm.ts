@@ -174,7 +174,8 @@ export class CreateForm {
             this.category,
             this.currentTicker
         ) */
-        this.currentItem = {
+
+        /*  this.currentItem = {
           ticker: this.currentTicker,
           name: this.state.getters.getName_moex(this.currentTicker, this.category),
           fullname: this.state.getters.getFullName_moex(this.currentTicker, this.category),
@@ -183,7 +184,9 @@ export class CreateForm {
           startPrice: this.state.getters.getStartPrice_moex(this.currentTicker, this.category),
           currency: this.state.getters.getCurrency_moex(this.currentTicker, this.category),
           nominal: this.state.getters.getNominal_moex(this.currentTicker, this.category),
-        }
+        } */
+
+        this.currentItem = this.state.getters.getData_moex(this.currentTicker, this.category, ['name', 'fullname', 'engname', 'price', 'startPrice', 'currency', 'nominal'])
 
         this.calc(this.currentTicker, true)
         this.calcCurrency()

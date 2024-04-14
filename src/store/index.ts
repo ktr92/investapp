@@ -128,9 +128,27 @@ export class Store {
       }
     },
     getMoexSearch: () => this.moexSearch,
+
+    getData_moex: (ticker: string, category: string, fields: Array<string>): IItem => {
+      const mapField: IObjIndexable = {
+        'ticker': ticker,
+        'name': this.getters.getName_moex(ticker, category),
+        'fullname': this.getters.getFullName_moex(ticker, category),
+        'engname': this.getters.getEngName_moex(ticker, category),
+        'price': this.getters.getPrice_moex(ticker, category),
+        'startPrice': this.getters.getStartPrice_moex(ticker, category),
+        'currency': this.getters.getCurrency_moex(ticker, category),
+        'nominal': this.getters.getNominal_moex(ticker, category),
+      }
+
+      return fields.reduce((acc: IObjIndexable, field: string) => (acc[field] = mapField[field], acc),
+          {}
+      ) as unknown as IItem
+    },
+
     getPrice_moex: (ticker: string, category: string) => {
       return Number(this.moexSearch.moexMarketData
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].priceIndex_1 ? mapMarket()[category].priceIndex_1 : mapMarket()[category].priceIndex_2])
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].priceIndex_1 > 0 ? mapMarket()[category].priceIndex_1 : mapMarket()[category].priceIndex_2])
     },
     getName_moex: (ticker: string, category: string) => {
       return this.moexSearch.moexSecurities
