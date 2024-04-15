@@ -1,6 +1,6 @@
 import {mapMarket} from '../utils/maps'
 import {fetchCurrency} from '../utils/currecyValue'
-import {getSearchField, moexDataInit, moexTickerLast} from '../utils/getStockPrice'
+import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
 
 interface IState {
   moex: Array<IMoexApi>,
@@ -13,21 +13,8 @@ export class Store {
     this.portfolio = state.portfolio
     this.defaultPortfolio = this.portfolio[0].id
     this.defaultCategory = this.portfolio[0].defaultCategory
-    this.currency = []
-    this.currencyList = [
-      {
-        id: 'USD',
-        value: 1
-      },
-      {
-        id: 'EUR',
-        value: 1
-      },
-      {
-        id: 'SUR',
-        value: 1
-      },
-    ]
+    this.currency = [],
+
     this.moex = {
       TQBR: [],
       TQCB: [],
@@ -62,7 +49,6 @@ export class Store {
   public moexMarketData: IMarketsList
   public moexSearch: IMarketsList
   public marketList: Array<string>
-  public currencyList: Array<ICurrency>
 
   private mutations = {
     changeBroker: (id: string) => {

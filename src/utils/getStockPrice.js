@@ -32,11 +32,8 @@ export async function moexTickerLast(market, tickers) {
   });
 
   let items = null
-  if (market === 'TQBR') {
-    items = moexTransformer(fMarketdata, fSecurities, indexes)
-  } else {
-    items = moexBondsTransformer(fMarketdata, fSecurities, indexes)
-  }
+
+  items = moexTransformer(fMarketdata, fSecurities, indexes, market)
 
   return {
     items,
@@ -45,63 +42,38 @@ export async function moexTickerLast(market, tickers) {
   }
 }
 
-function moexTransformer(market, security, indexes) {
+function moexTransformer(market, security, indexes, category) {
   const result = []
   indexes.forEach(index => {
     result.push(
         {
-          name: security[index][2],
-          ticker: market[index][0],
-          price: market[index][12],
-          open: security[index][3],
-          currency: security[index][25]
-        })
-  })
-
-  return result
-}
-function moexBondsTransformer(market, security, indexes) {
-  const result = []
-  indexes.forEach(index => {
-    result.push(
-        {
-          name: security[index][2],
-          ticker: market[index][0],
-          price: market[index][11],
-          open: security[index][3],
-          nominal: security[index][38],
-          currency: security[index][25]
-
+          name: security[index][mapMarket()[category].nameIndex],
+          ticker: market[index][mapMarket()[category].tickerIndex],
+          price: market[index][mapMarket()[category].priceIndex_1 ? mapMarket()[category].priceIndex_1 : mapMarket()[category].priceIndex_2],
+          open: security[index][mapMarket()[category].openPriceIndex],
+          currency: security[index][mapMarket()[category].openPriceIndex],
+          nominal: security[index][mapMarket()[category].nominalIndex],
         })
   })
 
   return result
 }
 
-export function moexDataInit(state, category, ticker) {
+/* export function moexDataInit(state, category, ticker) {
   const marketData = state.getters.getMoexSearch().moexMarketData.filter(item => item[0] === ticker)[0]
   const securityData = state.getters.getMoexSearch().moexSecurities.filter(item => item[0] === ticker)[0]
-  console.log(securityData)
   if (marketData && securityData) {
     let result = null
     if (marketData && securityData) {
-    /*   result = mapMarket(marketData, securityData)[category].data */
       result = {
-        ticker: marketData[mapMarket()[category].tickerIndex],
-        name: securityData[mapMarket()[category].nameIndex],
-        fullname: securityData[mapMarket()[category].fnameIndex],
-        engname: securityData[mapMarket()[category].engnameIndex],
-        price: marketData[mapMarket()[category].priceIndex_1] ?? marketData[mapMarket()[category].priceIndex_2],
-        startPrice: marketData[mapMarket()[category].openPriceIndex],
-        currency: securityData[mapMarket()[category].currencyIndex],
-        nominal: securityData[mapMarket()[category].nominalIndex],
+        ...state.getters.getData_moex(ticker, category, ['ticker', 'name', 'fullname', 'engname', 'price', 'startPrice', 'currency', 'nominal'])
       }
     }
     return result
   }
-}
+} */
 
-export function initPositionData(category, formdata, moexSearch) {
+export function initFormData(category, formdata, moexSearch) {
   let result = null
   const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
   const nominal = moexData[mapMarket()[category].nominalIndex]

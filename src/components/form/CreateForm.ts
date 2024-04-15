@@ -3,7 +3,8 @@ import {Store} from '../../store'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'
-import {initPositionData, moexDataInit} from '../../utils/getStockPrice'
+import {initFormData} from '../../utils/getStockPrice'
+import {mapMarket} from '../../utils/maps'
 
 export class CreateForm {
   constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean, market: string) => void) {
@@ -77,7 +78,8 @@ export class CreateForm {
     const $ticker: HTMLInputElement = document.querySelector('[name="name"]')
     $ticker.value = ''
     this.calc('', false)
-    if (this.category === 'TQCB' || this.category === 'TQOB') {
+    /*     if (this.category === 'TQCB' || this.category === 'TQOB') {
+ */ if (mapMarket()[this.category].type === 'bonds') {
       document.querySelector('[data-input="stopValue"]').classList.add('hidden')
     } else {
       document.querySelector('[data-input="stopValue"]').classList.remove('hidden')
@@ -170,22 +172,6 @@ export class CreateForm {
         this.isvalid = true
         this.currentTicker = e.target.dataset.ticker
 
-        /*  this.currentItem = moexDataInit(this.state,
-            this.category,
-            this.currentTicker
-        ) */
-
-        /*  this.currentItem = {
-          ticker: this.currentTicker,
-          name: this.state.getters.getName_moex(this.currentTicker, this.category),
-          fullname: this.state.getters.getFullName_moex(this.currentTicker, this.category),
-          engname: this.state.getters.getEngName_moex(this.currentTicker, this.category),
-          price: this.state.getters.getPrice_moex(this.currentTicker, this.category),
-          startPrice: this.state.getters.getStartPrice_moex(this.currentTicker, this.category),
-          currency: this.state.getters.getCurrency_moex(this.currentTicker, this.category),
-          nominal: this.state.getters.getNominal_moex(this.currentTicker, this.category),
-        } */
-
         this.currentItem = this.state.getters.getData_moex(this.currentTicker, this.category, ['name', 'fullname', 'engname', 'price', 'startPrice', 'currency', 'nominal'])
 
         this.calc(this.currentTicker, true)
@@ -249,7 +235,7 @@ export class CreateForm {
 
       let result = null
 
-      result = initPositionData(this.category, formdata, this.state.moexSearch.moexSecurities)
+      result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities)
 
       if (this.isvalid) {
         this.onSubmit(
