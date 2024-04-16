@@ -81,8 +81,10 @@ export class CreateForm {
     /*     if (this.category === 'TQCB' || this.category === 'TQOB') {
  */ if (mapMarket()[this.category].type === 'bonds') {
       document.querySelector('[data-input="stopValue"]').classList.add('hidden')
+      document.querySelector('[data-input="nkd"]').classList.remove('hidden')
     } else {
       document.querySelector('[data-input="stopValue"]').classList.remove('hidden')
+      document.querySelector('[data-input="nkd"]').classList.add('hidden')
     }
     $ticker.focus()
   }
@@ -109,6 +111,7 @@ export class CreateForm {
     const $stop = document.querySelector('input[name="stop"]') as HTMLInputElement
     const $count = document.querySelector('input[name="count"]') as HTMLInputElement
     const $result = document.querySelector('[data-result="total"]') as HTMLDivElement
+    const $nkd = document.querySelector('input[name="nkd"]') as HTMLInputElement
     const broker = (document.querySelector('#portfolio') as HTMLSelectElement).value
 
     if (ticker === '') {
@@ -121,11 +124,19 @@ export class CreateForm {
     }
 
     if (isload) {
-      price = this.currentItem.price
+      const nominal = this.currentItem.nominal
+      const currency = this.state.getters.getCurrency(this.currentItem.currency)
+      price = this.currentItem.price * Number(currency)
+
+      if (nominal > 1) {
+        price = price * Number(nominal) / 100
+      }
+
       stop = Number(price) * 0.98;
       if (price) {
         if (this.currentItem.currency === 'SUR') {
           count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
+          console.log(count)
         } else {
           count = 1
         }
@@ -141,10 +152,9 @@ export class CreateForm {
     $price.value = String(price);
     $count.value = String(count);
     $stop.value = String(stop.toFixed(2));
+    $nkd.value = String(this.currentItem.nkd);
 
-    const nominal = this.currentItem.nominal
-    const currency = this.state.getters.getCurrency(this.currentItem.currency)
-    $result.textContent = numberWithSpaces(String((Number(price) * Number(nominal) / 100 * Number(currency) * count).toFixed(2)));
+    $result.textContent = numberWithSpaces(String((price * count).toFixed(2)));
   }
 
   initFormListeners() {
@@ -172,14 +182,13 @@ export class CreateForm {
         this.isvalid = true
         this.currentTicker = e.target.dataset.ticker
 
-        this.currentItem = this.state.getters.getData_moex(this.currentTicker, this.category, ['name', 'fullname', 'engname', 'price', 'startPrice', 'currency', 'nominal'])
+        this.currentItem = this.state.getters.getData_moex(this.currentTicker, this.category, ['name', 'fullname', 'engname', 'price', 'startPrice', 'currency', 'nominal', 'nkd'])
 
         this.calc(this.currentTicker, true)
         this.calcCurrency()
         this.showInfo()
         /* $block.removeEventListener('click', (e) => this.onSelect(e, $input)) */
         $block.classList.add('hidden')
-        console.log('currentItem: ', this.currentItem)
         $block.removeEventListener('click', listener)
       }
     }
@@ -317,6 +326,10 @@ export class CreateForm {
                       <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
                       <input data-calc="totalprice" value="" type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Price" >
                   </div>
+                  <div class="w-full  mb-4 hidden" data-input="nkd">
+                      <label for="nkd" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">NKD</label>
+                      <input data-calc="totalprice" value="" type="text" name="nkd" id="nkd" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="NKD" >
+                  </div>
                   <div class="w-full  mb-4" data-input="count">
                       <label for="count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Count</label>
                       <input data-calc="totalprice" value="50"  type="text" name="count" id="count" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Count" >
@@ -326,9 +339,9 @@ export class CreateForm {
                       <input type="text" name="stop" id="stop" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Stop" >
                   </div>
                   <div class="w-full  mb-4 hidden" data-input="currencyValue">
-                  <label for="currencyValue" class=" block mb-2 text-sm font-medium text-gray-900 dark:text-white">Currency</label>
-                    <input type="text" name="currencyValue" id="currencyValue" value="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Currency value at buy moment" >
-                </div>
+                    <label for="currencyValue" class=" block mb-2 text-sm font-medium text-gray-900 dark:text-white">Currency</label>
+                      <input type="text" name="currencyValue" id="currencyValue" value="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Currency value at buy moment" >
+                  </div>
                   
                   <div class="sm:col-span-2 mb-4" >
                       <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>

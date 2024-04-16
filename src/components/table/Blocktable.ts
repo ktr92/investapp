@@ -66,7 +66,8 @@ export class BlockTable extends AppComponent {
               portfolio.id,
               portfolio.name,
               portfolio.depo,
-              Position.createPosition(portfolio.markets[item], this.state, positionType, item), portfolio.comm
+              Position.createPosition(portfolio.markets[item], this.state, positionType, portfolio.comm, item),
+              portfolio.comm
           )
           positions = positions.concat(pp.positions)
         }

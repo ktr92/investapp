@@ -8,10 +8,16 @@ export class Price extends ViewComponent {
   }
 
   render() {
+    let result = null
+    if (this.value) {
+      result = numberWithSpaces(this.value.toFixed(2)) + ' ₽'
+    } else {
+      result = '-'
+    }
     return `
       <div class="">
           <span class="w-auto block mr-3">
-          <span class="block font-normal text-gray-900 whitespace-nowrap dark:text-white">${numberWithSpaces(this.value.toFixed(2))} ₽</span>
+          <span class="block font-normal text-gray-900 whitespace-nowrap dark:text-white">${result}</span>
           </span>
         
       </div>

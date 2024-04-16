@@ -49,7 +49,7 @@ function moexTransformer(market, security, indexes, category) {
         {
           name: security[index][mapMarket()[category].nameIndex],
           ticker: market[index][mapMarket()[category].tickerIndex],
-          price: market[index][mapMarket()[category].priceIndex_1 ? mapMarket()[category].priceIndex_1 : mapMarket()[category].priceIndex_2],
+          price: market[index][mapMarket()[category].priceIndex_1] ? market[index][mapMarket()[category].priceIndex_1] : market[index][mapMarket()[category].priceIndex_2],
           open: security[index][mapMarket()[category].openPriceIndex],
           currency: security[index][mapMarket()[category].openPriceIndex],
           nominal: security[index][mapMarket()[category].nominalIndex],
@@ -91,7 +91,8 @@ export function initFormData(category, formdata, moexSearch) {
     count: Number(formdata.get('count')),
     buyCurrency,
     currency: currency,
-    nominal: nominal
+    nominal: nominal,
+    nkd: Number(formdata.get('nkd')) || 0,
   }
   if (category === 'cash') {
     result = {

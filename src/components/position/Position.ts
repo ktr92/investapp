@@ -17,9 +17,10 @@ export class Position implements IObjIndexable {
       nominal: number,
       currency: string,
       buyCurrency: number,
-
       myStop: number = null,
       salePrice: number = null,
+      nkd = 0,
+      comm = 1,
       options: Store
   ) {
     this.options = options
@@ -29,6 +30,7 @@ export class Position implements IObjIndexable {
       this.startPrice = new Price(buyPrice, options )
       this.startTotal = new Totalprice(buyPrice, count, options )
       this.change = new Change(buyPrice, this.stock.currentPrice, count, options)
+      this.comm = this.startPrice.value * count * comm / 100
     }
     if (this.type === 'bonds') {
       this.stock = new Bonds(ticker, nominal, currency, options, market )
@@ -40,12 +42,16 @@ export class Position implements IObjIndexable {
       this.startTotal = new Totalprice(price, count, options )
       this.change = new Change(price, this.stock.currentPrice, count, options)
       this.nominal = nominal
+      this.comm = this.startPrice.value * comm / 100
     }
 
     this.count = new Count(count, options)
     this.currentPrice = new Totalprice(this.stock.currentPrice, count, options)
     this.myStop = new Price(myStop, options )
     this.salePrice = new Totalprice(salePrice, null, options )
+    this.nkd = nkd * count
+    this.comm = new Price(this.comm as number, options)
+    this.nkd = new Price(this.nkd as number, options)
   }
 
   [index: string]: unknown;
@@ -57,9 +63,9 @@ export class Position implements IObjIndexable {
   public currentPrice: Totalprice
   public options: Store
 
-  static createPosition(items: Array<IPosition>, state: Store, type: string, market: string) {
+  static createPosition(items: Array<IPosition>, state: Store, type: string, comm: number, market: string) {
     const result = items.map((item: IPosition) => {
-      return new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, state)
+      return new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, item.nkd, comm, state)
     })
 
     return result

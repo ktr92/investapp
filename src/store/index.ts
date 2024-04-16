@@ -125,6 +125,7 @@ export class Store {
         'startPrice': this.getters.getStartPrice_moex(ticker, category),
         'currency': this.getters.getCurrency_moex(ticker, category),
         'nominal': this.getters.getNominal_moex(ticker, category),
+        'nkd': this.getters.getNKD_moex(ticker, category),
       }
 
       return fields.reduce((acc: IObjIndexable, field: string) => (acc[field] = mapField[field], acc),
@@ -133,8 +134,8 @@ export class Store {
     },
 
     getPrice_moex: (ticker: string, category: string) => {
-      return Number(this.moexSearch.moexMarketData
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].priceIndex_1 > 0 ? mapMarket()[category].priceIndex_1 : mapMarket()[category].priceIndex_2])
+      const item = this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0]
+      return Number(item[mapMarket()[category].priceIndex_1] ? item[mapMarket()[category].priceIndex_1] :item[mapMarket()[category].priceIndex_2])
     },
     getName_moex: (ticker: string, category: string) => {
       return this.moexSearch.moexSecurities
@@ -151,6 +152,10 @@ export class Store {
     getStartPrice_moex: (ticker: string, category: string) => {
       return Number(this.moexSearch.moexMarketData
           .filter(item => item[0] === ticker)[0][mapMarket()[category].openPriceIndex])
+    },
+    getNKD_moex: (ticker: string, category: string) => {
+      return Number(this.moexSearch.moexSecurities
+          .filter(item => item[0] === ticker)[0][mapMarket()[category].nkdIndex])
     },
     getCurrency_moex: (ticker: string, category: string) => {
       return this.moexSearch.moexSecurities
@@ -210,7 +215,7 @@ const state: IState = {
       id: '1',
       name: 'SBER',
       depo: 450000,
-      comm: 0.06,
+      comm: 0.09,
       defaultSumm: 50000,
       defaultCategory: 'TQBR',
       markets: {
@@ -233,7 +238,7 @@ const state: IState = {
       id: '2',
       name: 'IIS',
       depo: 200000,
-      comm: 0.06,
+      comm: 0.09,
       defaultSumm: 50000,
       defaultCategory: 'TQBR',
       markets: {
@@ -268,7 +273,7 @@ const state: IState = {
       id: '3',
       name: 'Finam',
       depo: 500000,
-      comm: 0.065,
+      comm: 0.095,
       defaultSumm: 50000,
       defaultCategory: 'TQBR',
       markets: {
@@ -295,7 +300,7 @@ const state: IState = {
             ticker: 'RU000A105A95',
             type: 'bonds',
             market: 'TQCB',
-
+            nkd: 10,
             buyPrice: 110,
             count: 1,
             nominal: 1000,
@@ -307,7 +312,7 @@ const state: IState = {
             ticker: 'RU000A107B43',
             type: 'bonds',
             market: 'TQCB',
-
+            nkd: 13,
             buyPrice: 84,
             count: 2,
             nominal: 1000,
@@ -318,6 +323,7 @@ const state: IState = {
           {
             ticker: 'RU000A107B43',
             type: 'bonds',
+            nkd: 11,
             market: 'TQCB',
             buyPrice: 84,
             count: 1,
@@ -336,7 +342,7 @@ const state: IState = {
             count: 1,
             nominal: 1000,
             currency: '',
-
+            nkd: 7,
           },
         ]
       },

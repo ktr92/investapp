@@ -33,6 +33,8 @@ declare interface IPosition {
   market: string,
   buyPrice: number,
   count: number,
+  comm?: number,
+  nkd?: number,
   nominal?: number,
   currency?: string,
   buyCurrency?: number,
@@ -58,7 +60,9 @@ declare interface IItem {
   price: number,
   startPrice: number,
   currency: string,
-  nominal: number
+  nominal: number,
+  nkd: number,
+  comm: number
 }
 
 declare interface IMoexApi {
