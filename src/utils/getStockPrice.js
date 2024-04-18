@@ -76,8 +76,13 @@ function moexTransformer(market, security, indexes, category) {
 export function initFormData(category, formdata, moexSearch) {
   let result = null
   const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
-  const nominal = moexData[mapMarket()[category].nominalIndex]
+  let nominal = 1
+  if (mapMarket()[category].nominalIndex) {
+    nominal = moexData[mapMarket()[category].nominalIndex]
+  }
   const currency = moexData[mapMarket()[category].currencyIndex]
+
+  console.log(moexData)
 
   const price = Number(formdata.get('price'))
 
@@ -89,7 +94,7 @@ export function initFormData(category, formdata, moexSearch) {
     market: category,
     buyPrice: price,
     count: Number(formdata.get('count')),
-    buyCurrency,
+    buyCurrency: buyCurrency,
     currency: currency,
     nominal: nominal,
     nkd: Number(formdata.get('nkd')) || 0,

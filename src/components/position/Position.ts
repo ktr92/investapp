@@ -25,30 +25,25 @@ export class Position implements IObjIndexable {
   ) {
     this.options = options
     this.type = type
+
     if (this.type === 'stock') {
       this.stock = new Stock(ticker, options, market )
-      this.startPrice = new Price(buyPrice, options )
-      this.startTotal = new Totalprice(buyPrice, count, options )
-      this.change = new Change(buyPrice, this.stock.currentPrice, count, options)
-      this.comm = this.startPrice.value * count * comm / 100
     }
     if (this.type === 'bonds') {
       this.stock = new Bonds(ticker, nominal, currency, options, market )
-      let price = buyPrice * nominal / 100
-      if (buyCurrency) {
-        price *= buyCurrency
-      }
-      this.startPrice = new Price(price, options )
-      this.startTotal = new Totalprice(price, count, options )
-      this.change = new Change(price, this.stock.currentPrice, count, options)
-      this.nominal = nominal
-      this.comm = this.startPrice.value * comm / 100
     }
 
+    buyPrice = buyPrice * (nominal ? (nominal / 100) : 1) * (buyCurrency ? buyCurrency : 1)
+    this.startPrice = new Price(buyPrice, options )
+    this.startTotal = new Totalprice(buyPrice, count, options )
+    this.change = new Change(buyPrice, this.stock.currentPrice, count, options)
+    this.nominal = nominal
     this.count = new Count(count, options)
     this.currentPrice = new Totalprice(this.stock.currentPrice, count, options)
     this.myStop = new Price(myStop, options )
     this.salePrice = new Totalprice(salePrice, null, options )
+
+    this.comm = this.startPrice.value * count * comm / 100
     this.nkd = nkd * count
     this.comm = new Price(this.comm as number, options)
     this.nkd = new Price(this.nkd as number, options)

@@ -5,7 +5,7 @@ export function mapMarket(): IMoexObject {
       market: 'TQBR',
       priceIndex_1: 2,
       priceIndex_2: 12,
-      nominalIndex: 23,
+      nominalIndex: -1,
       currencyIndex: 16,
       tickerIndex: 0,
       nameIndex: 2,

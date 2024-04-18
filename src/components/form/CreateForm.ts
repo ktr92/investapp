@@ -104,9 +104,9 @@ export class CreateForm {
   }
 
   calc(ticker: string, isload: boolean) {
-    let price = 0;
     let stop = 0;
     let count = 0
+    let price = 0;
     const $price = document.querySelector('input[name="price"]') as HTMLInputElement
     const $stop = document.querySelector('input[name="stop"]') as HTMLInputElement
     const $count = document.querySelector('input[name="count"]') as HTMLInputElement
@@ -126,35 +126,22 @@ export class CreateForm {
     if (isload) {
       const nominal = this.currentItem.nominal
       const currency = this.state.getters.getCurrency(this.currentItem.currency)
-      price = this.currentItem.price * Number(currency)
 
-      if (nominal > 1) {
-        price = price * Number(nominal) / 100
-      }
+      const textprice = this.currentItem.price * Number(currency) * (nominal > 1 ? (Number(nominal) / 100) : 1)
 
-      stop = Number(price) * 0.98;
-      if (price) {
-        if (this.currentItem.currency === 'SUR') {
-          count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(price))
-          console.log(count)
-        } else {
-          count = 1
-        }
-      } else {
-        count = 1
-      }
+      stop = Number(this.currentItem.price) * 0.98;
+      count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(textprice))
+      $result.textContent = numberWithSpaces(String((textprice * count).toFixed(2)));
     } else {
       price = Number($price.value)
       stop = Number($stop.value)
       count = Number($count.value)
     }
 
-    $price.value = String(price);
+    $price.value = String(this.currentItem.price);
     $count.value = String(count);
     $stop.value = String(stop.toFixed(2));
     $nkd.value = String(this.currentItem.nkd);
-
-    $result.textContent = numberWithSpaces(String((price * count).toFixed(2)));
   }
 
   initFormListeners() {
@@ -254,6 +241,8 @@ export class CreateForm {
             this.category
         )
       }
+
+      console.log(this.state)
     });
   }
   initBrokers() {
