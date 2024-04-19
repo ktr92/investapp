@@ -7,4 +7,7 @@ export class ViewComponent {
   render() {
     return ''
   }
+  initListeners(): void {
+    return void 0
+  }
 }

@@ -5,12 +5,12 @@ import {Count} from './Count';
 import {Totalprice} from './Totalprice';
 import {Store} from '../../store';
 import {Bonds} from './Bonds';
+import {PositionControl} from './PositionControl';
 
 export class Position implements IObjIndexable {
   constructor(
       ticker:string,
       market: string,
-
       type: string,
       buyPrice: number,
       count: number,
@@ -21,7 +21,9 @@ export class Position implements IObjIndexable {
       salePrice: number = null,
       nkd = 0,
       comm = 1,
-      options: Store
+      options: Store,
+      positionId: string,
+      portfolioId: string
   ) {
     this.options = options
     this.type = type
@@ -46,11 +48,15 @@ export class Position implements IObjIndexable {
     this.nkd = nkd * count
 
     const extra = Number(nkd * count + Number(this.comm))
-    console.log(extra)
     this.comm = new Price(this.comm as number, options)
     this.nkd = new Price(this.nkd as number, options)
 
     this.startTotal = new Totalprice(buyPrice, count, options, extra)
+
+    this.positionControl = new PositionControl({
+      positionId,
+      portfolioId
+    }, options)
   }
 
   [index: string]: unknown;
@@ -64,7 +70,7 @@ export class Position implements IObjIndexable {
 
   static createPosition(items: Array<IPosition>, state: Store, type: string, comm: number, market: string) {
     const result = items.map((item: IPosition) => {
-      return new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, item.nkd, comm, state)
+      return new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, item.nkd, comm, state, item.positionId, item.portfolioId)
     })
 
     return result

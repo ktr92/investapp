@@ -33,6 +33,8 @@ declare interface IPosition {
   market: string,
   buyPrice: number,
   count: number,
+  positionId: string,
+  portfolioId: string,
   comm?: number,
   nkd?: number,
   nominal?: number,
@@ -108,4 +110,9 @@ declare interface IMoexIndex {
   engnameIndex: number,
   openPriceIndex: number,
   nkdIndex: number | null
+}
+
+declare interface IItemInfo {
+  positionId: string,
+  portfolioId: string,
 }

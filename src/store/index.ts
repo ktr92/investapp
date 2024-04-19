@@ -221,6 +221,8 @@ const state: IState = {
       markets: {
         TQBR: [
           {
+            positionId: '1',
+            portfolioId: '1',
             ticker: 'ASTR',
             type: 'stock',
             market: 'TQBR',
@@ -244,6 +246,8 @@ const state: IState = {
       markets: {
         TQBR: [
           {
+            positionId: '2',
+            portfolioId: '2',
             ticker: 'LKOH',
             type: 'stock',
             market: 'TQCB',
@@ -253,6 +257,8 @@ const state: IState = {
             myStop: 7000,
           },
           {
+            positionId: '3',
+            portfolioId: '2',
             ticker: 'SVCB',
             type: 'stock',
             market: 'TQCB',
@@ -279,6 +285,8 @@ const state: IState = {
       markets: {
         TQBR: [
           {
+            positionId: '4',
+            portfolioId: '3',
             ticker: 'SVET',
             type: 'stock',
             market: 'TQBR',
@@ -287,6 +295,8 @@ const state: IState = {
             myStop: 25,
           },
           {
+            positionId: '5',
+            portfolioId: '3',
             ticker: 'HYDR',
             type: 'stock',
             market: 'TQBR',
@@ -297,6 +307,8 @@ const state: IState = {
         ],
         TQCB: [
           {
+            positionId: '6',
+            portfolioId: '3',
             ticker: 'RU000A105A95',
             type: 'bonds',
             market: 'TQCB',
@@ -309,6 +321,8 @@ const state: IState = {
 
           },
           {
+            positionId: '7',
+            portfolioId: '3',
             ticker: 'RU000A107B43',
             type: 'bonds',
             market: 'TQCB',
@@ -321,6 +335,8 @@ const state: IState = {
 
           },
           {
+            positionId: '8',
+            portfolioId: '3',
             ticker: 'RU000A107B43',
             type: 'bonds',
             nkd: 11,
@@ -335,6 +351,8 @@ const state: IState = {
         ],
         TQOB: [
           {
+            positionId: '9',
+            portfolioId: '3',
             ticker: 'SU26238RMFS4',
             type: 'bonds',
             market: 'TQOB',

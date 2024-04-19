@@ -22,6 +22,7 @@ export class CreateForm {
   public mDataList: IMarketsList
   public isLoading: boolean
   public currentItem: IItem
+  public currentPortfolio: string
 
   static async create(selector: string, state: Store, onSubmit?: (id: string, position: IPosition, isclone: boolean,) => void) {
     const instance = new CreateForm(selector, state, onSubmit)
@@ -113,6 +114,7 @@ export class CreateForm {
     const $result = document.querySelector('[data-result="total"]') as HTMLDivElement
     const $nkd = document.querySelector('input[name="nkd"]') as HTMLInputElement
     const broker = (document.querySelector('#portfolio') as HTMLSelectElement).value
+    this.currentPortfolio = broker
 
     if (ticker === '') {
       $price.value = ''
@@ -231,7 +233,7 @@ export class CreateForm {
 
       let result = null
 
-      result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities)
+      result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities, this.currentPortfolio)
 
       if (this.isvalid) {
         this.onSubmit(

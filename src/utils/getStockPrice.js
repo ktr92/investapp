@@ -59,8 +59,7 @@ function moexTransformer(market, security, indexes, category) {
   return result
 }
 
-export function initFormData(category, formdata, moexSearch) {
-  let result = null
+export function initFormData(category, formdata, moexSearch, portfolio) {
   const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
   let nominal = 1
   if (mapMarket()[category].nominalIndex) {
@@ -68,13 +67,11 @@ export function initFormData(category, formdata, moexSearch) {
   }
   const currency = moexData[mapMarket()[category].currencyIndex]
 
-  console.log(moexData)
-
   const price = Number(formdata.get('price'))
 
   const buyCurrency = Number(formdata.get('currencyValue')) ? Number(formdata.get('currencyValue')) : 1
 
-  result = {
+  const result = {
     ticker: String(formdata.get('name')),
     type: mapMarket()[category].type,
     market: category,
@@ -84,6 +81,8 @@ export function initFormData(category, formdata, moexSearch) {
     currency: currency,
     nominal: nominal,
     nkd: Number(formdata.get('nkd')) || 0,
+    positionId: String(Math.random()),
+    portfolioId: String(portfolio)
   }
 
   return result

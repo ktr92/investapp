@@ -1,4 +1,5 @@
 import {DomComponent} from '../DomComponent'
+import {PositionControl} from '../position/PositionControl'
 import {TableComponent} from './TableComponent'
 import {ViewComponent} from './ViewComponent'
 import {renderTable} from './table.template'
@@ -40,6 +41,14 @@ export class Table extends DomComponent {
 
     root.addEventListener('click', e => {
       this.sortTable($root, e)
+    })
+
+    this.instances.components.forEach(component => {
+      component.props.forEach(prop => {
+        if (prop instanceof PositionControl) {
+          prop.initListeners()
+        }
+      })
     })
   }
 
