@@ -282,7 +282,6 @@ export class CreateForm {
                           <option value="TQBR">Stocks</option>
                           <option value="TQCB">Corporative Bonds</option>
                           <option value="TQOB">Bonds</option>
-                          <option value="cash">Cash</option>
                         </select>
                     </div>
                   <div class="sm:col-span-2  mb-4 relative">

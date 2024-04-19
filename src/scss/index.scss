@@ -28,12 +28,12 @@ body {
 }
 
 .sorted.asc::after {
-  transform: translateY(-50%) rotate(180deg); 
+  transform: translateY(-50%) rotate(180deg)  translateX(75%);
 
  
 }
 .sorted.desc::after {
-  transform: translateY(-50%) rotate(0); 
+  transform: translateY(-50%) rotate(0) translateX(-75%);
 
 
 }
