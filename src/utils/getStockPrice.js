@@ -59,20 +59,6 @@ function moexTransformer(market, security, indexes, category) {
   return result
 }
 
-/* export function moexDataInit(state, category, ticker) {
-  const marketData = state.getters.getMoexSearch().moexMarketData.filter(item => item[0] === ticker)[0]
-  const securityData = state.getters.getMoexSearch().moexSecurities.filter(item => item[0] === ticker)[0]
-  if (marketData && securityData) {
-    let result = null
-    if (marketData && securityData) {
-      result = {
-        ...state.getters.getData_moex(ticker, category, ['ticker', 'name', 'fullname', 'engname', 'price', 'startPrice', 'currency', 'nominal'])
-      }
-    }
-    return result
-  }
-} */
-
 export function initFormData(category, formdata, moexSearch) {
   let result = null
   const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
@@ -98,15 +84,6 @@ export function initFormData(category, formdata, moexSearch) {
     currency: currency,
     nominal: nominal,
     nkd: Number(formdata.get('nkd')) || 0,
-  }
-  if (category === 'cash') {
-    result = {
-      ticker: 'cash',
-      type: 'cash',
-      market: '',
-      buyPrice: price,
-      count: 1,
-    }
   }
 
   return result

@@ -3,9 +3,15 @@ import {ViewComponent} from '../table/ViewComponent'
 import {Store} from '../../store';
 
 export class Totalprice extends ViewComponent {
-  constructor(public single: number = null, public count: number = null, options: Store) {
+  constructor(public single: number = null, public count: number = null, options: Store, extra = 0) {
     super(options)
-    this.total = Number((this.single * this.count).toFixed(2))
+    this.total = this.single * this.count
+
+    if (extra) {
+      this.total += extra
+    }
+
+    this.total = Number( this.total.toFixed(2))
   }
 
   public total: number

@@ -73,44 +73,9 @@ export class BlockTable extends AppComponent {
         }
       })
 
-      /*   const allBonds = new Portfolio(portfolio.id, portfolio.name, portfolio.depo, Position.createPosition(portfolio.markets.TQCB, this.state, 'bonds'), portfolio.comm) */
-
       const table = new Table('.table', TablePosition, positions)
       table.render()
-
-      /* if (positions.length) {
-        positions.forEach(item => {
-          if (item && item.positions && item.positions.length) {
-            const table = new Table('.table', TablePosition, item.positions)
-            table.render()
-          }
-        })
-      } */
     })
-
-    /* const allStocks = source.map(item => {
-      return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.positions, this.state, 'stock'), item.comm)
-    })
-
-    const allBonds = source.map(item => {
-      if (item.bonds && item.bonds.length > 0) {
-        return new Portfolio(item.id, item.name, item.depo, Position.createPosition(item.bonds, this.state, 'bonds'), item.comm)
-      }
-    })
-
-    allStocks.forEach(item => {
-      const table = new Table('.table', TablePosition, item.positions)
-      table.render()
-    })
-
-    if (allBonds && allBonds.length) {
-      allBonds.forEach(item => {
-        if (item) {
-          const table = new Table('.table', TablePosition, item.positions)
-          table.render()
-        }
-      })
-    } */
   }
 
   changeBroker(id?: string) {

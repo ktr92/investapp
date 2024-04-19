@@ -35,7 +35,6 @@ export class Position implements IObjIndexable {
 
     buyPrice = buyPrice * (nominal ? (nominal / 100) : 1) * (buyCurrency ? buyCurrency : 1)
     this.startPrice = new Price(buyPrice, options )
-    this.startTotal = new Totalprice(buyPrice, count, options )
     this.change = new Change(buyPrice, this.stock.currentPrice, count, options)
     this.nominal = nominal
     this.count = new Count(count, options)
@@ -45,8 +44,13 @@ export class Position implements IObjIndexable {
 
     this.comm = this.startPrice.value * count * comm / 100
     this.nkd = nkd * count
+
+    const extra = Number(nkd * count + Number(this.comm))
+    console.log(extra)
     this.comm = new Price(this.comm as number, options)
     this.nkd = new Price(this.nkd as number, options)
+
+    this.startTotal = new Totalprice(buyPrice, count, options, extra)
   }
 
   [index: string]: unknown;
