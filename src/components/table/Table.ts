@@ -1,4 +1,5 @@
 import {DomComponent} from '../DomComponent'
+import {Emitter} from '../Emitter'
 import {PositionControl} from '../position/PositionControl'
 import {TableComponent} from './TableComponent'
 import {ViewComponent} from './ViewComponent'
@@ -16,7 +17,7 @@ interface IConstructor {
 }
 
 export class Table extends DomComponent {
-  constructor(public selector: string, protected Component: IConstructor, public items: Array<unknown>) {
+  constructor(public selector: string, protected Component: IConstructor, public items: Array<unknown>, public emitter: Emitter) {
     super(selector)
     this.init()
   }
@@ -46,7 +47,7 @@ export class Table extends DomComponent {
     this.instances.components.forEach(component => {
       component.props.forEach(prop => {
         if (prop instanceof PositionControl) {
-          prop.initListeners()
+          prop.initListeners(this.emitter)
         }
       })
     })

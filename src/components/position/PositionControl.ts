@@ -1,19 +1,35 @@
+import closeByClickOutside from '../../utils/clickOutside';
 import {Store} from '../../store';
-import Dropdown from '../UI/Dropdown';
 import {ViewComponent} from '../table/ViewComponent';
+import {CreateForm} from '../form/CreateForm';
+import {Emitter} from '../Emitter';
 
 export class PositionControl extends ViewComponent {
   constructor(public itemInfo: IItemInfo, options: Store) {
     super(options)
   }
 
-  initListeners() {
-    document.querySelector(`#button_position${this.itemInfo.positionId}`).addEventListener('click', (e) => {
-      document.querySelector(`#menu_position${this.itemInfo.positionId}`).classList.remove('hidden')
+  initListeners(emitter: Emitter) {
+    const $button =document.querySelector(`#button_position${this.itemInfo.positionId}`)
+    const $menu = document.querySelector(`#menu_position${this.itemInfo.positionId}`)
+    $button.addEventListener('click', (e) => {
+      $menu.classList.remove('hidden')
     })
-    document.querySelector(`[data-buypos="${this.itemInfo.positionId}${this.itemInfo.positionId}"]`).addEventListener('click', (e) => {
-      console.log(this.itemInfo.positionId)
+    document.querySelector(`[data-buypos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
+      const create = await CreateForm.create('#modalContent', this.options, () => {
+        console.log(1)
+      })
+
+      emitter.emit('modal:renderModal', {
+        title: 'Buy position',
+        content: create.$el.innerHTML
+      })
+
+      create.initForm()
+      $menu.classList.add('hidden')
     })
+
+    closeByClickOutside(`#menu_position${this.itemInfo.positionId}`, `#button_position${this.itemInfo.positionId}`)
   }
 
   render() {
@@ -26,10 +42,10 @@ export class PositionControl extends ViewComponent {
       </button>
       
       <div id="menu_position${this.itemInfo.positionId}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute top-full right-0">
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-buypos="${this.itemInfo.positionId}${this.itemInfo.positionId}">Buy</div>
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-salepos="${this.itemInfo.positionId}${this.itemInfo.positionId}">Sale</div>
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-editpos="${this.itemInfo.positionId}${this.itemInfo.positionId}">Edit</div>
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-deletepos="${this.itemInfo.positionId}${this.itemInfo.positionId}">Delete</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-buypos="${this.itemInfo.positionId}" >Buy</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-salepos="${this.itemInfo.positionId}">Sale</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-editpos="${this.itemInfo.positionId}">Edit</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-deletepos="${this.itemInfo.positionId}">Delete</div>
       </div>
     </div>
     `

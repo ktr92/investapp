@@ -1,4 +1,5 @@
 import {Store} from '../../store'
+import {Emitter} from '../Emitter'
 
 export class ViewComponent {
   constructor(public options: Store) {}
@@ -7,7 +8,7 @@ export class ViewComponent {
   render() {
     return ''
   }
-  initListeners(): void {
+  initListeners(emitter?: Emitter): void {
     return void 0
   }
 }

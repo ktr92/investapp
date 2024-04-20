@@ -36,6 +36,7 @@ export class BlockTable extends AppComponent {
   public state: Store
   public el: DomComponent
   public dropdownPortfolio: Dropdown
+  public emitter: Emitter
   static id = 'tableblock'
 
   init(): void {
@@ -73,7 +74,7 @@ export class BlockTable extends AppComponent {
         }
       })
 
-      const table = new Table('.table', TablePosition, positions)
+      const table = new Table('.table', TablePosition, positions, this.emitter)
       table.render()
     })
   }
