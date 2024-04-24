@@ -62,6 +62,7 @@ function moexTransformer(market, security, indexes, category) {
 export function initFormData(category, formdata, moexSearch, portfolio, positionId = null) {
   const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
   let nominal = 1
+
   if (mapMarket()[category].nominalIndex) {
     nominal = moexData[mapMarket()[category].nominalIndex]
   }

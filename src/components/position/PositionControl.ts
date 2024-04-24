@@ -15,7 +15,8 @@ export class PositionControl extends ViewComponent {
     this.emitter = emitter
     const modaldata = {
       id: this.itemInfo.positionId,
-      ptf: this.itemInfo.portfolioId
+      ptf: this.itemInfo.portfolioId,
+      market: this.itemInfo.marketId
     }
     const $button =document.querySelector(`#button_position${this.itemInfo.positionId}`)
     const $menu = document.querySelector(`#menu_position${this.itemInfo.positionId}`)
@@ -24,32 +25,32 @@ export class PositionControl extends ViewComponent {
     })
 
     document.querySelector(`[data-buypos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
-      const create = await CreateForm.create('#modalContent', this.options, 'buy', modaldata, this.onBuy.bind(this))
+      const create = await CreateForm.create('#modalContent', this.options, 'buy', this.onBuy.bind(this), modaldata, )
       emitter.emit('modal:renderModal', {
         title: 'Buy position',
         content: create.$el.innerHTML
       })
 
-      create.initForm()
+      await create.initForm()
       $menu.classList.add('hidden')
     })
 
     document.querySelector(`[data-editpos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
-      const create = await CreateForm.create('#modalContent', this.options, 'edit', modaldata, this.onEdit.bind(this))
+      const create = await CreateForm.create('#modalContent', this.options, 'edit', this.onEdit.bind(this), modaldata)
 
       emitter.emit('modal:renderModal', {
         title: 'Edit position',
         content: create.$el.innerHTML
       })
 
-      create.initForm()
+      await create.initForm()
       $menu.classList.add('hidden')
     })
 
     closeByClickOutside(`#menu_position${this.itemInfo.positionId}`, `#button_position${this.itemInfo.positionId}`)
   }
 
-  onBuy(brokerId: string, position: IPosition, isclone: boolean, market: string, iscash: boolean) {
+  onBuy(brokerId: string, position: IPosition, isclone: boolean, market: string) {
     this.options.actions.addPosition(brokerId, position, isclone, market)
     this.emitter.emit('header:moexUpdate', this.itemInfo.portfolioId)
     this.emitter.emit('modal:closeModal')

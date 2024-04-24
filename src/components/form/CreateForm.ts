@@ -8,11 +8,12 @@ import {mapMarket} from '../../utils/maps'
 
 interface IModalData {
   id: string,
-  ptf: string
+  ptf: string,
+  market: string
 }
 
 export class CreateForm {
-  constructor(selector: string, public state: Store, public mode: string, public modaldata?: IModalData, public onSubmit?: (id: string, position: IPosition, isclone?: boolean, market?: string) => void) {
+  constructor(selector: string, public state: Store, public mode: string, public onSubmit?: (id: string, position: IPosition, isclone?: boolean, market?: string) => void, public modaldata?: IModalData) {
     this.$el = document.querySelector(selector)
     this.isvalid = false
     this.category = this.state.getters.getCategory(this.state.defaultPortfolio)
@@ -29,8 +30,8 @@ export class CreateForm {
   public currentItem: IItem
   public currentPortfolio: string
 
-  static async create(selector: string, state: Store, mode: string, modaldata?: IModalData, onSubmit?: (id: string, position: IPosition, isclone?: boolean,) => void) {
-    const instance = new CreateForm(selector, state, mode, modaldata, onSubmit)
+  static async create(selector: string, state: Store, mode: string, onSubmit?: (id: string, position: IPosition, isclone?: boolean,) => void, modaldata?: IModalData, ) {
+    const instance = new CreateForm(selector, state, mode, onSubmit, modaldata)
     await instance.initMarketData()
     return instance
   }
@@ -39,12 +40,12 @@ export class CreateForm {
     await this.state.actions.initSearch(this.category)
   }
 
-  initForm() {
+  async initForm() {
     const $form = document.createElement('form')
     $form.setAttribute('id', 'createForm')
     this.$el.insertAdjacentElement('beforeend', $form)
 
-    const formContent = this.renderMode(this.mode)
+    const formContent = await this.renderMode(this.mode)
 
     $form.insertAdjacentHTML('afterbegin', this.init(formContent))
     /*     this.category = (document.querySelector('#portfolio') as HTMLSelectElement).value
@@ -58,6 +59,8 @@ export class CreateForm {
       this.initFormListeners()
       this.initTickerInput($ticker)
     }
+    this.changeFields()
+
     this.initFormSubmit()
 
     /* document.querySelectorAll('[data-mode]').forEach(item => {
@@ -95,11 +98,10 @@ export class CreateForm {
   }
 
   changeFields() {
-    const $ticker: HTMLInputElement = document.querySelector('[name="name"]')
-    $ticker.value = ''
-    this.calc('', false)
-    /*     if (this.category === 'TQCB' || this.category === 'TQOB') {
- */ if (mapMarket()[this.category].type === 'bonds') {
+    /*  const $ticker: HTMLInputElement = document.querySelector('[name="name"]')
+    $ticker.value = '' */
+    /*     this.calc('', false) */
+    if (mapMarket()[this.category].type === 'bonds') {
       document.querySelector('[data-input="stopValue"]').classList.add('hidden')
       document.querySelector('[data-input="nkd"]').classList.remove('hidden')
       document.querySelector('[data-input="currencyValue"]').classList.remove('hidden')
@@ -108,7 +110,7 @@ export class CreateForm {
       document.querySelector('[data-input="nkd"]').classList.add('hidden')
       document.querySelector('[data-input="currencyValue"]').classList.add('hidden')
     }
-    $ticker.focus()
+    /*     $ticker.focus() */
   }
 
   calcCurrency() {
@@ -180,7 +182,6 @@ export class CreateForm {
       this.changeForm(true)
       await this.initMarketData()
       this.changeFields()
-
       this.changeForm(false)
     })
   }
@@ -255,17 +256,21 @@ export class CreateForm {
       let result = null
 
       if (this.mode === 'create' || this.mode === 'buy') {
-        result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities, this.currentPortfolio ? this.currentPortfolio : this.modaldata.ptf, this.modaldata.id ? this.modaldata.id : null)
-        console.log(result)
-        /*   if (this.isvalid) { */
-        this.onSubmit(
-            this.modaldata.ptf,
-            result,
-            Boolean(formdata.get('isclone')),
-            this.category
-        )
+        result = initFormData(
+            this.category,
+            formdata,
+            this.state.moexSearch.moexSecurities,
+            this.currentPortfolio ? this.currentPortfolio : this.modaldata.ptf,
+            this.modaldata ? this.modaldata.id : null)
 
-        /*    } */
+        /*    if (this.isvalid) { */
+        this.onSubmit(
+          this.currentPortfolio ? this.currentPortfolio : this.modaldata.ptf,
+          result,
+          Boolean(formdata.get('isclone')),
+          this.category
+        )
+      /*   } */
       }
 
       if (this.mode === 'edit') {
@@ -340,8 +345,15 @@ export class CreateForm {
     </div>`
   }
 
-  renderMode(mode: string) {
+  async renderMode(mode: string) {
     let form = ''
+    let currentPosition: IPosition = null
+    if (this.modaldata) {
+      currentPosition= this.state.getters.getPositionById(this.modaldata.id)
+      this.category = this.modaldata.market ? this.modaldata.market: this.category
+      await this.initMarketData()
+    }
+
     switch (mode) {
       case 'create':
         form += this.renderBroker(this.initBrokers())
@@ -355,7 +367,6 @@ export class CreateForm {
           + this.renderStop()
         break;
       case 'buy': {
-        const currentPosition: IPosition = this.state.getters.getPositionById(this.modaldata.id)
         form +=
            this.renderName(currentPosition.ticker)
            + this.renderClone()
@@ -368,7 +379,6 @@ export class CreateForm {
       }
 
       case 'edit': {
-        const currentPosition: IPosition = this.state.getters.getPositionById(this.modaldata.id)
         form +=
            this.renderName(currentPosition.ticker)
           + this.renderPrice(currentPosition.buyPrice)

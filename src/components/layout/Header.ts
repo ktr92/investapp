@@ -53,7 +53,7 @@ export class Header extends AppComponent {
         title: 'Add new position',
         content: create.$el.innerHTML
       })
-      create.initForm()
+      await create.initForm()
     })
 
     document.querySelector('[data-modal="sellPosition"]').addEventListener('click', e => {
@@ -77,7 +77,7 @@ export class Header extends AppComponent {
     })
   }
 
-  addPosition(brokerId: string, position: IPosition, isclone: boolean, market: string, iscash: boolean) {
+  addPosition(brokerId: string, position: IPosition, isclone: boolean, market: string) {
     this.state.actions.addPosition(brokerId, position, isclone, market)
     this.$emit('header:moexUpdate', brokerId)
     this.$emit('modal:closeModal')

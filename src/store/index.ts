@@ -72,8 +72,8 @@ export class Store {
       markets.forEach(market => {
         this.portfolio.forEach(item => {
           item.markets[market].forEach(pos => {
-            if (pos.positionId === id) {
-              pos.buyPrice = newPostion.buyCurrency
+            if (pos.positionId === newPostion.positionId) {
+              pos.buyPrice = newPostion.buyPrice
               pos.count = newPostion.count
               pos.myStop = newPostion.myStop
               pos.buyCurrency = newPostion.buyCurrency

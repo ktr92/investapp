@@ -115,4 +115,5 @@ declare interface IMoexIndex {
 declare interface IItemInfo {
   positionId: string,
   portfolioId: string,
+  marketId: string
 }
