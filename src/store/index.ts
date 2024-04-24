@@ -57,7 +57,7 @@ export class Store {
     },
     addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market: string) => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
-      const ispos = pfolio.markets[market].filter(item => item.ticker === newPostion.ticker)
+      const ispos = pfolio.markets[market].filter(item => item.positionId === newPostion.positionId)
 
       if (clone || !ispos.length) {
         pfolio.markets[market].push(newPostion)
@@ -66,6 +66,22 @@ export class Store {
         pos.buyPrice = (newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) / (newPostion.count + pos.count)
         pos.count += newPostion.count
       }
+    },
+    editPosition: (id: string, newPostion: IPosition) => {
+      const markets = Object.keys(this.moex)
+      markets.forEach(market => {
+        this.portfolio.forEach(item => {
+          item.markets[market].forEach(pos => {
+            if (pos.positionId === id) {
+              pos.buyPrice = newPostion.buyCurrency
+              pos.count = newPostion.count
+              pos.myStop = newPostion.myStop
+              pos.buyCurrency = newPostion.buyCurrency
+              pos.nkd = newPostion.nkd
+            }
+          })
+        })
+      })
     }
   }
 
@@ -88,6 +104,25 @@ export class Store {
       return {
         [market]: tickers
       }
+    },
+
+    getPositionById: (id: string): IPosition => {
+      const markets = Object.keys(this.moex)
+      let position = null
+      markets.forEach(market => {
+        this.portfolio.forEach(item => {
+          item.markets[market].forEach(pos => {
+            if (pos.positionId === id) {
+              position = pos
+            }
+          })
+        })
+      })
+      return position
+    },
+
+    getPortfolioByPositionId: (id: string) => {
+      return this.getters.getPositionById(id).portfolioId
     },
 
     getCurrent: () => this.currentPortfolio,
@@ -203,6 +238,10 @@ export class Store {
     },
     addPosition: (id: string, pos: IPosition, clone: boolean, market: string) => {
       this.mutations.addPosition(id, pos, clone, market)
+    },
+
+    editPosition: (id: string, pos: IPosition) => {
+      this.mutations.editPosition(id, pos)
     },
 
   }

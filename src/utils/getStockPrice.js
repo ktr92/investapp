@@ -49,7 +49,7 @@ function moexTransformer(market, security, indexes, category) {
         {
           name: security[index][mapMarket()[category].nameIndex],
           ticker: market[index][mapMarket()[category].tickerIndex],
-          price: market[index][mapMarket()[category].priceIndex_1] ? market[index][mapMarket()[category].priceIndex_1] : market[index][mapMarket()[category].priceIndex_2],
+          price: market[index][mapMarket()[category].priceIndex_1] ? market[index][mapMarket()[category].priceIndex_1] : security[index][mapMarket()[category].priceIndex_2],
           open: security[index][mapMarket()[category].openPriceIndex],
           currency: security[index][mapMarket()[category].openPriceIndex],
           nominal: security[index][mapMarket()[category].nominalIndex],
@@ -59,7 +59,7 @@ function moexTransformer(market, security, indexes, category) {
   return result
 }
 
-export function initFormData(category, formdata, moexSearch, portfolio) {
+export function initFormData(category, formdata, moexSearch, portfolio, positionId = null) {
   const moexData = moexSearch.filter(item => item[0] === String(formdata.get('name')))[0]
   let nominal = 1
   if (mapMarket()[category].nominalIndex) {
@@ -71,6 +71,11 @@ export function initFormData(category, formdata, moexSearch, portfolio) {
 
   const buyCurrency = Number(formdata.get('currencyValue')) ? Number(formdata.get('currencyValue')) : 1
 
+  let posId = String(new Date().valueOf())
+  if (positionId && !formdata.get('isclone')) {
+    posId = positionId
+  }
+
   const result = {
     ticker: String(formdata.get('name')),
     type: mapMarket()[category].type,
@@ -81,7 +86,7 @@ export function initFormData(category, formdata, moexSearch, portfolio) {
     currency: currency,
     nominal: nominal,
     nkd: Number(formdata.get('nkd')) || 0,
-    positionId: String(Math.random()),
+    positionId: posId,
     portfolioId: String(portfolio)
   }
 

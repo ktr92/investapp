@@ -9,17 +9,22 @@ export class PositionControl extends ViewComponent {
     super(options)
   }
 
+  public emitter: Emitter
+
   initListeners(emitter: Emitter) {
+    this.emitter = emitter
+    const modaldata = {
+      id: this.itemInfo.positionId,
+      ptf: this.itemInfo.portfolioId
+    }
     const $button =document.querySelector(`#button_position${this.itemInfo.positionId}`)
     const $menu = document.querySelector(`#menu_position${this.itemInfo.positionId}`)
     $button.addEventListener('click', (e) => {
       $menu.classList.remove('hidden')
     })
-    document.querySelector(`[data-buypos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
-      const create = await CreateForm.create('#modalContent', this.options, () => {
-        console.log(1)
-      })
 
+    document.querySelector(`[data-buypos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
+      const create = await CreateForm.create('#modalContent', this.options, 'buy', modaldata, this.onBuy.bind(this))
       emitter.emit('modal:renderModal', {
         title: 'Buy position',
         content: create.$el.innerHTML
@@ -29,7 +34,30 @@ export class PositionControl extends ViewComponent {
       $menu.classList.add('hidden')
     })
 
+    document.querySelector(`[data-editpos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
+      const create = await CreateForm.create('#modalContent', this.options, 'edit', modaldata, this.onEdit.bind(this))
+
+      emitter.emit('modal:renderModal', {
+        title: 'Edit position',
+        content: create.$el.innerHTML
+      })
+
+      create.initForm()
+      $menu.classList.add('hidden')
+    })
+
     closeByClickOutside(`#menu_position${this.itemInfo.positionId}`, `#button_position${this.itemInfo.positionId}`)
+  }
+
+  onBuy(brokerId: string, position: IPosition, isclone: boolean, market: string, iscash: boolean) {
+    this.options.actions.addPosition(brokerId, position, isclone, market)
+    this.emitter.emit('header:moexUpdate', this.itemInfo.portfolioId)
+    this.emitter.emit('modal:closeModal')
+  }
+  onEdit(id: string, position: IPosition) {
+    this.options.actions.editPosition(this.itemInfo.portfolioId, position)
+    this.emitter.emit('header:moexUpdate', this.itemInfo.portfolioId)
+    this.emitter.emit('modal:closeModal')
   }
 
   render() {

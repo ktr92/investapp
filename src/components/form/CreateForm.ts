@@ -6,8 +6,13 @@ import {getBrokerList} from '../AppUtils'
 import {initFormData} from '../../utils/getStockPrice'
 import {mapMarket} from '../../utils/maps'
 
+interface IModalData {
+  id: string,
+  ptf: string
+}
+
 export class CreateForm {
-  constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone: boolean, market: string) => void) {
+  constructor(selector: string, public state: Store, public mode: string, public modaldata?: IModalData, public onSubmit?: (id: string, position: IPosition, isclone?: boolean, market?: string) => void) {
     this.$el = document.querySelector(selector)
     this.isvalid = false
     this.category = this.state.getters.getCategory(this.state.defaultPortfolio)
@@ -24,8 +29,8 @@ export class CreateForm {
   public currentItem: IItem
   public currentPortfolio: string
 
-  static async create(selector: string, state: Store, onSubmit?: (id: string, position: IPosition, isclone: boolean,) => void) {
-    const instance = new CreateForm(selector, state, onSubmit)
+  static async create(selector: string, state: Store, mode: string, modaldata?: IModalData, onSubmit?: (id: string, position: IPosition, isclone?: boolean,) => void) {
+    const instance = new CreateForm(selector, state, mode, modaldata, onSubmit)
     await instance.initMarketData()
     return instance
   }
@@ -39,15 +44,29 @@ export class CreateForm {
     $form.setAttribute('id', 'createForm')
     this.$el.insertAdjacentElement('beforeend', $form)
 
-    $form.insertAdjacentHTML('afterbegin', this.init(this.initBrokers()))
+    const formContent = this.renderMode(this.mode)
+
+    $form.insertAdjacentHTML('afterbegin', this.init(formContent))
     /*     this.category = (document.querySelector('#portfolio') as HTMLSelectElement).value
  */
+
     const $ticker = this.$el.querySelector('[name="name"]') as HTMLInputElement
 
-    $ticker.focus()
-    this.initFormListeners()
-    this.initTickerInput($ticker)
+    if (this.mode === 'create') {
+      $ticker.focus()
+
+      this.initFormListeners()
+      this.initTickerInput($ticker)
+    }
     this.initFormSubmit()
+
+    /* document.querySelectorAll('[data-mode]').forEach(item => {
+      item.classList.add('hidden')
+    })
+
+    document.querySelectorAll(`[data-mode-${this.mode}]`).forEach(item => {
+      item.classList.remove('hidden')
+    }) */
   }
 
   async searchItem(key: string) {
@@ -83,9 +102,11 @@ export class CreateForm {
  */ if (mapMarket()[this.category].type === 'bonds') {
       document.querySelector('[data-input="stopValue"]').classList.add('hidden')
       document.querySelector('[data-input="nkd"]').classList.remove('hidden')
+      document.querySelector('[data-input="currencyValue"]').classList.remove('hidden')
     } else {
       document.querySelector('[data-input="stopValue"]').classList.remove('hidden')
       document.querySelector('[data-input="nkd"]').classList.add('hidden')
+      document.querySelector('[data-input="currencyValue"]').classList.add('hidden')
     }
     $ticker.focus()
   }
@@ -233,18 +254,28 @@ export class CreateForm {
 
       let result = null
 
-      result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities, this.currentPortfolio)
-
-      if (this.isvalid) {
+      if (this.mode === 'create' || this.mode === 'buy') {
+        result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities, this.currentPortfolio ? this.currentPortfolio : this.modaldata.ptf, this.modaldata.id ? this.modaldata.id : null)
+        console.log(result)
+        /*   if (this.isvalid) { */
         this.onSubmit(
-            String(formdata.get('portfolio')),
+            this.modaldata.ptf,
             result,
             Boolean(formdata.get('isclone')),
             this.category
         )
+
+        /*    } */
       }
 
-      console.log(this.state)
+      if (this.mode === 'edit') {
+        result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities, this.modaldata.ptf, this.modaldata.id)
+
+        this.onSubmit(
+            this.modaldata.ptf,
+            result,
+        )
+      }
     });
   }
   initBrokers() {
@@ -261,7 +292,156 @@ export class CreateForm {
     return selectBroker
   }
 
-  init(selectBroker: string) {
+  renderBroker(selectBroker: string) {
+    return `
+      <div class="sm:col-span-2 mb-4"  data-mode=""  data-mode-create="">
+          <label for="portfolio" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select portfolio</label>
+          <select id="portfolio" name="portfolio" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+            ${selectBroker}
+          </select>
+      </div>
+      `
+  }
+  renderCategory() {
+    return `
+      <div class="sm:col-span-2 mb-4"  data-mode=""  data-mode-create="">
+        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
+        <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+          <option value="TQBR">Stocks</option>
+          <option value="TQCB">Corporative Bonds</option>
+          <option value="TQOB">Bonds</option>
+        </select>
+    </div>
+      `
+  }
+  renderSearch() {
+    const custom = `<div  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute hidden" data-dropdown='name'></div>`
+    return this.renderInput('name', 'text', 'Название', '', '', '', 'Тикер, наименование', custom)
+    /*
+    return `
+      <div class="sm:col-span-2  mb-4 relative">
+        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ticker / name</label>
+        <input autocomplete="off" value="" type="text" name="name" id="name" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticker, name" >
+        <div  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute hidden" data-dropdown='name'>
+        </div>
+    </div>
+      ` */
+  }
+
+  renderClone() {
+    return `
+    <div class="flex items-center mb-4" data-input="clone" data-mode=""  data-mode-create="" data-mode-edit="">
+        <input id="isclone" name="isclone" type="checkbox" value="isclone"
+            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-500 dark:border-gray-600 " />
+
+        <label for="isclone" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
+            Clone ?
+        </label>
+    </div>`
+  }
+
+  renderMode(mode: string) {
+    let form = ''
+    switch (mode) {
+      case 'create':
+        form += this.renderBroker(this.initBrokers())
+          + this.renderCategory()
+          + this.renderSearch()
+          + this.renderClone()
+          + this.renderPrice()
+          + this.renderCount()
+          + this.renderNkd()
+          + this.renderCurrency()
+          + this.renderStop()
+        break;
+      case 'buy': {
+        const currentPosition: IPosition = this.state.getters.getPositionById(this.modaldata.id)
+        form +=
+           this.renderName(currentPosition.ticker)
+           + this.renderClone()
+          + this.renderPrice(currentPosition.buyPrice)
+          + this.renderCount(currentPosition.count)
+          + this.renderNkd(currentPosition.nkd)
+          + this.renderCurrency(currentPosition.buyCurrency)
+          + this.renderStop(currentPosition.myStop)
+        break;
+      }
+
+      case 'edit': {
+        const currentPosition: IPosition = this.state.getters.getPositionById(this.modaldata.id)
+        form +=
+           this.renderName(currentPosition.ticker)
+          + this.renderPrice(currentPosition.buyPrice)
+          + this.renderCount(currentPosition.count)
+          + this.renderNkd(currentPosition.nkd)
+          + this.renderCurrency(currentPosition.buyCurrency)
+          + this.renderStop(currentPosition.myStop)
+        break;
+      }
+
+      default:
+        break
+    }
+    form += this.renderSubmit()
+
+    return form
+  }
+
+  renderName(value?: string) {
+    return this.renderInput('name', 'text', 'Наименование', value || '', '', 'readonly', 'Наименование')
+  }
+  renderPrice(value?: string | number) {
+    return this.renderInput('price', 'number', 'Цена покупки', value || '0', '', 'data-calc="totalprice"', 'Цена')
+  }
+
+  renderNkd(value?: string | number) {
+    return this.renderInput('nkd', 'number', 'НКД', value || '0', 'data-input="nkd"', 'data-calc="totalprice"', 'НКД', '', 'hidden')
+  }
+  renderCount(value?: string | number) {
+    return this.renderInput('count', 'number', 'Количество', value || '1', 'data-input="count"', 'data-calc="totalprice"', 'Количество')
+  }
+  renderStop(value?: string | number) {
+    return this.renderInput('stop', 'number', 'Стоп-лосс', value || '0', 'data-input="stopValue"', 'data-calc=""', 'Стоп-лосс')
+  }
+  renderCurrency(value?: string | number) {
+    return this.renderInput('currencyValue', 'number', 'Валюта в момент сделки', value || '1', 'data-input="currencyValue"', 'data-calc="totalprice"', 'Курс валюты', '', 'hidden')
+  }
+
+  renderDescription(value?: string) {
+    return this.renderTextarea('description', 'Комментарии', '4', 'Примечание', value || '')
+  }
+
+  renderTextarea(id: string, title: string, rows: number | string, placeholder?: string, attrBlock?:string, attrInput?: string, value?: string | number) {
+    return `
+      <div class="sm:col-span-2 mb-4"${attrBlock}>
+          <label for="${id}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">${title}</label>
+          <textarea id="${id}" ${attrInput}  rows="${rows}" class="block p-1 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="${placeholder}">${value}</textarea>
+      </div>
+    `
+  }
+
+  renderInput(id: string, type: string, title: string, value?: string | number, attrBlock?: string, attrInput?: string, placeholder?: string, customHTML?: string, classes?: string) {
+    return `
+      <div class="w-full  mb-4 ${classes}" ${attrBlock}>
+          <label for="${id}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">${title}</label>
+          <input ${attrInput} step="0.01" value="${value}"  type="${type}" name="${id}" id="${id}" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="${placeholder}" >
+          ${customHTML ? customHTML : ''}
+      </div>
+    `
+  }
+
+  renderSubmit() {
+    return `
+      <div class="flex items-center">
+        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Confirm
+        </button>
+        <div class="pl-4" data-result="total">0 </div>&nbsp;₽
+      </div>
+    `
+  }
+
+  init(formContent: string) {
     return `
           <div id="modalLoader" class="hidden loader absolute w-full h-full flex items-center justify-center left-0 right-0 top-0 bottom-0 z-40 bg-[rgba(233,233,233,0.2)]">
             <div role="status">
@@ -272,80 +452,8 @@ export class CreateForm {
                 <span class="sr-only">Loading...</span>
             </div>
           </div>
-                    <div class="sm:col-span-2 mb-4">
-                        <label for="portfolio" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select portfolio</label>
-                        <select id="portfolio" name="portfolio" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          ${selectBroker}
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2 mb-4">
-                        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
-                        <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          <option value="TQBR">Stocks</option>
-                          <option value="TQCB">Corporative Bonds</option>
-                          <option value="TQOB">Bonds</option>
-                        </select>
-                    </div>
-                  <div class="sm:col-span-2  mb-4 relative">
-                     <div class="">
-                      <div id="tickerName"></div>
-                      <div id="bonds_dohod"></div>
-                      <div id="bonds_nkd"></div>
-                      <div id="bonds_finish"></div>
-                      <div id="bonds_currency"></div>
-                      <div id="bonds_coupon"></div>
-                      <div id="bonds_nextcoupon"></div>
-                    </div>
-                      <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ticker / name</label>
-                      <input autocomplete="off" value="" type="text" name="name" id="name" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticker, name" >
-
-                      <div  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute hidden" data-dropdown='name'>
-                          
-                        
-                      </div>
-                  </div>
-                  <div class="flex items-center mb-4" data-input="clone">
-                    <input id="isclone" name="isclone" type="checkbox" value="isclone"
-                        class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-500 dark:border-gray-600 " />
-
-                    <label for="isclone" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
-                        Clone ?
-                    </label>
-                </div>
-                  <div class="w-full  mb-4">
-                      <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
-                      <input data-calc="totalprice" value="" type="text" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Price" >
-                  </div>
-                  <div class="w-full  mb-4 hidden" data-input="nkd">
-                      <label for="nkd" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">NKD</label>
-                      <input data-calc="totalprice" value="" type="text" name="nkd" id="nkd" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="NKD" >
-                  </div>
-                  <div class="w-full  mb-4" data-input="count">
-                      <label for="count" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Count</label>
-                      <input data-calc="totalprice" value="50"  type="text" name="count" id="count" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Count" >
-                  </div>
-                  <div class="w-full  mb-4" data-input="stopValue">
-                      <label for="stop" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Stop-Loss</label>
-                      <input type="text" name="stop" id="stop" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Stop" >
-                  </div>
-                  <div class="w-full  mb-4 hidden" data-input="currencyValue">
-                    <label for="currencyValue" class=" block mb-2 text-sm font-medium text-gray-900 dark:text-white">Currency</label>
-                      <input type="text" name="currencyValue" id="currencyValue" value="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Currency value at buy moment" >
-                  </div>
-                  
-                  <div class="sm:col-span-2 mb-4" >
-                      <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                      <textarea id="description" rows="4" class="block p-1 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Notes"></textarea>
-                  </div>
-              </div>
-              <div class="flex items-center">
-                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Confirm
-                </button>
-                <div class="pl-4" data-result="total">0 </div>&nbsp;₽
-              </div>
-              
-     
+        ${formContent}
+       </div>
     `
   }
 }

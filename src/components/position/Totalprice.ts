@@ -11,7 +11,7 @@ export class Totalprice extends ViewComponent {
       this.total += extra
     }
 
-    this.total = Number( this.total.toFixed(2))
+    this.total = Number(this.total.toFixed(2))
   }
 
   public total: number

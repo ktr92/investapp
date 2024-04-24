@@ -73,7 +73,6 @@ export class BlockTable extends AppComponent {
           positions = positions.concat(pp.positions)
         }
       })
-
       const table = new Table('.table', TablePosition, positions, this.emitter)
       table.render()
     })
