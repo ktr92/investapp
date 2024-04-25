@@ -82,6 +82,30 @@ export class Store {
           })
         })
       })
+    },
+    salePosition: (id: string, newPostion: IPosition) => {
+      const markets = Object.keys(this.moex)
+      markets.forEach(market => {
+        this.portfolio.forEach(item => {
+          item.markets[market].forEach(pos => {
+            if (pos.positionId === newPostion.positionId) {
+              pos.buyPrice = newPostion.buyPrice
+              pos.count = newPostion.count
+              pos.myStop = newPostion.myStop
+              pos.buyCurrency = newPostion.buyCurrency
+              pos.nkd = newPostion.nkd
+            }
+          })
+        })
+      })
+    },
+    deletePosition: (id: string, newPostion: IPosition) => {
+      const markets = Object.keys(this.moex)
+      markets.forEach(market => {
+        this.portfolio.forEach(item => {
+          item.markets[market] = item.markets[market].filter(pos => pos.positionId !== newPostion.positionId)
+        })
+      })
     }
   }
 
@@ -242,6 +266,12 @@ export class Store {
 
     editPosition: (id: string, pos: IPosition) => {
       this.mutations.editPosition(id, pos)
+    },
+    deletePosition: (id: string, pos: IPosition) => {
+      this.mutations.deletePosition(id, pos)
+    },
+    salePosition: (id: string, pos: IPosition) => {
+      this.mutations.salePosition(id, pos)
     },
 
   }

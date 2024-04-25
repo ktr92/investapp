@@ -3,6 +3,9 @@ import {Store} from '../../store';
 import {ViewComponent} from '../table/ViewComponent';
 import {CreateForm} from '../form/CreateForm';
 import {Emitter} from '../Emitter';
+import {BuyForm} from '../form/BuyForm';
+import {EditForm} from '../form/EditForm';
+import {DeleteForm} from '../form/DeleteForm';
 
 export class PositionControl extends ViewComponent {
   constructor(public itemInfo: IItemInfo, options: Store) {
@@ -25,7 +28,7 @@ export class PositionControl extends ViewComponent {
     })
 
     document.querySelector(`[data-buypos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
-      const create = await CreateForm.create('#modalContent', this.options, 'buy', this.onBuy.bind(this), modaldata, )
+      const create = await BuyForm.create('#modalContent', this.options, this.onBuy.bind(this), modaldata)
       emitter.emit('modal:renderModal', {
         title: 'Buy position',
         content: create.$el.innerHTML
@@ -36,10 +39,30 @@ export class PositionControl extends ViewComponent {
     })
 
     document.querySelector(`[data-editpos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
-      const create = await CreateForm.create('#modalContent', this.options, 'edit', this.onEdit.bind(this), modaldata)
+      const create = await EditForm.create('#modalContent', this.options, this.onEdit.bind(this), modaldata)
 
       emitter.emit('modal:renderModal', {
         title: 'Edit position',
+        content: create.$el.innerHTML
+      })
+
+      await create.initForm()
+      $menu.classList.add('hidden')
+    })
+    document.querySelector(`[data-deletepos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
+      const create = await DeleteForm.create('#modalContent', this.options, this.onDelete.bind(this), modaldata)
+      emitter.emit('modal:renderModal', {
+        title: 'Delete position',
+        content: create.$el.innerHTML
+      })
+
+      await create.initForm()
+      $menu.classList.add('hidden')
+    })
+    document.querySelector(`[data-salepos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
+      const create = await CreateForm.create('#modalContent', this.options, this.onSale.bind(this), modaldata)
+      emitter.emit('modal:renderModal', {
+        title: 'Sale position',
         content: create.$el.innerHTML
       })
 
@@ -57,6 +80,16 @@ export class PositionControl extends ViewComponent {
   }
   onEdit(id: string, position: IPosition) {
     this.options.actions.editPosition(this.itemInfo.portfolioId, position)
+    this.emitter.emit('header:moexUpdate', this.itemInfo.portfolioId)
+    this.emitter.emit('modal:closeModal')
+  }
+  onDelete(id: string, position: IPosition) {
+    this.options.actions.deletePosition(this.itemInfo.portfolioId, position)
+    this.emitter.emit('header:moexUpdate', this.itemInfo.portfolioId)
+    this.emitter.emit('modal:closeModal')
+  }
+  onSale(id: string, position: IPosition) {
+    this.options.actions.salePosition(this.itemInfo.portfolioId, position)
     this.emitter.emit('header:moexUpdate', this.itemInfo.portfolioId)
     this.emitter.emit('modal:closeModal')
   }

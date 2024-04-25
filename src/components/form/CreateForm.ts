@@ -5,6 +5,8 @@ import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'
 import {initFormData} from '../../utils/getStockPrice'
 import {mapMarket} from '../../utils/maps'
+import {Form} from './Form'
+import * as template from './form.tempalte'
 
 interface IModalData {
   id: string,
@@ -12,26 +14,13 @@ interface IModalData {
   market: string
 }
 
-export class CreateForm {
-  constructor(selector: string, public state: Store, public mode: string, public onSubmit?: (id: string, position: IPosition, isclone?: boolean, market?: string) => void, public modaldata?: IModalData) {
-    this.$el = document.querySelector(selector)
-    this.isvalid = false
-    this.category = this.state.getters.getCategory(this.state.defaultPortfolio)
+export class CreateForm extends Form {
+  constructor(selector: string, public state: Store, public onSubmit?: (id: string, position: IPosition, isclone?: boolean, market?: string) => void) {
+    super(selector, state, onSubmit)
   }
 
-  public $el: HTMLElement
-  public dropdownBroker: Dropdown
-  public foundList: Array<Array<string>>
-  public isvalid: boolean
-  public currentTicker: string
-  public category: string
-  public mDataList: IMarketsList
-  public isLoading: boolean
-  public currentItem: IItem
-  public currentPortfolio: string
-
-  static async create(selector: string, state: Store, mode: string, onSubmit?: (id: string, position: IPosition, isclone?: boolean,) => void, modaldata?: IModalData, ) {
-    const instance = new CreateForm(selector, state, mode, onSubmit, modaldata)
+  static async create(selector: string, state: Store, onSubmit?: (id: string, position: IPosition, isclone?: boolean,) => void, modaldata?: IModalData, ) {
+    const instance = new CreateForm(selector, state, onSubmit)
     await instance.initMarketData()
     return instance
   }
@@ -40,51 +29,19 @@ export class CreateForm {
     await this.state.actions.initSearch(this.category)
   }
 
-  async initForm() {
-    const $form = document.createElement('form')
-    $form.setAttribute('id', 'createForm')
-    this.$el.insertAdjacentElement('beforeend', $form)
-
-    const formContent = await this.renderMode(this.mode)
-
-    $form.insertAdjacentHTML('afterbegin', this.init(formContent))
-    /*     this.category = (document.querySelector('#portfolio') as HTMLSelectElement).value
- */
-
+  postInit() {
     const $ticker = this.$el.querySelector('[name="name"]') as HTMLInputElement
 
-    if (this.mode === 'create') {
-      $ticker.focus()
+    $ticker.focus()
 
-      this.initFormListeners()
-      this.initTickerInput($ticker)
-    }
-    this.changeFields()
-
-    this.initFormSubmit()
-
-    /* document.querySelectorAll('[data-mode]').forEach(item => {
-      item.classList.add('hidden')
-    })
-
-    document.querySelectorAll(`[data-mode-${this.mode}]`).forEach(item => {
-      item.classList.remove('hidden')
-    }) */
+    this.initFormListeners()
+    this.initTickerInput($ticker)
   }
 
   async searchItem(key: string) {
     let res: Array<Array<string>> = []
     res = this.state.getters.getMoexByName(key)
     return res
-  }
-
-  changeForm(loading: boolean) {
-    const $loader = document.querySelector('.loader')
-    if (loading) {
-      $loader.classList.remove('hidden')
-    } else {
-      $loader.classList.add('hidden')
-    }
   }
 
   showInfo() {
@@ -95,78 +52,6 @@ export class CreateForm {
         document.querySelector('label[for="name"]').textContent = name
       }
     }
-  }
-
-  changeFields() {
-    /*  const $ticker: HTMLInputElement = document.querySelector('[name="name"]')
-    $ticker.value = '' */
-    /*     this.calc('', false) */
-    if (mapMarket()[this.category].type === 'bonds') {
-      document.querySelector('[data-input="stopValue"]').classList.add('hidden')
-      document.querySelector('[data-input="nkd"]').classList.remove('hidden')
-      document.querySelector('[data-input="currencyValue"]').classList.remove('hidden')
-    } else {
-      document.querySelector('[data-input="stopValue"]').classList.remove('hidden')
-      document.querySelector('[data-input="nkd"]').classList.add('hidden')
-      document.querySelector('[data-input="currencyValue"]').classList.add('hidden')
-    }
-    /*     $ticker.focus() */
-  }
-
-  calcCurrency() {
-    const $currency: HTMLElement = document.querySelector('[data-input="currencyValue"]')
-    const $currencyInput: HTMLInputElement = $currency.querySelector('input')
-
-    const isCurrency = this.currentItem.currency
-    if (isCurrency && isCurrency !== 'SUR') {
-      $currency.classList.remove('hidden')
-      $currencyInput.value = String(this.state.getters.getCurrency(isCurrency))
-    } else {
-      $currency.classList.add('hidden')
-      $currencyInput.value = '1'
-    }
-  }
-
-  calc(ticker: string, isload: boolean) {
-    let stop = 0;
-    let count = 0
-    let price = 0;
-    const $price = document.querySelector('input[name="price"]') as HTMLInputElement
-    const $stop = document.querySelector('input[name="stop"]') as HTMLInputElement
-    const $count = document.querySelector('input[name="count"]') as HTMLInputElement
-    const $result = document.querySelector('[data-result="total"]') as HTMLDivElement
-    const $nkd = document.querySelector('input[name="nkd"]') as HTMLInputElement
-    const broker = (document.querySelector('#portfolio') as HTMLSelectElement).value
-    this.currentPortfolio = broker
-
-    if (ticker === '') {
-      $price.value = ''
-      $stop.value = ''
-      $count.value = ''
-      $result.textContent = '0'
-
-      return
-    }
-
-    if (isload) {
-      const nominal = this.currentItem.nominal
-      const currency = this.state.getters.getCurrency(this.currentItem.currency)
-
-      const textprice = this.currentItem.price * Number(currency) * (nominal > 1 ? (Number(nominal) / 100) : 1)
-
-      stop = Number(this.currentItem.price) * 0.98;
-      count = Math.round(this.state.getters.getPortfolioSumm(broker)/Number(textprice))
-      $result.textContent = numberWithSpaces(String((textprice * count).toFixed(2)));
-    } else {
-      price = Number($price.value)
-      stop = Number($stop.value)
-      count = Number($count.value)
-    }
-
-    $price.value = String(this.currentItem.price);
-    $count.value = String(count);
-    $stop.value = String(stop.toFixed(2));
-    $nkd.value = String(this.currentItem.nkd);
   }
 
   initFormListeners() {
@@ -255,7 +140,7 @@ export class CreateForm {
 
       let result = null
 
-      if (this.mode === 'create' || this.mode === 'buy') {
+      if (this.isvalid) {
         result = initFormData(
             this.category,
             formdata,
@@ -263,22 +148,11 @@ export class CreateForm {
             this.currentPortfolio ? this.currentPortfolio : this.modaldata.ptf,
             this.modaldata ? this.modaldata.id : null)
 
-        /*    if (this.isvalid) { */
         this.onSubmit(
           this.currentPortfolio ? this.currentPortfolio : this.modaldata.ptf,
           result,
           Boolean(formdata.get('isclone')),
           this.category
-        )
-      /*   } */
-      }
-
-      if (this.mode === 'edit') {
-        result = initFormData(this.category, formdata, this.state.moexSearch.moexSecurities, this.modaldata.ptf, this.modaldata.id)
-
-        this.onSubmit(
-            this.modaldata.ptf,
-            result,
         )
       }
     });
@@ -297,55 +171,7 @@ export class CreateForm {
     return selectBroker
   }
 
-  renderBroker(selectBroker: string) {
-    return `
-      <div class="sm:col-span-2 mb-4"  data-mode=""  data-mode-create="">
-          <label for="portfolio" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select portfolio</label>
-          <select id="portfolio" name="portfolio" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-            ${selectBroker}
-          </select>
-      </div>
-      `
-  }
-  renderCategory() {
-    return `
-      <div class="sm:col-span-2 mb-4"  data-mode=""  data-mode-create="">
-        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
-        <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-          <option value="TQBR">Stocks</option>
-          <option value="TQCB">Corporative Bonds</option>
-          <option value="TQOB">Bonds</option>
-        </select>
-    </div>
-      `
-  }
-  renderSearch() {
-    const custom = `<div  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute hidden" data-dropdown='name'></div>`
-    return this.renderInput('name', 'text', 'Название', '', '', '', 'Тикер, наименование', custom)
-    /*
-    return `
-      <div class="sm:col-span-2  mb-4 relative">
-        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ticker / name</label>
-        <input autocomplete="off" value="" type="text" name="name" id="name" class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ticker, name" >
-        <div  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute hidden" data-dropdown='name'>
-        </div>
-    </div>
-      ` */
-  }
-
-  renderClone() {
-    return `
-    <div class="flex items-center mb-4" data-input="clone" data-mode=""  data-mode-create="" data-mode-edit="">
-        <input id="isclone" name="isclone" type="checkbox" value="isclone"
-            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-500 dark:border-gray-600 " />
-
-        <label for="isclone" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
-            Clone ?
-        </label>
-    </div>`
-  }
-
-  async renderMode(mode: string) {
+  async renderMode() {
     let form = ''
     let currentPosition: IPosition = null
     if (this.modaldata) {
@@ -354,90 +180,19 @@ export class CreateForm {
       await this.initMarketData()
     }
 
-    switch (mode) {
-      case 'create':
-        form += this.renderBroker(this.initBrokers())
-          + this.renderCategory()
-          + this.renderSearch()
-          + this.renderClone()
+    form += template.renderBroker(this.initBrokers())
+          + template.renderCategory()
+          + template.renderSearch()
+          + template.renderClone()
           + this.renderPrice()
           + this.renderCount()
           + this.renderNkd()
           + this.renderCurrency()
           + this.renderStop()
-        break;
-      case 'buy': {
-        form +=
-           this.renderName(currentPosition.ticker)
-           + this.renderClone()
-          + this.renderPrice(currentPosition.buyPrice)
-          + this.renderCount(currentPosition.count)
-          + this.renderNkd(currentPosition.nkd)
-          + this.renderCurrency(currentPosition.buyCurrency)
-          + this.renderStop(currentPosition.myStop)
-        break;
-      }
 
-      case 'edit': {
-        form +=
-           this.renderName(currentPosition.ticker)
-          + this.renderPrice(currentPosition.buyPrice)
-          + this.renderCount(currentPosition.count)
-          + this.renderNkd(currentPosition.nkd)
-          + this.renderCurrency(currentPosition.buyCurrency)
-          + this.renderStop(currentPosition.myStop)
-        break;
-      }
-
-      default:
-        break
-    }
     form += this.renderSubmit()
 
     return form
-  }
-
-  renderName(value?: string) {
-    return this.renderInput('name', 'text', 'Наименование', value || '', '', 'readonly', 'Наименование')
-  }
-  renderPrice(value?: string | number) {
-    return this.renderInput('price', 'number', 'Цена покупки', value || '0', '', 'data-calc="totalprice"', 'Цена')
-  }
-
-  renderNkd(value?: string | number) {
-    return this.renderInput('nkd', 'number', 'НКД', value || '0', 'data-input="nkd"', 'data-calc="totalprice"', 'НКД', '', 'hidden')
-  }
-  renderCount(value?: string | number) {
-    return this.renderInput('count', 'number', 'Количество', value || '1', 'data-input="count"', 'data-calc="totalprice"', 'Количество')
-  }
-  renderStop(value?: string | number) {
-    return this.renderInput('stop', 'number', 'Стоп-лосс', value || '0', 'data-input="stopValue"', 'data-calc=""', 'Стоп-лосс')
-  }
-  renderCurrency(value?: string | number) {
-    return this.renderInput('currencyValue', 'number', 'Валюта в момент сделки', value || '1', 'data-input="currencyValue"', 'data-calc="totalprice"', 'Курс валюты', '', 'hidden')
-  }
-
-  renderDescription(value?: string) {
-    return this.renderTextarea('description', 'Комментарии', '4', 'Примечание', value || '')
-  }
-
-  renderTextarea(id: string, title: string, rows: number | string, placeholder?: string, attrBlock?:string, attrInput?: string, value?: string | number) {
-    return `
-      <div class="sm:col-span-2 mb-4"${attrBlock}>
-          <label for="${id}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">${title}</label>
-          <textarea id="${id}" ${attrInput}  rows="${rows}" class="block p-1 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="${placeholder}">${value}</textarea>
-      </div>
-    `
-  }
-
-  renderInput(id: string, type: string, title: string, value?: string | number, attrBlock?: string, attrInput?: string, placeholder?: string, customHTML?: string, classes?: string) {
-    return `
-      <div class="w-full  mb-4 ${classes}" ${attrBlock}>
-          <label for="${id}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">${title}</label>
-          <input ${attrInput} step="0.01" value="${value}"  type="${type}" name="${id}" id="${id}" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="${placeholder}" >
-          ${customHTML ? customHTML : ''}
-      </div>
-    `
   }
 
   renderSubmit() {
@@ -448,22 +203,6 @@ export class CreateForm {
         </button>
         <div class="pl-4" data-result="total">0 </div>&nbsp;₽
       </div>
-    `
-  }
-
-  init(formContent: string) {
-    return `
-          <div id="modalLoader" class="hidden loader absolute w-full h-full flex items-center justify-center left-0 right-0 top-0 bottom-0 z-40 bg-[rgba(233,233,233,0.2)]">
-            <div role="status">
-                <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                </svg>
-                <span class="sr-only">Loading...</span>
-            </div>
-          </div>
-        ${formContent}
-       </div>
     `
   }
 }
