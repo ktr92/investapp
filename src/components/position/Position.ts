@@ -71,8 +71,12 @@ export class Position implements IObjIndexable {
   public options: Store
 
   static createPosition(items: Array<IPosition>, state: Store, type: string, comm: number, market: string) {
-    const result = items.map((item: IPosition) => {
-      return new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, item.nkd, comm, state, item.positionId, item.portfolioId, market)
+    const result: Array<Position> = []
+    items.forEach((item: IPosition) => {
+      // выводим все кроме проданных
+      if (!item.isSold) {
+        result.push(new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, item.nkd, comm, state, item.positionId, item.portfolioId, market))
+      }
     })
 
     return result

@@ -184,4 +184,16 @@ export abstract class Form {
   renderDescription(value?: string) {
     return template.renderTextarea('description', 'Комментарии', '4', 'Примечание', value || '')
   }
+  renderSalePrice(value?: string | number) {
+    return template.renderInput('salePrice', 'number', 'Цена продажи', value || '0', '', 'data-calc="totalprice"', 'Цена')
+  }
+  renderSaleNkd(value?: string | number) {
+    return template.renderInput('saleNkd', 'number', 'НКД', value || '0', 'data-input="nkd"', 'data-calc="totalprice"', 'НКД', '', 'hidden')
+  }
+  renderSaleCount(value?: string | number) {
+    return template.renderInput('saleCount', 'number', 'Количество', value || '1', 'data-input="count"', 'data-calc="totalprice"', 'Количество')
+  }
+  renderSaleCurrency(value?: string | number) {
+    return template.renderInput('saleCurrency', 'number', 'Валюта в момент сделки', value || '1', 'data-input="currencyValue"', 'data-calc="totalprice"', 'Курс валюты', '', 'hidden')
+  }
 }

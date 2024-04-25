@@ -41,7 +41,12 @@ declare interface IPosition {
   currency?: string,
   buyCurrency?: number,
   myStop?: number,
-  options?: IState
+  options?: IState,
+  salePrice?: number,
+  saleCount?: number,
+  saleCurrency?: number,
+  saleNkd?: number
+  isSold?: boolean
 }
 
 declare interface IPortfolio {
@@ -116,4 +121,10 @@ declare interface IItemInfo {
   positionId: string,
   portfolioId: string,
   marketId: string
+}
+
+declare interface IModalData {
+  id: string,
+  ptf: string,
+  market: string
 }

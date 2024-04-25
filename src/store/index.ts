@@ -89,11 +89,14 @@ export class Store {
         this.portfolio.forEach(item => {
           item.markets[market].forEach(pos => {
             if (pos.positionId === newPostion.positionId) {
-              pos.buyPrice = newPostion.buyPrice
-              pos.count = newPostion.count
-              pos.myStop = newPostion.myStop
-              pos.buyCurrency = newPostion.buyCurrency
-              pos.nkd = newPostion.nkd
+              pos.saleCount = newPostion.saleCount
+              pos.salePrice = newPostion.salePrice
+              pos.saleCurrency = newPostion.saleCurrency
+              pos.saleNkd = newPostion.saleNkd
+              pos.count -= newPostion.saleCount
+              if (pos.count === 0) {
+                pos.isSold = true
+              }
             }
           })
         })

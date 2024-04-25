@@ -31,18 +31,20 @@ export class TablePosition {
 
   init(items: IPosition[]) {
     items.forEach(item => {
-      const viewItem = new TableComponent()
-      Object.keys(item)
-          .forEach(key => {
-            const idx = this.props.indexOf(key)
-            if (idx > -1) {
-              const newItem = item[key] as ViewComponent
-              this.initSortfield(item[key] as ViewComponent, newItem, idx)
+      if (item) {
+        const viewItem = new TableComponent()
+        Object.keys(item)
+            .forEach(key => {
+              const idx = this.props.indexOf(key)
+              if (idx > -1) {
+                const newItem = item[key] as ViewComponent
+                this.initSortfield(item[key] as ViewComponent, newItem, idx)
 
-              viewItem.props.push(newItem)
-            }
-          })
-      this.components.push(viewItem)
+                viewItem.props.push(newItem)
+              }
+            })
+        this.components.push(viewItem)
+      }
     })
 
     this.initFooters(items)

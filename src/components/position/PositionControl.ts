@@ -6,6 +6,7 @@ import {Emitter} from '../Emitter';
 import {BuyForm} from '../form/BuyForm';
 import {EditForm} from '../form/EditForm';
 import {DeleteForm} from '../form/DeleteForm';
+import {SaleForm} from '../form/SaleForm';
 
 export class PositionControl extends ViewComponent {
   constructor(public itemInfo: IItemInfo, options: Store) {
@@ -60,7 +61,7 @@ export class PositionControl extends ViewComponent {
       $menu.classList.add('hidden')
     })
     document.querySelector(`[data-salepos="${this.itemInfo.positionId}"]`).addEventListener('click', async (e) => {
-      const create = await CreateForm.create('#modalContent', this.options, this.onSale.bind(this), modaldata)
+      const create = await SaleForm.create('#modalContent', this.options, this.onSale.bind(this), modaldata)
       emitter.emit('modal:renderModal', {
         title: 'Sale position',
         content: create.$el.innerHTML
