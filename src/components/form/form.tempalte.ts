@@ -1,3 +1,5 @@
+const inputClass = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500'
+
 export function renderClone() {
   return `
   <div class="flex items-center mb-4" data-input="clone" data-mode=""  data-mode-create="" data-mode-edit="">
@@ -25,7 +27,7 @@ export function renderBroker(selectBroker: string) {
   return `
     <div class="sm:col-span-2 mb-4"  data-mode=""  data-mode-create="">
         <label for="portfolio" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select portfolio</label>
-        <select id="portfolio" name="portfolio" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+        <select id="portfolio" name="portfolio" class="${inputClass}">
           ${selectBroker}
         </select>
     </div>
@@ -35,7 +37,7 @@ export function renderCategory() {
   return `
     <div class="sm:col-span-2 mb-4"  data-mode=""  data-mode-create="">
       <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
-      <select id="category" name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+      <select id="category" name="category" class="${inputClass}"}>
         <option value="TQBR">Stocks</option>
         <option value="TQCB">Corporative Bonds</option>
         <option value="TQOB">Bonds</option>
@@ -52,7 +54,7 @@ export function renderTextarea(id: string, title: string, rows: number | string,
   return `
     <div class="sm:col-span-2 mb-4"${attrBlock}>
         <label for="${id}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">${title}</label>
-        <textarea id="${id}" ${attrInput}  rows="${rows}" class="block p-1 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="${placeholder}">${value}</textarea>
+        <textarea id="${id}" ${attrInput}  rows="${rows}" class="${inputClass}" placeholder="${placeholder}">${value}</textarea>
     </div>
   `
 }
@@ -61,7 +63,16 @@ export function renderInput(id: string, type: string, title: string, value?: str
   return `
     <div class="w-full  mb-4 ${classes}" ${attrBlock}>
         <label for="${id}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">${title}</label>
-        <input ${attrInput} step="0.000000001" value="${value}"  type="${type}" name="${id}" id="${id}" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="${placeholder}" >
+        <input 
+          ${attrInput} 
+          step="0.000000001" 
+          value="${value}"  
+          type="${type}" 
+          name="${id}" 
+          id="${id}" 
+          autocomplete="off" 
+          class="${inputClass}" 
+          placeholder="${placeholder}" >
         ${customHTML ? customHTML : ''}
     </div>
   `

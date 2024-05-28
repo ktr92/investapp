@@ -54,23 +54,6 @@ export class CreateForm extends Form {
     }
   }
 
-  initFormListeners() {
-    this.$el.querySelectorAll('input[data-calc="totalprice"]').forEach(item => {
-      item.addEventListener('input', (e) => {
-        if (this.currentTicker) {
-          this.calc(this.currentTicker, false)
-        }
-      })
-    })
-    this.$el.querySelector('[name="category"]').addEventListener('change', async (e) => {
-      this.category = (e.target as HTMLSelectElement).value
-      this.changeForm(true)
-      await this.initMarketData()
-      this.changeFields()
-      this.changeForm(false)
-    })
-  }
-
   onSelect(e: Event, $input: EventTarget, $block?: HTMLElement, listener?: CallbackFunction) {
     if (e.target instanceof HTMLElement) {
       if (e.target.dataset.ticker) {

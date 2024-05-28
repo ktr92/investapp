@@ -8,6 +8,14 @@ import {BlockTable} from './components/table/Blocktable';
 import {Store} from './store';
 
 const state = new Store;
+/*
+const socket = new WebSocket('wss://invest-public-api.tinkoff.ru/ws/');
+socket.onopen = function(e) {
+  console.log('connected')
+};
+
+const tickers = state.getters.getAllTickers('TQBR');
+console.log(tickers['TQBR']); */
 
 (async function() {
   state.moex = await state.actions.initMoex()

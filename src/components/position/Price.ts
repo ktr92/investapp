@@ -10,7 +10,7 @@ export class Price extends ViewComponent {
   render() {
     let result = null
     if (this.value) {
-      result = numberWithSpaces(this.value.toFixed(2)) + ' ₽'
+      result = numberWithSpaces(parseFloat(this.value.toString())) + ' ₽'
     } else {
       result = '-'
     }

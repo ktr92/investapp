@@ -165,7 +165,7 @@ export abstract class Form {
     return template.renderInput('name', 'text', 'Наименование', value || '', '', 'readonly', 'Наименование')
   }
   renderPrice(value?: string | number) {
-    return template.renderInput('price', 'number', 'Цена покупки', value || '0', '', 'data-calc="totalprice"', 'Цена')
+    return template.renderInput('price', 'number', 'Цена покупки', value || '0', '')
   }
 
   renderNkd(value?: string | number) {
