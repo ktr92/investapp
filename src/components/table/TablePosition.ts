@@ -24,7 +24,7 @@ export class TablePosition {
     this.init(items)
   }
   public viewItems: TableComponent
-  public headers = ['Актив', 'Кол-во', 'Средняя цена', 'НКД', 'Комиссия', 'Вложено', 'Текущая стоимость', 'Прибыль', '', '']
+  public headers = ['Актив', 'Кол-во', 'Средняя цена', 'НКД', 'Комиссия', 'Вложено', 'Стоимость', 'Прибыль', '', '']
   public footers: Array<string> = []
   public props = ['stock', 'count', 'startPrice', 'nkd', 'comm', 'startTotal', 'currentPrice', 'change', 'positionControl']
   public components: Array<TableComponent> = []

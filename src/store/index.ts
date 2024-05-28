@@ -302,6 +302,16 @@ const state: IState = {
             count: 100,
             myStop: 500,
           },
+          {
+            positionId: '1',
+            portfolioId: '1',
+            ticker: 'HYDR',
+            type: 'stock',
+            market: 'TQBR',
+            buyPrice: 0.7670,
+            count: 416000,
+            myStop: 0,
+          },
         ],
         TQCB: [
         ],
