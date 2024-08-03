@@ -8,7 +8,6 @@ import {BlockTable} from './components/table/Blocktable';
 import {Store} from './store';
 
 const state = new Store;
-
 (async function() {
   state.moex = await state.actions.initMoex()
   state.currency = await state.actions.initCurrency()

@@ -105,10 +105,10 @@ export class PositionControl extends ViewComponent {
       </button>
       
       <div id="menu_position${this.itemInfo.positionId}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute top-full right-0">
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-buypos="${this.itemInfo.positionId}" >Buy</div>
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-salepos="${this.itemInfo.positionId}">Sale</div>
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-editpos="${this.itemInfo.positionId}">Edit</div>
-        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-deletepos="${this.itemInfo.positionId}">Delete</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-buypos="${this.itemInfo.positionId}" >Купить</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-salepos="${this.itemInfo.positionId}">Продать</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-editpos="${this.itemInfo.positionId}">Изменить</div>
+        <div class='class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"' data-deletepos="${this.itemInfo.positionId}">Удалить</div>
       </div>
     </div>
     `

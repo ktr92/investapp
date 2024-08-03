@@ -60,6 +60,7 @@ export class BlockTable extends AppComponent {
   createTable(source: Array<IPortfolio>) {
     source.forEach(portfolio => {
       let positions: Array<Position> = []
+      Store.portfolioName = portfolio.name
       this.state.marketList.forEach(item => {
         const positionType = getPositionType(item)
         if (portfolio.markets[item] && portfolio.markets[item].length) {

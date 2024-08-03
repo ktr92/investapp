@@ -39,7 +39,7 @@ export class Header extends AppComponent {
   init(): void {
     const brokerLIst = getBrokerList(this.state)
 
-    this.dropdownPortfolio = new Dropdown('#dropdownButton', 'Select Portfolio', '#dropdownMenu', [...brokerLIst], this.changeBroker.bind(this))
+    this.dropdownPortfolio = new Dropdown('#dropdownButton', 'Портфель', '#dropdownMenu', [...brokerLIst], this.changeBroker.bind(this))
 
     document.querySelector('[data-click="changeTheme"]').addEventListener('click', e => {
       this.$emit('header:changeTheme')
@@ -101,13 +101,13 @@ export class Header extends AppComponent {
               </div>
           </div><!-- /.block -->
           <div class="block ml-8  ">
-            <button data-click="showAllBrokers" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Total portfolio</button>
+            <button data-click="showAllBrokers" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Все портфели</button>
           </div><!-- /.block -->
           <div class="block ml-8  ">
-            <button data-modal="newPosition" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">New Position</button>
+            <button data-modal="newPosition" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Добавить позицию</button>
           </div><!-- /.block -->
           <div class="block ml-8  ">
-            <button data-modal="sellPosition" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Sell Position</button>
+            <button data-modal="sellPosition" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Убрать позицию</button>
           </div><!-- /.block -->
         </div>
         <div class="cursor-pointer group" data-click='changeTheme' >

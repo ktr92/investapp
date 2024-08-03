@@ -2,6 +2,7 @@
 import idGenerator from '../../utils/idGenerator'
 import {TableComponent} from './TableComponent'
 import {ViewComponent} from './ViewComponent'
+import {Store} from '../../store';
 
 const idgen = idGenerator()
 
@@ -20,6 +21,7 @@ export function renderTable(items: Array<TableComponent>, headers: Array<string>
   const table = `
     <section class="w-full dark:bg-gray-900 py-3 sm:py-5" id=table${tabid.id}>
       <div class="w-full mx-auto max-w-screen-2xl">
+      <h2 class="text-2xl font-black">${Store.portfolioName || '' }</h2>
         <div class="w-full relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <table class="w-full">
         <thead>${header ?? ''}</thead>

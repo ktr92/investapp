@@ -38,6 +38,8 @@ export class Store {
     this.currentPortfolio = []
   }
 
+  static portfolioName: string
+
   public portfolio: Array<IPortfolio>
   public defaultPortfolio: string
   public defaultCategory: string
@@ -285,7 +287,7 @@ const state: IState = {
   portfolio: [
     {
       id: '1',
-      name: 'SBER',
+      name: 'СберБрокер (спекулятивный, но походу стал долгосрочным)',
       depo: 450000,
       comm: 0.09,
       defaultSumm: 50000,
@@ -295,20 +297,10 @@ const state: IState = {
           {
             positionId: '1',
             portfolioId: '1',
-            ticker: 'ASTR',
-            type: 'stock',
-            market: 'TQBR',
-            buyPrice: 554,
-            count: 100,
-            myStop: 500,
-          },
-          {
-            positionId: '1',
-            portfolioId: '1',
             ticker: 'HYDR',
             type: 'stock',
             market: 'TQBR',
-            buyPrice: 0.7670,
+            buyPrice: 0.6670,
             count: 416000,
             myStop: 0,
           },
@@ -320,7 +312,7 @@ const state: IState = {
     },
     {
       id: '2',
-      name: 'IIS',
+      name: 'ИИС СберБрокер (среднесрочный)',
       depo: 200000,
       comm: 0.09,
       defaultSumm: 50000,
@@ -330,23 +322,22 @@ const state: IState = {
           {
             positionId: '2',
             portfolioId: '2',
-            ticker: 'LKOH',
+            ticker: 'ASTR',
             type: 'stock',
             market: 'TQCB',
 
-            buyPrice: 6990,
-            count: 22,
-            myStop: 7000,
+            buyPrice: 510,
+            count: 178,
           },
           {
             positionId: '3',
             portfolioId: '2',
-            ticker: 'SVCB',
+            ticker: 'SNGSP',
             type: 'stock',
             market: 'TQCB',
 
-            buyPrice: 16,
-            count: 3000,
+            buyPrice: 62,
+            count: 1000,
             myStop: 0,
 
           }
@@ -359,33 +350,14 @@ const state: IState = {
     },
     {
       id: '3',
-      name: 'Finam',
+      name: 'Финам (долгосрочный)',
       depo: 500000,
       comm: 0.095,
       defaultSumm: 50000,
       defaultCategory: 'TQBR',
       markets: {
         TQBR: [
-          {
-            positionId: '4',
-            portfolioId: '3',
-            ticker: 'SVET',
-            type: 'stock',
-            market: 'TQBR',
-            buyPrice: 32,
-            count: 1000,
-            myStop: 25,
-          },
-          {
-            positionId: '5',
-            portfolioId: '3',
-            ticker: 'HYDR',
-            type: 'stock',
-            market: 'TQBR',
-            buyPrice: 0.8885,
-            count: 3000,
-            myStop: 0.7000,
-          },
+
         ],
         TQCB: [
           {
@@ -439,7 +411,7 @@ const state: IState = {
             type: 'bonds',
             market: 'TQOB',
             buyPrice: 55,
-            count: 1,
+            count: 50,
             nominal: 1000,
             currency: '',
             nkd: 7,
