@@ -300,7 +300,7 @@ const state: IState = {
             ticker: 'HYDR',
             type: 'stock',
             market: 'TQBR',
-            buyPrice: 0.6670,
+            buyPrice: 0.5670,
             count: 416000,
             myStop: 0,
           },
@@ -336,7 +336,7 @@ const state: IState = {
             type: 'stock',
             market: 'TQCB',
 
-            buyPrice: 62,
+            buyPrice: 42,
             count: 1000,
             myStop: 0,
 
