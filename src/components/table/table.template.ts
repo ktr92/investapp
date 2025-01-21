@@ -18,11 +18,11 @@ export function renderTable(items: Array<TableComponent>, headers: Array<string>
     id: idgen.next().value
   }
 
-  const table = `
-    <section class="w-full dark:bg-gray-900 py-3 sm:py-5" id=table${tabid.id}>
-      <div class="w-full mx-auto max-w-screen-2xl">
-      <h2 class="text-2xl font-black">${Store.portfolioName || '' }</h2>
-        <div class="w-full relative bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+  const table = ` 
+    <section class="w-full dark:bg-gray-800 py-3 sm:py-5" id=table${tabid.id}>
+      <div class="w-full mx-auto px-8">
+      <h2 class="text-2xl font-bold mb-4 dark:text-white">${Store.portfolioName || '' }</h2>
+        <div class="w-full relative bg-white dark:bg-gray-800">
         <table class="w-full">
         <thead>${header ?? ''}</thead>
         <tbody></tbody>
@@ -48,7 +48,7 @@ export function renderBody(root: HTMLElement, items: Array<TableComponent>) {
 }
 
 function renderHeader(header: Array<unknown>) {
-  let row = `<tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">`
+  let row = `<tr class="border-b bg-gray-100 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700">`
   let index = 0
 
   header.forEach(item => {
@@ -94,7 +94,7 @@ function createRow(cols: Array<ViewComponent>) {
 } */
 
 function createCol(value: string | unknown, index: number, isheader = false, iscolor = false) {
-  let newcol = `<td class=" py-2 relative cursor-pointer font-medium text-gray-900 whitespace-nowrap dark:text-white ${isheader ? 'pl-2 pr-2 hover:text-[#00aff5] dark:hover:text-[#00aff5]' : ' px-2'}" data-sort="${index}" ${isheader ? `data-header="asc"` : ''}>`
+  let newcol = `<td class=" py-2 relative cursor-pointer font-medium text-gray-900 whitespace-nowrap dark:text-white ${isheader ? 'pl-4 pr-4 hover:text-[#00aff5] dark:hover:text-[#00aff5]' : ' px-4'}" data-sort="${index}" ${isheader ? `data-header="asc"` : ''}>`
   newcol += value
   newcol += '</td>'
   return newcol

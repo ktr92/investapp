@@ -34,7 +34,7 @@ export class Bonds extends ViewComponent implements IObjIndexable {
     <div class="">
       <a href="#" target="_blank" class="flex items-center">
         <span class="w-auto h-8 mr-3 ">
-          <img src=${this.logo} width="40" width="40" height="40" class="min-w-[40px] rounded-full">
+          <img src=${this.logo} width="22" width="22" height="22" class="min-w-[22px] rounded-full">
         </span>
         <span>
           <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white">${this.name}</span>

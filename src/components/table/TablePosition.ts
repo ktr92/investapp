@@ -7,6 +7,7 @@ import {Count} from '../position/Count'
 import {Totalprice} from '../position/Totalprice'
 import {ViewComponent} from './ViewComponent'
 import numberWithSpaces from '../../utils/formatNumber'
+import calcSumm from '../../utils/calcSumm'
 
 declare interface IPosition extends IObjIndexable {
   stock: Stock
@@ -71,31 +72,19 @@ export class TablePosition {
 
   initFooters(items: IPosition[]) {
     this.footers.push('Всего')
-    this.footers.push(this.calcCount(items) + ' шт.')
+    this.footers.push(calcSumm(items, 'count', 'count') + ' шт.')
+    this.footers.push('')
+    this.footers.push('')
     this.footers.push('')
     this.footers.push(this.calcBuy(items) + ' ₽')
-    this.footers.push(this.calcCurrent(items) + ' ₽')
+    this.footers.push(calcSumm(items, 'currentPrice', 'total') + ' ₽')
     this.footers.push(this.calcChange(items))
   }
 
-  calcCount(items: IPosition[]) {
-    let totalCount = 0
-    items.forEach(item => {
-      totalCount += item.count.count
-    })
-    return numberWithSpaces(totalCount)
-  }
   calcBuy(items: IPosition[]) {
     let total = 0
     items.forEach(item => {
       total += item.startPrice.value * item.count.count
-    })
-    return numberWithSpaces(total.toFixed(2))
-  }
-  calcCurrent(items: IPosition[]) {
-    let total = 0
-    items.forEach(item => {
-      total += item.currentPrice.total
     })
     return numberWithSpaces(total.toFixed(2))
   }
