@@ -287,7 +287,7 @@ const state: IState = {
   portfolio: [
     {
       id: '1',
-      name: 'СберБрокер',
+      name: 'Среднесрочный портфель',
       depo: 450000,
       comm: 0.09,
       defaultSumm: 50000,
@@ -312,7 +312,7 @@ const state: IState = {
     },
     {
       id: '2',
-      name: 'ИИС СберБрокер',
+      name: 'Долгосрочный портфель',
       depo: 200000,
       comm: 0.09,
       defaultSumm: 50000,
@@ -350,7 +350,7 @@ const state: IState = {
     },
     {
       id: '3',
-      name: 'Финам',
+      name: 'Портфель облигаций',
       depo: 500000,
       comm: 0.095,
       defaultSumm: 50000,
