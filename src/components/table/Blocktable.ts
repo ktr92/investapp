@@ -11,6 +11,7 @@ import {Emitter} from '../Emitter';
 import changeClass from '../../utils/toggleClass';
 import {Store} from '../../store';
 import {getPositionType} from '../../utils/getStockPrice';
+import {TableHistory} from './TableHistory';
 
 interface DomOptions {
   name: string,
@@ -39,9 +40,8 @@ export class BlockTable extends AppComponent {
   public emitter: Emitter
   static id = 'tableblock'
 
-  init(): void {
-    const all = this.state.getters.getAllPortfolio();
-    this.createTable(all)
+  init() {
+    this.initStartstate()
 
     this.$on('table:changeBroker', (id: string) => {
       this.changeBroker(id)
@@ -49,6 +49,18 @@ export class BlockTable extends AppComponent {
     this.$on('table:showAllBrokers', () => {
       this.changeBroker()
     })
+
+    this.$on('table:changeView', (view: string) => {
+      if (view === 'appHistory') {
+        const history = new TableHistory('#tableblock')
+        history.render()
+      }
+    })
+  }
+
+  initStartstate() {
+    const all = this.state.getters.getAllPortfolio();
+    this.createTable(all)
   }
 
   toHTML(): string {

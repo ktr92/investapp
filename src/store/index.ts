@@ -1,3 +1,5 @@
+/** @module Store */
+
 import {mapMarket} from '../utils/maps'
 import {fetchCurrency} from '../utils/currecyValue'
 import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
@@ -66,6 +68,18 @@ export class Store {
       } else {
         const pos = ispos[0]
         pos.buyPrice = (newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) / (newPostion.count + pos.count)
+        pos.count += newPostion.count
+      }
+    },
+    sellPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market: string) => {
+      const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
+      const ispos = pfolio.markets[market].filter(item => item.positionId === newPostion.positionId)
+
+      if (clone || !ispos.length) {
+        pfolio.markets[market].push(newPostion)
+      } else {
+        const pos = ispos[0]
+        pos.buyPrice = -(newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) / (newPostion.count + pos.count)
         pos.count += newPostion.count
       }
     },
@@ -267,6 +281,9 @@ export class Store {
     },
     addPosition: (id: string, pos: IPosition, clone: boolean, market: string) => {
       this.mutations.addPosition(id, pos, clone, market)
+    },
+    sellPosition: (id: string, pos: IPosition, clone: boolean, market: string) => {
+      this.mutations.sellPosition(id, pos, clone, market)
     },
 
     editPosition: (id: string, pos: IPosition) => {
