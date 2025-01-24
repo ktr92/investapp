@@ -1,11 +1,20 @@
+/** Class for DOM-elements to make a simplified interface for operating with the DOM-tree */
 export class DomComponent implements IObjIndexable {
+  /**
+   * @param {string} selector - the root element's selector
+   * @this {DomComponent}
+   */
   constructor(selector: string) {
     this.$root = document.querySelector(selector)
   }
   public $root: HTMLElement | Element
   [index: string]: unknown
 
-  $(selector: string) {
+  /**
+   * @param {string} selector - selector to find element
+   * @return {NodeListOf<Element> | Element} - selected element if there is the only one on the page or a list of elements
+   */
+  $(selector: string): NodeListOf<Element> | Element {
     const $el = document.querySelectorAll(selector)
     if ($el) {
       if ($el.length === 1) {
@@ -16,7 +25,11 @@ export class DomComponent implements IObjIndexable {
     }
   }
 
-  append(node: DomComponent | Element) {
+  /**
+   * @param {DomComponent | Element} node - the element to append
+   * @return {DomComponent} - the root element {@link $root} wuth appended {@link node}
+   */
+  append(node: DomComponent | Element): DomComponent {
     if (node instanceof DomComponent) {
       node = node.$root
     }
@@ -25,13 +38,7 @@ export class DomComponent implements IObjIndexable {
   }
 
   initListeners(eventType: string) {
-    const clickElements = this.$root.querySelectorAll(`[data-${eventType}]`)
-    clickElements.forEach(element => {
-      const method: string = (element as HTMLElement).dataset[eventType]
-      const fn = (this[method] as (ev: Event) => unknown).bind(this)
-
-      this.onEvent(element, eventType, fn)
-    })
+    return 1
   }
 
   onEvent(element: Element, eventType: string, callback: (ev: Event, params?: unknown) => unknown) {
