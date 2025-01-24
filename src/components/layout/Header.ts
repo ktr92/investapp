@@ -12,14 +12,6 @@ import {Store} from '../../store';
 import {CreateForm} from '../form/CreateForm';
 import {getBrokerList} from '../AppUtils';
 
-interface DomOptions {
-  name: string,
-  listeners: Array<string>,
-  emitter: Emitter,
-  unsubs: Array<CallbackFunction>,
-  state: Store
-}
-
 export class Header extends AppComponent {
   constructor(selector: DomComponent, options: DomOptions) {
     super(selector, {

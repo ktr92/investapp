@@ -1,3 +1,16 @@
+import {TablePosition} from '../components/table/TablePosition';
+
+interface ITableData {
+  [index: string]: IConstructor<TablePosition>,
+
+}
+
+export function mapTableData(): ITableData {
+  return {
+    TablePosition,
+  }
+}
+
 export function mapMarket(): IMoexObject {
   return {
     'TQBR': {

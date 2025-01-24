@@ -1,4 +1,3 @@
-
 declare interface IObjIndexable {
   [index: string]: unknown
 }
@@ -98,10 +97,11 @@ declare interface IListener {
   [index: string]: Array<CallbackFunction>,
   eventName?: Array<CallbackFunction>,
 }
-
+declare interface IConstructor<T> {
+  new (...args: Array<unknown>): T,
+}
 declare interface IMoexObject {
   [index: string]: IMoexIndex,
-
 }
 declare interface IMoexIndex {
   type: string,
@@ -116,6 +116,14 @@ declare interface IMoexIndex {
   engnameIndex: number,
   openPriceIndex: number,
   nkdIndex: number | null
+}
+
+declare interface DomOptions {
+  name: string,
+  listeners: Array<string>,
+  emitter: import('../src/components/Emitter').Emitter,
+  unsubs: Array<CallbackFunction>,
+  state: import('../src/store').Store,
 }
 
 declare interface IItemInfo {

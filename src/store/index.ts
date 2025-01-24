@@ -256,11 +256,17 @@ export class Store {
   }
 
   public actions = {
+
+    getAction(name: string) {
+      return this[name]
+    },
+
     createPositions: (source: Array<IPortfolio>, state: Store): Array<Position[]> => {
       const result: Array<Position[]> = []
       source.forEach(portfolio => {
         let positions: Array<Position> = []
         Store.portfolioName = portfolio.name
+        console.log(state)
         state.marketList.forEach(item => {
           const positionType = getPositionType(item)
           if (portfolio.markets[item] && portfolio.markets[item].length) {

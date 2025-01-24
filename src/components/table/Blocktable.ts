@@ -1,22 +1,15 @@
 import {DomComponent} from '../DomComponent';
 import {Table} from '../table/Table';
-import {TablePosition} from '../../components/table/TablePosition'
 import Dropdown from '../UI/Dropdown';
 import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
 import {Store} from '../../store';
 import {TableHistory} from './TableHistory';
-
-interface DomOptions {
-  name: string,
-  listeners: Array<string>,
-  emitter: Emitter,
-  unsubs: Array<CallbackFunction>,
-  state: Store
-}
+import {mapTableData} from '../../utils/maps';
+import {Position} from '../position/Position';
 
 /**
- * Class for app table content
+ * Class for connecting table template with data
  */
 export class BlockTable extends AppComponent {
   constructor(selector: DomComponent, options: DomOptions) {
@@ -24,8 +17,6 @@ export class BlockTable extends AppComponent {
       listeners: [],
       ...options
     })
-    this.emitter = options.emitter
-    this.state = options.state
     this.unsubs = []
   }
 
@@ -59,15 +50,22 @@ export class BlockTable extends AppComponent {
     this.createTable(all)
   }
 
-  createTable(source: Array<TableData>, type = 'positions') {
-    /**
-     * create position to render table
-     */
-    const tabledata = this.state.actions.createPositions(source, this.state)
+  toHTML(): string {
+    return `
+      <div class="table"></div>
+    `
+  }
+  /**
+   *
+   * @param {Array} source - array of data
+   * @param {string} action - some fn to prepare data for table rendering
+   * @param {string} type - some constructor name {@link mapTableData} that can create an instance of table data
+   */
+  createTable(source: Array<TableData>, action = 'createPositions', type = 'TablePosition'): void {
+    const tabledata = this.state.actions.getAction(action).call(this, source, this.state)
 
-    tabledata.forEach(item => {
-      console.log(item)
-      const table = new Table('.table', TablePosition, item, this.emitter)
+    tabledata.forEach((item: unknown[]) => {
+      const table = new Table('.table', mapTableData()[type], item, this.emitter)
       table.render()
     })
   }

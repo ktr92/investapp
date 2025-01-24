@@ -4,13 +4,6 @@ import {AppComponent} from '../AppComponent'
 import {DomComponent} from '../DomComponent'
 import {Emitter} from '../Emitter'
 
-interface DomOptions {
-  name: string,
-  listeners: Array<string>,
-  emitter: Emitter,
-  unsubs: Array<CallbackFunction>,
-  state: Store
-}
 interface IModal {
   content: string,
   title: string

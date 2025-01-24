@@ -3,13 +3,6 @@ import {DomComponent} from './DomComponent';
 import {DomListener} from './DomListener';
 import {Emitter} from './Emitter';
 
- interface DomOptions {
-  name: string,
-  listeners: Array<string>,
-  emitter: Emitter,
-  unsubs: Array<CallbackFunction>,
-  state: Store
-}
 /**
  * Class representing components for @see App  */
 export abstract class AppComponent extends DomListener implements IObjIndexable {
@@ -24,7 +17,6 @@ export abstract class AppComponent extends DomListener implements IObjIndexable 
     this.state = options.state
     this.unsubs = []
     this.prepare()
-    console.log(this)
   }
 
   public unsubs: Array<CallbackFunction>

@@ -12,12 +12,8 @@ interface ITableComponent {
   footers: Array<unknown>
 }
 
-interface IConstructor {
-  new (...args: Array<unknown>): ITableComponent,
-}
-
 export class Table extends DomComponent {
-  constructor(public selector: string, protected Component: IConstructor, public items: Array<unknown>, public emitter: Emitter) {
+  constructor(public selector: string, protected Component: IConstructor<ITableComponent>, public items: Array<unknown>, public emitter: Emitter) {
     super(selector)
     this.init()
   }
