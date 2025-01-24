@@ -58,6 +58,7 @@ declare interface IPortfolio {
   defaultSumm: number,
   defaultCategory: string,
 }
+declare type TableData = IPortfolio
 
 declare interface IItem {
   ticker: string,

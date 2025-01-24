@@ -1,5 +1,7 @@
 import {DomComponent} from './DomComponent';
-
+/**
+ * class provides methods for event listeners
+ */
 export abstract class DomListener {
   constructor(public $root: DomComponent, public listeners: Array<string>) {
     if (!$root) {

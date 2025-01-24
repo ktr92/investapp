@@ -84,15 +84,6 @@ function createRow(cols: Array<ViewComponent>) {
   return row
 }
 
-/* function renderRow(rows: Array<string>) {
-  let row = '<tr class="border-b dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700">'
-  rows.forEach(item => {
-    row += createCol(item)
-  })
-  row += '</tr>'
-  return row
-} */
-
 function createCol(value: string | unknown, index: number, isheader = false, iscolor = false) {
   let newcol = `<td class=" py-2 relative cursor-pointer font-medium text-slate-900 whitespace-nowrap dark:text-white ${isheader ? 'pl-4 pr-4 hover:text-[#00aff5] dark:hover:text-[#00aff5]' : ' px-4'}" data-sort="${index}" ${isheader ? `data-header="asc"` : ''}>`
   newcol += value

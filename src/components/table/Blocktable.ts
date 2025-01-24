@@ -1,16 +1,10 @@
 import {DomComponent} from '../DomComponent';
 import {Table} from '../table/Table';
 import {TablePosition} from '../../components/table/TablePosition'
-
-/* import store from './../../store' */
-import {Position} from '../position/Position';
-import {Portfolio} from '../Portfolio';
 import Dropdown from '../UI/Dropdown';
 import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
-import changeClass from '../../utils/toggleClass';
 import {Store} from '../../store';
-import {getPositionType} from '../../utils/getStockPrice';
 import {TableHistory} from './TableHistory';
 
 interface DomOptions {
@@ -21,6 +15,9 @@ interface DomOptions {
   state: Store
 }
 
+/**
+ * Class for app table content
+ */
 export class BlockTable extends AppComponent {
   constructor(selector: DomComponent, options: DomOptions) {
     super(selector, {
@@ -30,8 +27,6 @@ export class BlockTable extends AppComponent {
     this.emitter = options.emitter
     this.state = options.state
     this.unsubs = []
-
-    /*   this.$root.insertAdjacentHTML('beforeend', this.render()) */
   }
 
   public state: Store
@@ -44,14 +39,15 @@ export class BlockTable extends AppComponent {
     this.initStartstate()
 
     this.$on('table:changeBroker', (id: string) => {
-      this.changeBroker(id)
+      this.changeTableId(id)
     })
     this.$on('table:showAllBrokers', () => {
-      this.changeBroker()
+      this.changeTableId()
     })
 
     this.$on('table:changeView', (view: string) => {
       if (view === 'appHistory') {
+        this.removeTables()
         const history = new TableHistory('#tableblock')
         history.render()
       }
@@ -63,42 +59,32 @@ export class BlockTable extends AppComponent {
     this.createTable(all)
   }
 
-  toHTML(): string {
-    return `
-      <div class="table"></div>
-    `
-  }
+  createTable(source: Array<TableData>, type = 'positions') {
+    /**
+     * create position to render table
+     */
+    const tabledata = this.state.actions.createPositions(source, this.state)
 
-  createTable(source: Array<IPortfolio>) {
-    source.forEach(portfolio => {
-      let positions: Array<Position> = []
-      Store.portfolioName = portfolio.name
-      this.state.marketList.forEach(item => {
-        const positionType = getPositionType(item)
-        if (portfolio.markets[item] && portfolio.markets[item].length) {
-          const pp = new Portfolio(
-              portfolio.id,
-              portfolio.name,
-              portfolio.depo,
-              Position.createPosition(portfolio.markets[item], this.state, positionType, portfolio.comm, item),
-              portfolio.comm
-          )
-          positions = positions.concat(pp.positions)
-        }
-      })
-      const table = new Table('.table', TablePosition, positions, this.emitter)
+    tabledata.forEach(item => {
+      console.log(item)
+      const table = new Table('.table', TablePosition, item, this.emitter)
       table.render()
     })
   }
 
-  changeBroker(id?: string) {
+  removeTables() {
+    Store.portfolioName = null
+    this.state.actions.changeBroker(null)
     document.querySelectorAll('.renderedTable').forEach(item => {
-      item.innerHTML = ''
+      item.remove()
     })
+  }
+
+  changeTableId(id?: string) {
+    this.removeTables()
 
     if (id) {
       this.state.actions.changeBroker(String(id))
-
       this.createTable(this.state.currentPortfolio)
     } else {
       const all = this.state.getters.getAllPortfolio();

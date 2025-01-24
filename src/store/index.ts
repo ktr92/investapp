@@ -3,6 +3,9 @@
 import {mapMarket} from '../utils/maps'
 import {fetchCurrency} from '../utils/currecyValue'
 import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
+import {Position} from '../components/position/Position'
+import {getPositionType} from '../utils/getStockPrice';
+import {Portfolio} from '../components/Portfolio';
 
 interface IState {
   moex: Array<IMoexApi>,
@@ -57,7 +60,9 @@ export class Store {
   private mutations = {
     changeBroker: (id: string) => {
       this.currentPortfolio = []
-      this.currentPortfolio.push(this.getters.getPortfolioById(id))
+      if (id) {
+        this.currentPortfolio.push(this.getters.getPortfolioById(id))
+      }
     },
     addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market: string) => {
       const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
@@ -251,6 +256,28 @@ export class Store {
   }
 
   public actions = {
+    createPositions: (source: Array<IPortfolio>, state: Store): Array<Position[]> => {
+      const result: Array<Position[]> = []
+      source.forEach(portfolio => {
+        let positions: Array<Position> = []
+        Store.portfolioName = portfolio.name
+        state.marketList.forEach(item => {
+          const positionType = getPositionType(item)
+          if (portfolio.markets[item] && portfolio.markets[item].length) {
+            const pp = new Portfolio(
+                portfolio.id,
+                portfolio.name,
+                portfolio.depo,
+                Position.createPosition(portfolio.markets[item], state, positionType, portfolio.comm, item),
+                portfolio.comm
+            )
+            positions = positions.concat(pp.positions)
+            result.push(positions)
+          }
+        })
+      })
+      return result
+    },
     initMoex: async () => {
       this.marketList = Object.keys(this.moex)
       await Promise.all(this.marketList.map(async (item) => {
