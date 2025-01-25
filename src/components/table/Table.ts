@@ -13,7 +13,7 @@ interface ITableComponent {
 }
 
 export class Table extends DomComponent {
-  constructor(public selector: string, protected Component: IConstructor<ITableComponent>, public items: Array<unknown>, public emitter: Emitter) {
+  constructor(public selector: string, protected Component: IConstructor<ITableComponent>, public items: Array<unknown>, public emitter: Emitter, public tablename: string) {
     super(selector)
     this.init()
   }
@@ -31,7 +31,7 @@ export class Table extends DomComponent {
     $root.classList.add('renderedTable')
     const root: HTMLElement = $root.appendChild(document.createElement('div'))
 
-    const table = renderTable(this.instances.components, this.instances.headers, this.instances.footers)
+    const table = renderTable(this.instances.components, this.instances.headers, this.instances.footers, this.tablename)
     root.innerHTML = table
 
     renderBody($root, this.instances.components)

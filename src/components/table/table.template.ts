@@ -6,7 +6,7 @@ import {Store} from '../../store';
 
 const idgen = idGenerator()
 
-export function renderTable(items: Array<TableComponent>, headers: Array<string>, footers: Array<unknown> | null = null): string {
+export function renderTable(items: Array<TableComponent>, headers: Array<string>, footers: Array<unknown> | null = null, tablename?: string): string {
   const header = renderHeader(headers)
 
   let footer = null
@@ -21,7 +21,7 @@ export function renderTable(items: Array<TableComponent>, headers: Array<string>
   const table = ` 
     <section class="w-full dark:bg-slate-800 py-3 sm:py-5" id=table${tabid.id}>
       <div class="w-full mx-auto px-8">
-      <h2 class="text-2xl font-bold mb-4 dark:text-white">${Store.portfolioName || '' }</h2>
+      <h2 class="text-2xl font-bold mb-4 dark:text-white">${tablename || '' }</h2>
         <div class="w-full relative bg-white dark:bg-slate-800">
         <table class="w-full">
         <thead>${header ?? ''}</thead>

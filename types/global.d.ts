@@ -57,6 +57,10 @@ declare interface IPortfolio {
   defaultSumm: number,
   defaultCategory: string,
 }
+declare interface IPortfolioData {
+  name: string,
+  positions: import('../src/components/position/Position').Position[]
+}
 declare type TableData = IPortfolio
 
 declare interface IItem {

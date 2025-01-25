@@ -1,12 +1,10 @@
 import {DomComponent} from '../DomComponent';
 import {Table} from '../table/Table';
-import Dropdown from '../UI/Dropdown';
 import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
 import {Store} from '../../store';
 import {TableHistory} from './TableHistory';
 import {mapTableData} from '../../utils/maps';
-import {Position} from '../position/Position';
 
 /**
  * Class for connecting table template with data
@@ -17,12 +15,10 @@ export class BlockTable extends AppComponent {
       listeners: [],
       ...options
     })
-    this.unsubs = []
   }
 
   public state: Store
   public el: DomComponent
-  public dropdownPortfolio: Dropdown
   public emitter: Emitter
   static id = 'tableblock'
 
@@ -64,12 +60,15 @@ export class BlockTable extends AppComponent {
   createTable(source: Array<TableData>, action = 'createPositions', type = 'TablePosition'): void {
     const tabledata = this.state.actions.getAction(action).call(this, source, this.state)
 
-    tabledata.forEach((item: unknown[]) => {
-      const table = new Table('.table', mapTableData()[type], item, this.emitter)
+    tabledata.forEach((item: IPortfolioData) => {
+      const table = new Table('.table', mapTableData()[type], item.positions, this.emitter, item.name)
       table.render()
     })
   }
 
+  /**
+   * we need to remove all displaying content before change content
+   */
   removeTables() {
     Store.portfolioName = null
     this.state.actions.changeBroker(null)
@@ -78,6 +77,10 @@ export class BlockTable extends AppComponent {
     })
   }
 
+  /**
+   * function changes showing content insine this component
+   * @param {string} id - id to show specific content, no id to show all tables
+   */
   changeTableId(id?: string) {
     this.removeTables()
 

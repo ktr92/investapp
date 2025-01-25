@@ -261,12 +261,12 @@ export class Store {
       return this[name]
     },
 
-    createPositions: (source: Array<IPortfolio>, state: Store): Array<Position[]> => {
-      const result: Array<Position[]> = []
+    createPositions: (source: Array<IPortfolio>, state: Store): Array<IPortfolioData> => {
+      const result: Array<IPortfolioData> = []
+
       source.forEach(portfolio => {
         let positions: Array<Position> = []
         Store.portfolioName = portfolio.name
-        console.log(state)
         state.marketList.forEach(item => {
           const positionType = getPositionType(item)
           if (portfolio.markets[item] && portfolio.markets[item].length) {
@@ -278,8 +278,12 @@ export class Store {
                 portfolio.comm
             )
             positions = positions.concat(pp.positions)
-            result.push(positions)
           }
+        })
+
+        result.push({
+          name: Store.portfolioName,
+          positions
         })
       })
       return result
