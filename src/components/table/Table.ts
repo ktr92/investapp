@@ -1,6 +1,5 @@
 import {DomComponent} from '../DomComponent'
 import {Emitter} from '../Emitter'
-import {PositionControl} from '../position/PositionControl'
 import {TableComponent} from './TableComponent'
 import {ViewComponent} from './ViewComponent'
 import {renderTable} from './table.template'
@@ -11,8 +10,18 @@ interface ITableComponent {
   headers: Array<string>
   footers: Array<unknown>
 }
-
+/**
+ * Class representing table component
+ */
 export class Table extends DomComponent {
+  /**
+   * @constructor
+   * @param {string} selector - element to insert rendered table
+   * @param {IConstructor} Component - component using for generating specific table content
+   * @param {Array} items - array of table rows (Positions)
+   * @param {Element} emitter - the emitter
+   * @param {name} tablename - title displaying before the table
+   */
   constructor(public selector: string, protected Component: IConstructor<ITableComponent>, public items: Array<unknown>, public emitter: Emitter, public tablename: string) {
     super(selector)
     this.init()
@@ -22,6 +31,8 @@ export class Table extends DomComponent {
 
   init() {
     this.instances = new this.Component(this.items)
+
+    console.log( this.instances)
   }
 
   render() {
@@ -31,7 +42,7 @@ export class Table extends DomComponent {
     $root.classList.add('renderedTable')
     const root: HTMLElement = $root.appendChild(document.createElement('div'))
 
-    const table = renderTable(this.instances.components, this.instances.headers, this.instances.footers, this.tablename)
+    const table = renderTable(this.instances.headers, this.instances.footers, this.tablename)
     root.innerHTML = table
 
     renderBody($root, this.instances.components)
@@ -42,7 +53,7 @@ export class Table extends DomComponent {
 
     this.instances.components.forEach(component => {
       component.props.forEach(prop => {
-        if (prop instanceof PositionControl) {
+        if (prop) {
           prop.initListeners(this.emitter)
         }
       })

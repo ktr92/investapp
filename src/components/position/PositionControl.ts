@@ -22,7 +22,7 @@ export class PositionControl extends ViewComponent {
       ptf: this.itemInfo.portfolioId,
       market: this.itemInfo.marketId
     }
-    const $button =document.querySelector(`#button_position${this.itemInfo.positionId}`)
+    const $button = document.querySelector(`#button_position${this.itemInfo.positionId}`)
     const $menu = document.querySelector(`#menu_position${this.itemInfo.positionId}`)
     $button.addEventListener('click', (e) => {
       $menu.classList.remove('hidden')

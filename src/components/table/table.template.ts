@@ -6,7 +6,7 @@ import {Store} from '../../store';
 
 const idgen = idGenerator()
 
-export function renderTable(items: Array<TableComponent>, headers: Array<string>, footers: Array<unknown> | null = null, tablename?: string): string {
+export function renderTable(headers: Array<string>, footers: Array<unknown> | null = null, tablename?: string): string {
   const header = renderHeader(headers)
 
   let footer = null

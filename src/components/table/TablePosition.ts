@@ -1,5 +1,4 @@
 import {TableComponent} from './TableComponent'
-
 import {Change} from '../position/Change'
 import {Price} from '../position/Price'
 import {Stock} from '../position/Stock'
