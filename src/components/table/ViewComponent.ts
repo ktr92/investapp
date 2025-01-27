@@ -5,6 +5,7 @@ export class ViewComponent {
   constructor(public options: Store) {}
   sort: number
   sortField: number
+  value: number
   render() {
     return ''
   }

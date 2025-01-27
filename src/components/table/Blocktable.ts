@@ -52,15 +52,18 @@ export class BlockTable extends AppComponent {
     `
   }
   /**
-   *
+   * this function creates tables of content
    * @param {Array} source - array of data
    * @param {string} action - some fn to prepare data for table rendering
    * @param {string} type - some constructor name {@link mapTableData} that can create an instance of table data
    */
   createTable(source: Array<TableData>, action = 'createPositions', type = 'TablePosition'): void {
-    const tabledata = this.state.actions.getAction(action).call(this, source, this.state)
+    // getting data for table content (table title + positions array as table rows)
+    const tabledata: Array<IPortfolioData> = this.state.actions.getAction(action).call(this, source, this.state)
 
+    // render table for each item of tabledata
     tabledata.forEach((item: IPortfolioData) => {
+      Store.currentDataID = this.state.getters.getPortfolioId(item.name)
       const table = new Table('.table', mapTableData()[type], item.positions, this.emitter, item.name)
       table.render()
     })

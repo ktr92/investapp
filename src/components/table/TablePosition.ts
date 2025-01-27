@@ -7,6 +7,7 @@ import {Totalprice} from '../position/Totalprice'
 import {ViewComponent} from './ViewComponent'
 import numberWithSpaces from '../../utils/formatNumber'
 import calcSumm from '../../utils/calcSumm'
+import {Store} from '../../store'
 
 declare interface IPosition extends IObjIndexable {
   stock: Stock
@@ -18,15 +19,18 @@ declare interface IPosition extends IObjIndexable {
   myStop: Price
   salePrice: Price
 }
-
+/**
+ * component is used to connect data with table view
+ */
 export class TablePosition {
   constructor(items: IPosition[]) {
     this.init(items)
   }
   public viewItems: TableComponent
-  public headers = ['Актив', 'Кол-во', 'Средняя цена', 'НКД', 'Комиссия', 'Вложено', 'Стоимость', 'Прибыль', '', '']
+  public headers: string[] = Store.getStatic.getTableData().apply(null).columns.map((item: ITableColumn) => item.title)
+  public props: string[] = Store.getStatic.getTableData().apply(null).columns.map((item: ITableColumn) => item.cell)
+
   public footers: Array<string> = []
-  public props = ['stock', 'count', 'startPrice', 'nkd', 'comm', 'startTotal', 'currentPrice', 'change', 'positionControl']
   public components: Array<TableComponent> = []
 
   init(items: IPosition[]) {
@@ -39,7 +43,6 @@ export class TablePosition {
               if (idx > -1) {
                 const newItem = item[key] as ViewComponent
                 this.initSortfield(item[key] as ViewComponent, newItem, idx)
-
                 viewItem.props.push(newItem)
               }
             })
@@ -52,38 +55,25 @@ export class TablePosition {
 
   initSortfield(item: ViewComponent, newItem: ViewComponent, idx: number) {
     newItem.sort = idx
-    if (item instanceof Price) {
-      newItem.sortField = (item as Price).value
-    }
-    if (item instanceof Totalprice) {
-      newItem.sortField = (item as Totalprice).total
-    }
-    if (item instanceof Count) {
-      newItem.sortField = (item as Count).count
-    }
-    if (item instanceof Count) {
-      newItem.sortField = (item as Count).count
-    }
-    if (item instanceof Change) {
-      newItem.sortField = (item as Change).value
-    }
+    newItem.sortField =item.value
   }
 
   initFooters(items: IPosition[]) {
-    this.footers.push('Всего')
-    this.footers.push(calcSumm(items, 'count', 'count') + ' шт.')
+    this.footers = Store.getStatic.getTableData().apply(null).columns.map((item: ITableColumn) => item.footer)
+    /* this.footers.push('Всего')
+    this.footers.push(calcSumm(items, 'count', 'value') + ' шт.')
     this.footers.push('')
     this.footers.push('')
     this.footers.push('')
     this.footers.push(this.calcBuy(items) + ' ₽')
-    this.footers.push(calcSumm(items, 'currentPrice', 'total') + ' ₽')
-    this.footers.push(this.calcChange(items))
+    this.footers.push(calcSumm(items, 'currentPrice', 'value') + ' ₽')
+    this.footers.push(this.calcChange(items)) */
   }
 
   calcBuy(items: IPosition[]) {
     let total = 0
     items.forEach(item => {
-      total += item.startPrice.value * item.count.count
+      total += item.startPrice.value * item.count.value
     })
     return numberWithSpaces(total.toFixed(2))
   }
@@ -93,8 +83,8 @@ export class TablePosition {
     let total = 0
 
     items.forEach(item => {
-      change += item.change.currentValue * item.count.count - item.change.startValue * item.count.count
-      total += item.change.startValue * item.count.count
+      change += item.change.currentValue * item.count.value - item.change.startValue * item.count.value
+      total += item.change.startValue * item.count.value
     })
     percent = change / total * 100
 

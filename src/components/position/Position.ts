@@ -81,14 +81,4 @@ export class Position implements IObjIndexable {
 
     return result
   }
-
-/*   static createTotalPositions(items: Array<Portfolio>) {
-    const allPositions: Array<Position> = []
-    items.forEach((portf) => {
-      portf.positions.forEach((item: Position) => {
-        allPositions.push(new Position(item.ticker, item.buyPrice, item.count, item.myStop))
-      })
-    })
-    return allPositions
-  } */
 }

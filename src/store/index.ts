@@ -4,13 +4,97 @@ import {mapMarket} from '../utils/maps'
 import {fetchCurrency} from '../utils/currecyValue'
 import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
 import {Position} from '../components/position/Position'
-import {getPositionType} from '../utils/getStockPrice';
-import {Portfolio} from '../components/Portfolio';
+import {getPositionType} from '../utils/getStockPrice'
+import {Portfolio} from '../components/Portfolio'
+import calcSumm from '../utils/calcSumm'
 
 interface IState {
-  moex: Array<IMoexApi>,
-  portfolio: Array<IPortfolio>,
+  moex: Array<IMoexApi>
+  portfolio: Array<IPortfolio>
   currentPortfolio?: IPortfolio[]
+}
+
+const tableData = () => {
+  const currentData = state.portfolio.filter((item) => item.id === Store.currentDataID)
+
+  console.log(currentData)
+
+  const currentCount = currentData.reduce((prev, current) => {
+    let summ = 0
+    const dataMapped = Object.keys(current.markets).map(key => {
+      const datavalues = current.markets[key]
+      if (datavalues.length < 1) {
+        return 0
+      }
+      if (datavalues.length > 0) {
+        datavalues.forEach(value => {
+          summ += value.count
+        })
+      }
+      return summ
+    })
+    return 1
+  }, 0)
+
+  return {
+    columns: [
+      {
+        title: 'Актив',
+        cell: 'stock',
+        footer: 'Всего',
+      },
+      {
+        title: 'Количество',
+        cell: 'count',
+        footer: currentCount +
+          ' шт',
+      },
+      {
+        title: 'Средняя цена',
+        cell: 'startPrice',
+        footer: '',
+      },
+
+      {
+        title: 'НКД',
+        cell: 'nkd',
+        footer: '',
+      },
+      {
+        title: 'Комиссия',
+        cell: 'comm',
+        footer: '',
+      },
+      {
+        title: 'Вложено',
+        cell: 'startTotal',
+        footer: '',
+      },
+      {
+        title: 'Стоимость',
+        cell: 'currentPrice',
+        footer: '',
+      },
+      {
+        title: 'Прибыль',
+        cell: 'change',
+        footer: '',
+      },
+      {
+        title: '',
+        cell: 'change',
+        footer: '',
+      },
+      {
+        title: '',
+        cell: 'positionControl',
+        footer: '',
+      }
+    ]
+    /*  headers: ['Актив', 'Кол-во', 'Средняя цена', 'НКД', 'Комиссия', 'Вложено', 'Стоимость', 'Прибыль', '', ''],
+  props: ['stock', 'count', 'startPrice', 'nkd', 'comm', 'startTotal', 'currentPrice', 'change', 'positionControl'],
+  footers: ['Всего', 'count', '', '',] */
+  }
 }
 
 export class Store {
@@ -18,32 +102,32 @@ export class Store {
     this.portfolio = state.portfolio
     this.defaultPortfolio = this.portfolio[0].id
     this.defaultCategory = this.portfolio[0].defaultCategory
-    this.currency = [],
-
-    this.moex = {
+    ;(this.currency = []),
+    (this.moex = {
       TQBR: [],
       TQCB: [],
-      TQOB: []
-    }
-    this.moexSecurities ={
+      TQOB: [],
+    })
+    this.moexSecurities = {
       TQBR: [],
       TQCB: [],
-      TQOB: []
+      TQOB: [],
     }
     this.moexMarketData = {
       TQBR: [],
       TQCB: [],
-      TQOB: []
+      TQOB: [],
     }
     this.moexSearch = {
       TQBR: [],
       TQCB: [],
-      TQOB: []
+      TQOB: [],
     }
     this.currentPortfolio = []
   }
 
   static portfolioName: string
+  static currentDataID: string
 
   public portfolio: Array<IPortfolio>
   public defaultPortfolio: string
@@ -64,35 +148,53 @@ export class Store {
         this.currentPortfolio.push(this.getters.getPortfolioById(id))
       }
     },
-    addPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market: string) => {
-      const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
-      const ispos = pfolio.markets[market].filter(item => item.positionId === newPostion.positionId)
+    addPosition: (
+        pfolioId: string,
+        newPostion: IPosition,
+        clone: boolean,
+        market: string
+    ) => {
+      const pfolio = this.portfolio.filter((item) => item.id === pfolioId)[0]
+      const ispos = pfolio.markets[market].filter(
+          (item) => item.positionId === newPostion.positionId
+      )
 
       if (clone || !ispos.length) {
         pfolio.markets[market].push(newPostion)
       } else {
         const pos = ispos[0]
-        pos.buyPrice = (newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) / (newPostion.count + pos.count)
+        pos.buyPrice =
+          (newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) /
+          (newPostion.count + pos.count)
         pos.count += newPostion.count
       }
     },
-    sellPosition: (pfolioId: string, newPostion: IPosition, clone: boolean, market: string) => {
-      const pfolio = this.portfolio.filter(item => item.id === pfolioId)[0]
-      const ispos = pfolio.markets[market].filter(item => item.positionId === newPostion.positionId)
+    sellPosition: (
+        pfolioId: string,
+        newPostion: IPosition,
+        clone: boolean,
+        market: string
+    ) => {
+      const pfolio = this.portfolio.filter((item) => item.id === pfolioId)[0]
+      const ispos = pfolio.markets[market].filter(
+          (item) => item.positionId === newPostion.positionId
+      )
 
       if (clone || !ispos.length) {
         pfolio.markets[market].push(newPostion)
       } else {
         const pos = ispos[0]
-        pos.buyPrice = -(newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) / (newPostion.count + pos.count)
+        pos.buyPrice =
+          -(newPostion.buyPrice * newPostion.count + pos.buyPrice * pos.count) /
+          (newPostion.count + pos.count)
         pos.count += newPostion.count
       }
     },
     editPosition: (id: string, newPostion: IPosition) => {
       const markets = Object.keys(this.moex)
-      markets.forEach(market => {
-        this.portfolio.forEach(item => {
-          item.markets[market].forEach(pos => {
+      markets.forEach((market) => {
+        this.portfolio.forEach((item) => {
+          item.markets[market].forEach((pos) => {
             if (pos.positionId === newPostion.positionId) {
               pos.buyPrice = newPostion.buyPrice
               pos.count = newPostion.count
@@ -106,9 +208,9 @@ export class Store {
     },
     salePosition: (id: string, newPostion: IPosition) => {
       const markets = Object.keys(this.moex)
-      markets.forEach(market => {
-        this.portfolio.forEach(item => {
-          item.markets[market].forEach(pos => {
+      markets.forEach((market) => {
+        this.portfolio.forEach((item) => {
+          item.markets[market].forEach((pos) => {
             if (pos.positionId === newPostion.positionId) {
               pos.saleCount = newPostion.saleCount
               pos.salePrice = newPostion.salePrice
@@ -125,41 +227,58 @@ export class Store {
     },
     deletePosition: (id: string, newPostion: IPosition) => {
       const markets = Object.keys(this.moex)
-      markets.forEach(market => {
-        this.portfolio.forEach(item => {
-          item.markets[market] = item.markets[market].filter(pos => pos.positionId !== newPostion.positionId)
+      markets.forEach((market) => {
+        this.portfolio.forEach((item) => {
+          item.markets[market] = item.markets[market].filter(
+              (pos) => pos.positionId !== newPostion.positionId
+          )
         })
       })
-    }
+    },
+  }
+
+  static getStatic = {
+    getTableData: () => tableData,
+    getPortfolio: () => state.portfolio,
   }
 
   public getters = {
     getAllPortfolio: () => this.portfolio,
-    getPortfolio: (name: string) => this.portfolio.filter(item => item.name === name)[0],
-    getPortfolioId: (name: string) => this.portfolio.filter(item => item.name === name)[0].id,
-    getPortfolioById: (id: string) => this.portfolio.filter(item => item.id === id)[0],
-    getPortfolioComm: (name: string) => this.portfolio.filter(item => item.name === name)[0].comm,
-    getPortfolioSumm: (id: string) => this.portfolio.filter(item => item.id === id)[0].defaultSumm,
-    getPortfolioDepo: (name: string) => this.portfolio.filter(item => item.name === name)[0].depo,
-    getCategory: (id: string) => this.portfolio.filter(item => item.id === id)[0].defaultCategory,
+    getPortfolio: (name: string) =>
+      this.portfolio.filter((item) => item.name === name)[0],
+    getPortfolioId: (name: string) =>
+      this.portfolio.filter((item) => item.name === name)[0].id,
+    getPortfolioById: (id: string) =>
+      this.portfolio.filter((item) => item.id === id)[0],
+    getPortfolioComm: (name: string) =>
+      this.portfolio.filter((item) => item.name === name)[0].comm,
+    getPortfolioSumm: (id: string) =>
+      this.portfolio.filter((item) => item.id === id)[0].defaultSumm,
+    getPortfolioDepo: (name: string) =>
+      this.portfolio.filter((item) => item.name === name)[0].depo,
+    getCategory: (id: string) =>
+      this.portfolio.filter((item) => item.id === id)[0].defaultCategory,
 
-    getPortfolioPositions: (name: string, market = this.defaultCategory) => this.portfolio.filter(item => item.name === name)[0].markets[market],
+    getPortfolioPositions: (name: string, market = this.defaultCategory) =>
+      this.portfolio.filter((item) => item.name === name)[0].markets[market],
     getAllTickers: (market: string) => {
       const tickers: Array<string> = []
-      this.portfolio.forEach(item => {
-        item.markets[market].forEach(position => tickers.push(position.ticker))
+      this.portfolio.forEach((item) => {
+        item.markets[market].forEach((position) =>
+          tickers.push(position.ticker)
+        )
       })
       return {
-        [market]: tickers
+        [market]: tickers,
       }
     },
 
     getPositionById: (id: string): IPosition => {
       const markets = Object.keys(this.moex)
       let position = null
-      markets.forEach(market => {
-        this.portfolio.forEach(item => {
-          item.markets[market].forEach(pos => {
+      markets.forEach((market) => {
+        this.portfolio.forEach((item) => {
+          item.markets[market].forEach((pos) => {
             if (pos.positionId === id) {
               position = pos
             }
@@ -179,16 +298,20 @@ export class Store {
     getMoexByName: (str: string) => {
       const substr = str.toLocaleLowerCase()
 
-      const list = this.moexSearch.moexSecurities.filter(item => {
+      const list = this.moexSearch.moexSecurities.filter((item) => {
         const searchField = getSearchField(item)
 
-        return item[0].toLocaleLowerCase().includes(substr) || item[2].toLocaleLowerCase().includes(substr) || searchField.toLocaleLowerCase().includes(substr)
+        return (
+          item[0].toLocaleLowerCase().includes(substr) ||
+          item[2].toLocaleLowerCase().includes(substr) ||
+          searchField.toLocaleLowerCase().includes(substr)
+        )
       })
 
       return list
     },
     getCurrency: (id: string) => {
-      const isExist = this.currency.filter(item => item.id === id)
+      const isExist = this.currency.filter((item) => item.id === id)
 
       if (isExist && isExist[0]) {
         return isExist[0].value
@@ -198,83 +321,124 @@ export class Store {
     },
     getMoexSearch: () => this.moexSearch,
 
-    getData_moex: (ticker: string, category: string, fields: Array<string>): IItem => {
+    getData_moex: (
+        ticker: string,
+        category: string,
+        fields: Array<string>
+    ): IItem => {
       const mapField: IObjIndexable = {
-        'ticker': ticker,
-        'name': this.getters.getName_moex(ticker, category),
-        'fullname': this.getters.getFullName_moex(ticker, category),
-        'engname': this.getters.getEngName_moex(ticker, category),
-        'price': this.getters.getPrice_moex(ticker, category),
-        'startPrice': this.getters.getStartPrice_moex(ticker, category),
-        'currency': this.getters.getCurrency_moex(ticker, category),
-        'nominal': this.getters.getNominal_moex(ticker, category),
-        'nkd': this.getters.getNKD_moex(ticker, category),
+        ticker: ticker,
+        name: this.getters.getName_moex(ticker, category),
+        fullname: this.getters.getFullName_moex(ticker, category),
+        engname: this.getters.getEngName_moex(ticker, category),
+        price: this.getters.getPrice_moex(ticker, category),
+        startPrice: this.getters.getStartPrice_moex(ticker, category),
+        currency: this.getters.getCurrency_moex(ticker, category),
+        nominal: this.getters.getNominal_moex(ticker, category),
+        nkd: this.getters.getNKD_moex(ticker, category),
       }
 
-      return fields.reduce((acc: IObjIndexable, field: string) => (acc[field] = mapField[field], acc),
+      return fields.reduce(
+          (acc: IObjIndexable, field: string) => (
+            (acc[field] = mapField[field]), acc
+          ),
           {}
       ) as unknown as IItem
     },
 
     getPrice_moex: (ticker: string, category: string) => {
-      const item = this.moexSearch.moexMarketData.filter(item => item[0] === ticker)[0]
-      return Number(item[mapMarket()[category].priceIndex_1] ? item[mapMarket()[category].priceIndex_1] :item[mapMarket()[category].priceIndex_2])
+      const item = this.moexSearch.moexMarketData.filter(
+          (item) => item[0] === ticker
+      )[0]
+      return Number(
+        item[mapMarket()[category].priceIndex_1]
+          ? item[mapMarket()[category].priceIndex_1]
+          : item[mapMarket()[category].priceIndex_2]
+      )
     },
     getName_moex: (ticker: string, category: string) => {
-      return this.moexSearch.moexSecurities
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].nameIndex]
+      return this.moexSearch.moexSecurities.filter(
+          (item) => item[0] === ticker
+      )[0][mapMarket()[category].nameIndex]
     },
     getFullName_moex: (ticker: string, category: string) => {
-      return this.moexSearch.moexSecurities
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].fnameIndex]
+      return this.moexSearch.moexSecurities.filter(
+          (item) => item[0] === ticker
+      )[0][mapMarket()[category].fnameIndex]
     },
     getEngName_moex: (ticker: string, category: string) => {
-      return this.moexSearch.moexSecurities
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].engnameIndex]
+      return this.moexSearch.moexSecurities.filter(
+          (item) => item[0] === ticker
+      )[0][mapMarket()[category].engnameIndex]
     },
     getStartPrice_moex: (ticker: string, category: string) => {
-      return Number(this.moexSearch.moexMarketData
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].openPriceIndex])
+      return Number(
+          this.moexSearch.moexMarketData.filter((item) => item[0] === ticker)[0][
+              mapMarket()[category].openPriceIndex
+          ]
+      )
     },
     getNKD_moex: (ticker: string, category: string) => {
-      return Number(this.moexSearch.moexSecurities
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].nkdIndex])
+      return Number(
+          this.moexSearch.moexSecurities.filter((item) => item[0] === ticker)[0][
+              mapMarket()[category].nkdIndex
+          ]
+      )
     },
     getCurrency_moex: (ticker: string, category: string) => {
-      return this.moexSearch.moexSecurities
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].currencyIndex]
+      return this.moexSearch.moexSecurities.filter(
+          (item) => item[0] === ticker
+      )[0][mapMarket()[category].currencyIndex]
     },
     getCurrencyValue_moex: (ticker: string, category: string) => {
-      return this.getters.getCurrency(this.moexSearch.moexSecurities
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].currencyIndex]) || 1
+      return (
+        this.getters.getCurrency(
+            this.moexSearch.moexSecurities.filter(
+                (item) => item[0] === ticker
+            )[0][mapMarket()[category].currencyIndex]
+        ) || 1
+      )
     },
     getNominal_moex: (ticker: string, category: string) => {
-      return Number(this.moexSearch.moexSecurities
-          .filter(item => item[0] === ticker)[0][mapMarket()[category].nominalIndex]) || 1
+      return (
+        Number(
+            this.moexSearch.moexSecurities.filter(
+                (item) => item[0] === ticker
+            )[0][mapMarket()[category].nominalIndex]
+        ) || 1
+      )
     },
-    getMoex: () => this.moex
+    getMoex: () => this.moex,
   }
 
   public actions = {
-
     getAction(name: string) {
       return this[name]
     },
 
-    createPositions: (source: Array<IPortfolio>, state: Store): Array<IPortfolioData> => {
+    createPositions: (
+        source: Array<IPortfolio>,
+        state: Store
+    ): Array<IPortfolioData> => {
       const result: Array<IPortfolioData> = []
 
-      source.forEach(portfolio => {
+      source.forEach((portfolio) => {
         let positions: Array<Position> = []
         Store.portfolioName = portfolio.name
-        state.marketList.forEach(item => {
+        state.marketList.forEach((item) => {
           const positionType = getPositionType(item)
           if (portfolio.markets[item] && portfolio.markets[item].length) {
             const pp = new Portfolio(
                 portfolio.id,
                 portfolio.name,
                 portfolio.depo,
-                Position.createPosition(portfolio.markets[item], state, positionType, portfolio.comm, item),
+                Position.createPosition(
+                    portfolio.markets[item],
+                    state,
+                    positionType,
+                    portfolio.comm,
+                    item
+                ),
                 portfolio.comm
             )
             positions = positions.concat(pp.positions)
@@ -283,23 +447,25 @@ export class Store {
 
         result.push({
           name: Store.portfolioName,
-          positions
+          positions,
         })
       })
       return result
     },
     initMoex: async () => {
       this.marketList = Object.keys(this.moex)
-      await Promise.all(this.marketList.map(async (item) => {
-        const tickers = this.getters.getAllTickers(item)
-        if (tickers[item].length) {
-          const moex = await moexTickerLast(item, tickers[item])
-          this.moex[item] = moex.items
-          this.moexSecurities[item] = moex.moexSecurities
-          this.moexMarketData[item] = moex.moexMarketData
-          return this.moex
-        }
-      }))
+      await Promise.all(
+          this.marketList.map(async (item) => {
+            const tickers = this.getters.getAllTickers(item)
+            if (tickers[item].length) {
+              const moex = await moexTickerLast(item, tickers[item])
+              this.moex[item] = moex.items
+              this.moexSecurities[item] = moex.moexSecurities
+              this.moexMarketData[item] = moex.moexMarketData
+              return this.moex
+            }
+          })
+      )
 
       return {...this.moex}
     },
@@ -316,10 +482,20 @@ export class Store {
     changeBroker: (id: string) => {
       this.mutations.changeBroker(id)
     },
-    addPosition: (id: string, pos: IPosition, clone: boolean, market: string) => {
+    addPosition: (
+        id: string,
+        pos: IPosition,
+        clone: boolean,
+        market: string
+    ) => {
       this.mutations.addPosition(id, pos, clone, market)
     },
-    sellPosition: (id: string, pos: IPosition, clone: boolean, market: string) => {
+    sellPosition: (
+        id: string,
+        pos: IPosition,
+        clone: boolean,
+        market: string
+    ) => {
       this.mutations.sellPosition(id, pos, clone, market)
     },
 
@@ -332,7 +508,6 @@ export class Store {
     salePosition: (id: string, pos: IPosition) => {
       this.mutations.salePosition(id, pos)
     },
-
   }
 }
 
@@ -354,15 +529,14 @@ const state: IState = {
             ticker: 'HYDR',
             type: 'stock',
             market: 'TQBR',
-            buyPrice: 0.5670,
+            buyPrice: 0.567,
             count: 416000,
             myStop: 0,
           },
         ],
-        TQCB: [
-        ],
-        TQOB: []
-      }
+        TQCB: [],
+        TQOB: [],
+      },
     },
     {
       id: '2',
@@ -393,14 +567,11 @@ const state: IState = {
             buyPrice: 42,
             count: 1000,
             myStop: 0,
-
-          }
+          },
         ],
-        TQCB: [
-        ],
-        TQOB: []
-      }
-
+        TQCB: [],
+        TQOB: [],
+      },
     },
     {
       id: '3',
@@ -410,9 +581,7 @@ const state: IState = {
       defaultSumm: 50000,
       defaultCategory: 'TQBR',
       markets: {
-        TQBR: [
-
-        ],
+        TQBR: [],
         TQCB: [
           {
             positionId: '6',
@@ -425,8 +594,7 @@ const state: IState = {
             count: 1,
             nominal: 1000,
             currency: 'USD',
-            buyCurrency: 90
-
+            buyCurrency: 90,
           },
           {
             positionId: '7',
@@ -439,8 +607,7 @@ const state: IState = {
             count: 2,
             nominal: 1000,
             currency: 'USD',
-            buyCurrency: 92
-
+            buyCurrency: 92,
           },
           {
             positionId: '8',
@@ -453,8 +620,7 @@ const state: IState = {
             count: 1,
             nominal: 1000,
             currency: 'USD',
-            buyCurrency: 88
-
+            buyCurrency: 88,
           },
         ],
         TQOB: [
@@ -470,11 +636,10 @@ const state: IState = {
             currency: '',
             nkd: 7,
           },
-        ]
+        ],
       },
-
-    }
-  ]
+    },
+  ],
 }
 
 /* export default {getters, actions, state} */

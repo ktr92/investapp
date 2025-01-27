@@ -31,8 +31,6 @@ export class Table extends DomComponent {
 
   init() {
     this.instances = new this.Component(this.items)
-
-    console.log( this.instances)
   }
 
   render() {

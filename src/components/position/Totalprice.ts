@@ -5,22 +5,22 @@ import {Store} from '../../store';
 export class Totalprice extends ViewComponent {
   constructor(public single: number = null, public count: number = null, options: Store, extra = 0) {
     super(options)
-    this.total = this.single * this.count
+    this.value = this.single * this.count
 
     if (extra) {
-      this.total += extra
+      this.value += extra
     }
 
-    this.total = Number(this.total.toFixed(2))
+    this.value = Number(this.value.toFixed(2))
   }
 
-  public total: number
+  public value: number
 
   render() {
     return `
       <div class="">
           <span class="w-auto block mr-3">
-          <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white">${this.total ? numberWithSpaces(this.total) + ' ₽' : ''}</span>          </span>
+          <span class="block font-medium text-gray-900 whitespace-nowrap dark:text-white">${this.value ? numberWithSpaces(this.value) + ' ₽' : ''}</span>          </span>
           <span>
             <span class="block  bg-primary-100 text-slate-400 text-xs font-medium rounded dark:bg-primary-900 dark:text-primary-300">${numberWithSpaces(this.single.toFixed(2))} ₽</span>
             </span>  

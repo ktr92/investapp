@@ -25,6 +25,11 @@ declare interface IMarketsList {
   TQCB?: Array<Array<string>>,
   TQOB?: Array<Array<string>>
 }
+declare interface ITableColumn {
+  title: string,
+  cell: string,
+  footer: string | CallableFunction
+}
 
 declare interface IPosition {
   ticker: string,
