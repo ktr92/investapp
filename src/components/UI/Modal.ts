@@ -1,5 +1,5 @@
 import closeByClickOutside from '../../utils/clickOutside'
-import {Store} from '../../store'
+import {Store} from '../../store/moex'
 import {AppComponent} from '../AppComponent'
 import {DomComponent} from '../DomComponent'
 import {Emitter} from '../Emitter'

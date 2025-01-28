@@ -32,6 +32,7 @@ declare interface ITableColumn {
 }
 
 declare interface IPosition {
+  [index: string]: string | number | IState | boolean,
   ticker: string,
   type: string,
   market: string,
@@ -132,7 +133,7 @@ declare interface DomOptions {
   listeners: Array<string>,
   emitter: import('../src/components/Emitter').Emitter,
   unsubs: Array<CallbackFunction>,
-  state: import('../src/store').Store,
+  state: import('../src/store/moex').Store,
 }
 
 declare interface IItemInfo {

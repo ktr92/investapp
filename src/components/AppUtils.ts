@@ -1,4 +1,4 @@
-import {Store} from '../store';
+import {Store} from '../store/moex';
 
 export function getBrokerList(state: Store) {
   const all = state.getters.getAllPortfolio();

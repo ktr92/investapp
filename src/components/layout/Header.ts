@@ -8,7 +8,7 @@ import Dropdown from '../UI/Dropdown';
 import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
 import changeClass from '../../utils/toggleClass';
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 import {CreateForm} from '../form/CreateForm';
 import {getBrokerList} from '../AppUtils';
 

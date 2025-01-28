@@ -1,40 +1,80 @@
 /** @module Store */
 
-import {mapMarket} from '../utils/maps'
-import {fetchCurrency} from '../utils/currecyValue'
-import {getSearchField, moexTickerLast} from '../utils/getStockPrice'
-import {Position} from '../components/position/Position'
-import {getPositionType} from '../utils/getStockPrice'
-import {Portfolio} from '../components/Portfolio'
-import calcSumm from '../utils/calcSumm'
-
-interface IState {
-  moex: Array<IMoexApi>
-  portfolio: Array<IPortfolio>
-  currentPortfolio?: IPortfolio[]
-}
+import {mapMarket} from '../../utils/maps'
+import {fetchCurrency} from '../../utils/currecyValue'
+import {getSearchField, moexTickerLast} from '../../utils/getStockPrice'
+import {Position} from '../../components/position/Position'
+import {getPositionType} from '../../utils/getStockPrice'
+import {Portfolio} from '../../components/Portfolio'
+import calcSumm from '../../utils/calcSumm'
+import numberWithSpaces from '../../utils/formatNumber'
+import state from './state'
 
 const tableData = () => {
   const currentData = state.portfolio.filter((item) => item.id === Store.currentDataID)
 
-  console.log(currentData)
+  const marketData = JSON.parse(localStorage.getItem('moexdata'))
+  console.log(marketData)
 
-  const currentCount = currentData.reduce((prev, current) => {
+  function marketMultBy(multiplier1: string, multiplier2: string) {
     let summ = 0
-    const dataMapped = Object.keys(current.markets).map(key => {
-      const datavalues = current.markets[key]
+    Object.keys(marketData).map(key => {
+      const datavalues: IPosition[] = marketData[key]
       if (datavalues.length < 1) {
         return 0
       }
-      if (datavalues.length > 0) {
-        datavalues.forEach(value => {
-          summ += value.count
-        })
-      }
+      datavalues.forEach(value => {
+        const m1 = value[multiplier1]
+        const m2= value[multiplier2]
+        if (typeof m1 === 'number' && typeof m2 === 'number') {
+          summ += m1 * m2
+        }
+      })
       return summ
     })
-    return 1
-  }, 0)
+    return summ
+  }
+
+  function multBy(multiplier1: string, multiplier2: string) {
+    return currentData.reduce((prev, current) => {
+      let summ = 0
+      Object.keys(current.markets).map(key => {
+        const datavalues = current.markets[key]
+        if (datavalues.length < 1) {
+          return 0
+        }
+        datavalues.forEach(value => {
+          const m1 = value[multiplier1]
+          const m2= value[multiplier2]
+          if (typeof m1 === 'number' && typeof m2 === 'number') {
+            summ += m1 * m2
+          }
+        })
+        return summ
+      })
+      return summ
+    }, 0)
+  }
+
+  function summBy(field: string) {
+    return currentData.reduce((prev, current) => {
+      let summ = 0
+      Object.keys(current.markets).map(key => {
+        const datavalues = current.markets[key]
+        if (datavalues.length < 1) {
+          return 0
+        }
+        datavalues.forEach(value => {
+          const val = value[field]
+          if (typeof val === 'number') {
+            summ += val
+          }
+        })
+        return summ
+      })
+      return summ
+    }, 0)
+  }
 
   return {
     columns: [
@@ -46,7 +86,7 @@ const tableData = () => {
       {
         title: 'Количество',
         cell: 'count',
-        footer: currentCount +
+        footer: numberWithSpaces(summBy('count')) +
           ' шт',
       },
       {
@@ -68,12 +108,13 @@ const tableData = () => {
       {
         title: 'Вложено',
         cell: 'startTotal',
-        footer: '',
+        footer: numberWithSpaces(multBy('buyPrice', 'count').toFixed(2)) +
+        ' ₽',
       },
       {
-        title: 'Стоимость',
+        title: 'Текущая стоимость',
         cell: 'currentPrice',
-        footer: '',
+        footer: numberWithSpaces(marketMultBy('price', '1'))
       },
       {
         title: 'Прибыль',
@@ -510,166 +551,3 @@ export class Store {
     },
   }
 }
-
-const state: IState = {
-  moex: [],
-  portfolio: [
-    {
-      id: '1',
-      name: 'Среднесрочный портфель',
-      depo: 450000,
-      comm: 0.09,
-      defaultSumm: 50000,
-      defaultCategory: 'TQBR',
-      markets: {
-        TQBR: [
-          {
-            positionId: '1',
-            portfolioId: '1',
-            ticker: 'HYDR',
-            type: 'stock',
-            market: 'TQBR',
-            buyPrice: 0.567,
-            count: 416000,
-            myStop: 0,
-          },
-        ],
-        TQCB: [],
-        TQOB: [],
-      },
-    },
-    {
-      id: '2',
-      name: 'Долгосрочный портфель',
-      depo: 200000,
-      comm: 0.09,
-      defaultSumm: 50000,
-      defaultCategory: 'TQBR',
-      markets: {
-        TQBR: [
-          {
-            positionId: '2',
-            portfolioId: '2',
-            ticker: 'ASTR',
-            type: 'stock',
-            market: 'TQCB',
-
-            buyPrice: 510,
-            count: 178,
-          },
-          {
-            positionId: '3',
-            portfolioId: '2',
-            ticker: 'SNGSP',
-            type: 'stock',
-            market: 'TQCB',
-
-            buyPrice: 42,
-            count: 1000,
-            myStop: 0,
-          },
-        ],
-        TQCB: [],
-        TQOB: [],
-      },
-    },
-    {
-      id: '3',
-      name: 'Портфель облигаций',
-      depo: 500000,
-      comm: 0.095,
-      defaultSumm: 50000,
-      defaultCategory: 'TQBR',
-      markets: {
-        TQBR: [],
-        TQCB: [
-          {
-            positionId: '6',
-            portfolioId: '3',
-            ticker: 'RU000A105A95',
-            type: 'bonds',
-            market: 'TQCB',
-            nkd: 10,
-            buyPrice: 110,
-            count: 1,
-            nominal: 1000,
-            currency: 'USD',
-            buyCurrency: 90,
-          },
-          {
-            positionId: '7',
-            portfolioId: '3',
-            ticker: 'RU000A107B43',
-            type: 'bonds',
-            market: 'TQCB',
-            nkd: 13,
-            buyPrice: 84,
-            count: 2,
-            nominal: 1000,
-            currency: 'USD',
-            buyCurrency: 92,
-          },
-          {
-            positionId: '8',
-            portfolioId: '3',
-            ticker: 'RU000A107B43',
-            type: 'bonds',
-            nkd: 11,
-            market: 'TQCB',
-            buyPrice: 84,
-            count: 1,
-            nominal: 1000,
-            currency: 'USD',
-            buyCurrency: 88,
-          },
-        ],
-        TQOB: [
-          {
-            positionId: '9',
-            portfolioId: '3',
-            ticker: 'SU26238RMFS4',
-            type: 'bonds',
-            market: 'TQOB',
-            buyPrice: 55,
-            count: 50,
-            nominal: 1000,
-            currency: '',
-            nkd: 7,
-          },
-        ],
-      },
-    },
-  ],
-}
-
-/* export default {getters, actions, state} */
-
-/* addDepo(cash) {
-  depo += cash
-},
-reduceDepo(cash) {
-  depo -= cash
-},
-getDepo() {
-  return depo
-},
-addPosition(pos) {
-  const exist = this.positions.filter(item => item.ticker === pos.ticker)
-  if (exist.length === 1) {
-    this.refreshPosition(exist, pos)
-  } else {
-    itemsCount += 1
-    pos.id = itemsCount
-    this.positions.push(pos)
-  }
-  depo -= pos.price * pos.count
-},
-refreshPosition(exist, pos) {
-  const refresh = exist[0]
-  refresh.price = (refresh.price * refresh.count + pos.price * pos.count) / (refresh.count + pos.count)
-  refresh.count = refresh.count + pos.count
-  refresh.stop = pos.stop
-},
-removePosition(pos) {
-  this.positions.filter(item => item.id !== pos.id)
-} */

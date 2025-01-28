@@ -1,4 +1,4 @@
-import {Store} from '../../store'
+import {Store} from '../../store/moex'
 import {ViewComponent} from '../table/ViewComponent'
 
 export class Bonds extends ViewComponent implements IObjIndexable {

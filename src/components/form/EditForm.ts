@@ -1,4 +1,4 @@
-import {Store} from '../../store'
+import {Store} from '../../store/moex'
 import {initFormData} from '../../utils/getStockPrice'
 import * as template from './form.tempalte'
 import {Form} from './Form'

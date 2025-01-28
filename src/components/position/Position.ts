@@ -3,7 +3,7 @@ import {Price} from './Price';
 import {Stock} from './Stock';
 import {Count} from './Count';
 import {Totalprice} from './Totalprice';
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 import {Bonds} from './Bonds';
 import {PositionControl} from './PositionControl';
 

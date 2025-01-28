@@ -1,6 +1,6 @@
 import numberWithSpaces from '../../utils/formatNumber'
 import {ViewComponent} from '../table/ViewComponent'
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 export class Change extends ViewComponent implements IObjIndexable {
   constructor(public startValue: number, public currentValue: number, public count: number, options: Store) {
     super(options)

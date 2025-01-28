@@ -1,4 +1,4 @@
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 import numberWithSpaces from '../../utils/formatNumber';
 import {ViewComponent} from '../table/ViewComponent';
 

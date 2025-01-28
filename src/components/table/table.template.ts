@@ -2,7 +2,7 @@
 import idGenerator from '../../utils/idGenerator'
 import {TableComponent} from './TableComponent'
 import {ViewComponent} from './ViewComponent'
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 
 const idgen = idGenerator()
 

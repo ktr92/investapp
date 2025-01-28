@@ -1,5 +1,5 @@
 import closeByClickOutside from '../../utils/clickOutside';
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 import {ViewComponent} from '../table/ViewComponent';
 import {CreateForm} from '../form/CreateForm';
 import {Emitter} from '../Emitter';

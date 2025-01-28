@@ -1,6 +1,6 @@
 import numberWithSpaces from '../../utils/formatNumber'
 import {ViewComponent} from '../table/ViewComponent'
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 export class Count extends ViewComponent {
   constructor(public value: number = 1, options: Store) {
     super(options)

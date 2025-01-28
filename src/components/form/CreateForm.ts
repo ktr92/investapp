@@ -1,5 +1,5 @@
 import closeByClickOutside from '../../utils/clickOutside'
-import {Store} from '../../store'
+import {Store} from '../../store/moex'
 import Dropdown from '../UI/Dropdown'
 import numberWithSpaces from '../../utils/formatNumber'
 import {getBrokerList} from '../AppUtils'

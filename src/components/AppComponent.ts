@@ -1,4 +1,4 @@
-import {Store} from '../store';
+import {Store} from '../store/moex';
 import {DomComponent} from './DomComponent';
 import {DomListener} from './DomListener';
 import {Emitter} from './Emitter';

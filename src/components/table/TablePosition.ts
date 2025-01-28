@@ -7,7 +7,7 @@ import {Totalprice} from '../position/Totalprice'
 import {ViewComponent} from './ViewComponent'
 import numberWithSpaces from '../../utils/formatNumber'
 import calcSumm from '../../utils/calcSumm'
-import {Store} from '../../store'
+import {Store} from '../../store/moex'
 
 declare interface IPosition extends IObjIndexable {
   stock: Stock

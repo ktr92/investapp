@@ -1,6 +1,6 @@
 import numberWithSpaces from '../../utils/formatNumber'
 import {ViewComponent} from '../table/ViewComponent'
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 
 export class Totalprice extends ViewComponent {
   constructor(public single: number = null, public count: number = null, options: Store, extra = 0) {

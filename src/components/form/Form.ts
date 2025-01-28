@@ -1,5 +1,5 @@
 import {mapMarket} from '../../utils/maps'
-import {Store} from '../../store'
+import {Store} from '../../store/moex'
 import numberWithSpaces from '../../utils/formatNumber'
 
 import * as template from './form.tempalte'

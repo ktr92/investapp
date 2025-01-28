@@ -1,4 +1,4 @@
-import {Store} from '../../store'
+import {Store} from '../../store/moex'
 import {Emitter} from '../Emitter'
 
 export class ViewComponent {

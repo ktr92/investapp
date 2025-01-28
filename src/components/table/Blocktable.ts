@@ -2,7 +2,7 @@ import {DomComponent} from '../DomComponent';
 import {Table} from '../table/Table';
 import {AppComponent} from '../AppComponent';
 import {Emitter} from '../Emitter';
-import {Store} from '../../store';
+import {Store} from '../../store/moex';
 import {TableHistory} from './TableHistory';
 import {mapTableData} from '../../utils/maps';
 
