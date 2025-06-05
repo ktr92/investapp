@@ -75,7 +75,23 @@ export class Position implements IObjIndexable {
     items.forEach((item: IPosition) => {
       // выводим все кроме проданных
       if (!item.isSold) {
-        result.push(new Position(item.ticker, market, type, item.buyPrice, item.count, item.nominal, item.currency, item.buyCurrency, item.myStop, null, item.nkd, comm, state, item.positionId, item.portfolioId, market))
+        result.push(new Position(
+            item.ticker,
+            market,
+            type,
+            item.buyPrice,
+            item.count,
+            item.nominal,
+            item.currency,
+            item.buyCurrency,
+            item.myStop,
+            null,
+            item.nkd,
+            comm,
+            state,
+            item.positionId,
+            item.portfolioId,
+            market))
       }
     })
 

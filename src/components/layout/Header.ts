@@ -10,7 +10,7 @@ import {Emitter} from '../Emitter';
 import changeClass from '../../utils/toggleClass';
 import {Store} from '../../store/moex';
 import {CreateForm} from '../form/CreateForm';
-import {getBrokerList} from '../AppUtils';
+import {getBrokerList} from '../../utils/appUtils';
 
 export class Header extends AppComponent {
   constructor(selector: DomComponent, options: DomOptions) {

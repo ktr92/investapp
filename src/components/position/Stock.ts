@@ -1,3 +1,4 @@
+import {getItemLogo} from '../../utils/appUtils'
 import {Store} from '../../store/moex'
 import {ViewComponent} from '../table/ViewComponent'
 
@@ -8,7 +9,7 @@ export class Stock extends ViewComponent implements IObjIndexable {
     this.name = moex.name
     this.currentPrice = moex.price
     this.dayChange = moex.open - moex.price
-    this.logo = `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${ticker}.png`
+    this.logo = getItemLogo(ticker)
   }
   public currentPrice: number
   [index: string]: unknown

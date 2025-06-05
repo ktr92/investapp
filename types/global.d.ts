@@ -63,6 +63,15 @@ declare interface IPortfolio {
   defaultSumm: number,
   defaultCategory: string,
 }
+declare interface TPortfolio {
+  id: string,
+  name: string,
+  depo: number,
+  comm: number,
+  markets: Array<IPosition>,
+  defaultSumm: number,
+  defaultCategory: string,
+}
 declare interface IPortfolioData {
   name: string,
   positions: import('../src/components/position/Position').Position[]
@@ -146,4 +155,27 @@ declare interface IModalData {
   id: string,
   ptf: string,
   market: string
+}
+
+declare interface AppPosition {
+  id: string,
+  portfolioId: string,
+  type: 'stock' | 'bonds',
+  market: 'TQBR' | 'TQCB' | 'TQOB',
+  ticker: string,
+  name: string,
+  count: number,
+  currency: string,
+  price: number,
+  change: number,
+  buyPrice: number,
+  buyCurrency: number,
+  buyDate: string,
+  buyNkd?: number,
+  salePrice?: number,
+  saleDate?: string,
+  saleCount?: number,
+  saleCurrency?: number
+  nominal?: number,
+  saleNkd?: number
 }
