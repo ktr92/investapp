@@ -6,11 +6,9 @@ export class Totalprice extends ViewComponent {
   constructor(public single: number = null, public count: number = null, options: Store, extra = 0) {
     super(options)
     this.value = this.single * this.count
-
     if (extra) {
       this.value += extra
     }
-
     this.value = Number(this.value.toFixed(2))
   }
 

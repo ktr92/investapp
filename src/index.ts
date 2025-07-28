@@ -11,8 +11,7 @@ import {Store} from './store/moex';
 const state = new Store;
 
 (async function() {
-  /** Load exchange data and save it to use throughout the app */
-
+  /** Load current exchange info about user's postiions and save it to use throughout the app */
   state.moex = await state.actions.initMoex()
   localStorage.setItem('moexdata', JSON.stringify(state.moex))
 

@@ -5,15 +5,11 @@ import {ViewComponent} from '../table/ViewComponent'
 export class Bonds extends ViewComponent implements IObjIndexable {
   constructor(public ticker: string, nominal: number, currency: string, options: Store, market: string) {
     super(options)
-    console.log(this)
     const moex: IMoexApi = this.options.getters.getMoex()[market].filter(item => item.ticker === ticker)[0]
     this.name = moex.name
-
     this.currentPrice = moex.price * moex.nominal / 100
     this.dayChange = moex.open - moex.price
-
     this.logo = getItemLogo(ticker, options, market)
-
     this.initData(currency, moex, nominal)
   }
   public currentPrice: number

@@ -44,10 +44,8 @@ export class Position implements IObjIndexable {
     this.currentPrice = new Totalprice(this.stock.currentPrice, count, options)
     this.myStop = new Price(myStop, options )
     this.salePrice = new Totalprice(salePrice, null, options )
-
     this.comm = this.startPrice.value * count * comm / 100
     this.nkd = nkd * count
-
     const extra = Number(nkd * count + Number(this.comm))
     this.comm = new Price(this.comm as number, options)
     this.nkd = new Price(this.nkd as number, options)

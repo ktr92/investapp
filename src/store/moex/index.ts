@@ -9,23 +9,42 @@ import {Portfolio} from '../../components/Portfolio'
 import calcSumm from '../../utils/calcSumm'
 import numberWithSpaces from '../../utils/formatNumber'
 import state from './state'
+import {matchPortfolioMarket} from '../../utils/appUtils'
 
-const tableData = () => {
-  const currentData = state.portfolio.filter((item) => item.id === Store.currentDataID)
-
+interface ITableParts {
+  columns: ITableColumn[]
+}
+/** generate colums for the table
+ * @return {ITableParts} - a set of the columns
+ */
+const tableData = (): ITableParts => {
+  const currentPortfolio = state.portfolio.filter((item) => item.id === Store.currentDataID)
+  /** user's positions exchange info */
   const marketData = JSON.parse(localStorage.getItem('moexdata'))
-  console.log(marketData)
 
-  function marketMultBy(multiplier1: string, multiplier2: string) {
+  /** the sum of the values by column according to multiplier1
+   * @param {string} multiplier1 - value of the price
+   * @param {string} multiplier2 - count of the price
+   * @return {number} - multiplier1 * multiplier2
+  */
+  function marketMultBy(multiplier1: string, multiplier2: string): number {
     let summ = 0
+
+    console.log(state)
+
+    /** matching user's position and market data */
     Object.keys(marketData).map(key => {
       const datavalues: IPosition[] = marketData[key]
+
       if (datavalues.length < 1) {
         return 0
       }
       datavalues.forEach(value => {
         const m1 = value[multiplier1]
-        const m2= value[multiplier2]
+
+        const m2 = value[multiplier2]
+        console.log(m2)
+
         if (typeof m1 === 'number' && typeof m2 === 'number') {
           summ += m1 * m2
         }
@@ -36,7 +55,7 @@ const tableData = () => {
   }
 
   function multBy(multiplier1: string, multiplier2: string) {
-    return currentData.reduce((prev, current) => {
+    return currentPortfolio.reduce((prev, current) => {
       let summ = 0
       Object.keys(current.markets).map(key => {
         const datavalues = current.markets[key]
@@ -57,7 +76,7 @@ const tableData = () => {
   }
 
   function summBy(field: string) {
-    return currentData.reduce((prev, current) => {
+    return currentPortfolio.reduce((prev, current) => {
       let summ = 0
       Object.keys(current.markets).map(key => {
         const datavalues = current.markets[key]
@@ -114,7 +133,7 @@ const tableData = () => {
       {
         title: 'Текущая стоимость',
         cell: 'currentPrice',
-        footer: numberWithSpaces(marketMultBy('price', '1'))
+        footer: numberWithSpaces(marketMultBy('price', 'count'))
       },
       {
         title: 'Прибыль',
@@ -295,10 +314,16 @@ export class Store {
       this.portfolio.filter((item) => item.name === name)[0].comm,
     getPortfolioSumm: (id: string) =>
       this.portfolio.filter((item) => item.id === id)[0].defaultSumm,
+
     getPortfolioDepo: (name: string) =>
       this.portfolio.filter((item) => item.name === name)[0].depo,
     getCategory: (id: string) =>
       this.portfolio.filter((item) => item.id === id)[0].defaultCategory,
+
+    getPositionCount: (ticker: string, id: string) => {
+      const portfolio = this.portfolio.filter((item) => item.id === id)[0]
+      console.log(portfolio)
+    },
 
     getPortfolioPositions: (name: string, market = this.defaultCategory) =>
       this.portfolio.filter((item) => item.name === name)[0].markets[market],

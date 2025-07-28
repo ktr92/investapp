@@ -5,7 +5,7 @@ import {Store} from '../store/moex';
 /**
  * @param {Store} state - the state of the app
  * @return {IListItem[]} - user's broker list */
-export function getBrokerList(state: Store) {
+export function getBrokerList(state: Store): IListItem[] {
   const all = state.getters.getAllPortfolio();
   const brokerLIst: Array<IListItem> = []
 
@@ -26,10 +26,16 @@ export function getBrokerList(state: Store) {
  * @param {string} market - type of the item
  * @return {string} - a string represenring the logo url
  */
-export function getItemLogo(ticker: string, state?: Store, market?: string) {
+export function getItemLogo(ticker: string, state?: Store, market?: string): string {
   if (market && market === 'TQOB') {
     return `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${state.moexSecurities[market].filter((item) => item[0] === ticker)[0][28]}.png`
   } else {
     return `https://mybroker.storage.bcs.ru/FinInstrumentLogo/${ticker}.png`
   }
+}
+
+export function matchPortfolioMarket(ticker: string, field: string, state: Store) {
+  console.log(state)
+  const porfolio = state.getters.getCurrent()
+  const market = state.getters.getMoex()
 }
